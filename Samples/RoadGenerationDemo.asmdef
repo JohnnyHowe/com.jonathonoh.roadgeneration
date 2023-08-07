@@ -1,0 +1,17 @@
+{
+    "name": "RoadGenerationDemo",
+    "rootNamespace": "",
+    "references": [
+        "GUID:fcec704cba43a604980796eb67ec628c",
+        "GUID:2886d0abf4c39b8419b0da6d19c6ab90"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

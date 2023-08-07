@@ -1,0 +1,9 @@
+{
+    "name": "com.jonathonoh.roadgeneration",
+    "version": "1.0.0",
+    "displayName": "Procedural Road Generation",
+    "author": {
+        "name": "Jonathon Oram Howe",
+        "email": "jonathon.o.howe@gmail.com"
+    }
+}
