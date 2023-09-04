@@ -68,8 +68,11 @@ namespace JonathonOH.RoadGeneration
 
         public void AlignByStartPoint(TransformData newStartPoint)
         {
-            transform.position += newStartPoint.Position;
-            transform.rotation = newStartPoint.Rotation;
+            TransformData currentStart = TransformData.FromTransform(_startPoint);
+            Vector3 rotationChange = newStartPoint.Rotation.eulerAngles - currentStart.Rotation.eulerAngles;
+            transform.RotateAround(currentStart.Position, Vector3.up, rotationChange.y);
+            Vector3 positionChange = newStartPoint.Position - currentStart.Position;
+            transform.position += positionChange;
             _SetShape();
         }
 
