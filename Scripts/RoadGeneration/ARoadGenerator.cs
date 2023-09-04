@@ -8,29 +8,64 @@ namespace JonathonOH.RoadGeneration
 {
     public abstract class ARoadGenerator : MonoBehaviour
     {
+        [Serializable]
+        private struct PresetPiece
+        {
+            public bool flipped;
+            public int pieceIndex;
+        }
         [SerializeField] private int _choiceEngineStepsPerFrame = 1;
         [SerializeField] private int _choiceEngineCheckDepth = 5;
-        [SerializeField] private List<RoadSection> _roadSectionChoices; // Cannot serialize interfaces for inspector :(
+        [SerializeField] protected List<RoadSection> _roadSectionChoices;
         [SerializeField] private Transform _roadSectionContainer;
         [SerializeField] private bool _autoHorizontalFlipPieces = true;
+        [SerializeField] private bool placeAllPresetPiecesOnStart = true;
+        [SerializeField] private List<PresetPiece> piecesToPlaceFirst;
         private RoadGeneratorChoiceEngine _choiceEngine;
         protected List<RoadSection> currentPieces;
         protected List<RoadSection> prototypes;
+        private int presetPiecesPlaced;
+        private bool AllPresetPiecesPlaced
+        {
+            get => presetPiecesPlaced == piecesToPlaceFirst.Count;
+        }
 
         protected void Awake()
         {
             currentPieces = new List<RoadSection>();
+            presetPiecesPlaced = 0;
             _CreatePrototypes();
-
             _choiceEngine = new RoadGeneratorChoiceEngine();
+            PopulateCurrentPiecesFromWorld();
+            if (placeAllPresetPiecesOnStart) PlaceAllPresetPieces();
+            _ResetEngine();
+        }
+
+        private void PopulateCurrentPiecesFromWorld()
+        {
             foreach (Transform child in _roadSectionContainer)
             {
                 if (!child.gameObject.activeInHierarchy) continue;
                 RoadSection section = child.GetComponent<RoadSection>();
-                // ((RoadSection)section)._SetShape();
                 currentPieces.Add(section);
             }
-            _ResetEngine();
+        }
+
+        private void PlaceAllPresetPieces()
+        {
+            while (!AllPresetPiecesPlaced) PlaceNextPresetPiece();
+        }
+
+        private void PlaceNextPresetPiece()
+        {
+            PlacePresetPiece(piecesToPlaceFirst[presetPiecesPlaced++]);
+        }
+
+        private void PlacePresetPiece(PresetPiece presetPiece)
+        {
+            int prototypeIndex = presetPiece.pieceIndex;
+            if (_autoHorizontalFlipPieces) prototypeIndex = prototypeIndex * 2 + (presetPiece.flipped ? 1 : 0);
+            _PlaceNewPiece(prototypes[prototypeIndex]);
         }
 
         private void _CreatePrototypes()
@@ -40,15 +75,22 @@ namespace JonathonOH.RoadGeneration
                 Debug.LogWarning("RoadSection auto flip only works when start is along z axis!");
             }
 
+            int i = 0;
             prototypes = new List<RoadSection>();
             foreach (RoadSection roadSection in _roadSectionChoices)
             {
-                prototypes.Add(_CreatePrototype(roadSection));
+                RoadSection section = _CreatePrototype(roadSection);
+                section.PieceTypeId = i;
+                prototypes.Add(section);
 
                 RoadSection flippedSection = _CreatePrototype(roadSection);
+                flippedSection.PieceTypeId = i;
                 _Flip(flippedSection);
+                flippedSection.IsFlipped = true;
                 flippedSection.name += "Flipped";
                 prototypes.Add(flippedSection);
+
+                i++;
             }
         }
 
@@ -72,26 +114,33 @@ namespace JonathonOH.RoadGeneration
 
         protected void Update()
         {
-            _choiceEngine.Step(_choiceEngineStepsPerFrame);
-            if (ShouldPlaceNewPiece())
+            if (AllPresetPiecesPlaced)
             {
-                try
+                _choiceEngine.Step(_choiceEngineStepsPerFrame);
+                if (ShouldPlaceNewPiece())
                 {
-                    _choiceEngine.StepUntilChoiceIsFound();
+                    try
+                    {
+                        _choiceEngine.StepUntilChoiceIsFound();
+                    }
+                    catch (RoadGeneratorChoiceEngine.NoChoiceFoundException _)
+                    {
+                        // Debug.Log("Could not find valid road section choice!");
+                    }
+                    if (_choiceEngine.HasFoundChoice())
+                    {
+                        _PlaceNewPiece();
+                        OnNewPiecePlaced(currentPieces[currentPieces.Count - 1]);
+                    }
+                    else
+                    {
+                        // Debug.Log("Could not find valid road section choice!");
+                    }
                 }
-                catch (RoadGeneratorChoiceEngine.NoChoiceFoundException _)
-                {
-                    // Debug.Log("Could not find valid road section choice!");
-                }
-                if (_choiceEngine.HasFoundChoice())
-                {
-                    _PlaceNewPiece();
-                    OnNewPiecePlaced(currentPieces[currentPieces.Count - 1]);
-                }
-                else
-                {
-                    // Debug.Log("Could not find valid road section choice!");
-                }
+            }
+            else if (ShouldPlaceNewPiece())
+            {
+                PlaceNextPresetPiece();
             }
 
             if (ShouldRemoveLastPiece())
@@ -124,7 +173,11 @@ namespace JonathonOH.RoadGeneration
 
         private void _PlaceNewPiece()
         {
-            RoadSection prototype = (RoadSection)_choiceEngine.GetChoicePrototype();
+            _PlaceNewPiece((RoadSection)_choiceEngine.GetChoicePrototype());
+        }
+
+        private void _PlaceNewPiece(RoadSection prototype)
+        {
             RoadSection newSection = (RoadSection)prototype.Clone();
             Vector3 sectionScaleOriginal = newSection.transform.localScale;
             newSection.transform.parent = _roadSectionContainer;

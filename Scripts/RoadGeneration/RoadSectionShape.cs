@@ -81,13 +81,6 @@ namespace JonathonOH.RoadGeneration
                     Debug.DrawLine(new Vector3(vertex1.x, _heightRange.Max, vertex1.y), new Vector3(vertex2.x, _heightRange.Max, vertex2.y), Color.red);
                 }
             }
-            foreach (Vector3 vertex1 in _boundaryVerticesRelativeToHandle)
-            {
-                foreach (Vector3 vertex2 in _boundaryVerticesRelativeToHandle)
-                {
-                    Debug.DrawLine(vertex1, vertex2);
-                }
-            }
         }
     }
 }

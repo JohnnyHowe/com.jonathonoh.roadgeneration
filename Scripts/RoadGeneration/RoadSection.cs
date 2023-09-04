@@ -12,8 +12,10 @@ namespace JonathonOH.RoadGeneration
         [SerializeField] private Transform _endPoint;
         [SerializeField] private MeshFilter _boundingMesh;
         [SerializeField] private bool _infiniteHeight = false;
-
         [SerializeField] private List<Vector2> topology;
+
+        [SerializeField][ReadOnly] public int PieceTypeId;
+        [SerializeField][ReadOnly] public bool IsFlipped;
 
         private RoadSectionShape _shapeRelativeToStart
         {
@@ -53,9 +55,15 @@ namespace JonathonOH.RoadGeneration
 
         private void _DrawEndPoints()
         {
-            Vector3 startDir = _startPoint.rotation * Quaternion.Euler(0, 0, 1).eulerAngles;
-            DrawArrow.ForGizmo(_startPoint.position - startDir, startDir);
-            DrawArrow.ForGizmo(_endPoint.position, _endPoint.rotation * Quaternion.Euler(0, 0, 1).eulerAngles);
+            if (_startPoint != null)
+            {
+                Vector3 startDir = _startPoint.rotation * Quaternion.Euler(0, 0, 1).eulerAngles;
+                DrawArrow.ForGizmo(_startPoint.position - startDir, startDir);
+            }
+            if (_endPoint != null)
+            {
+                DrawArrow.ForGizmo(_endPoint.position, _endPoint.rotation * Quaternion.Euler(0, 0, 1).eulerAngles);
+            }
         }
 
         public void AlignByStartPoint(TransformData newStartPoint)
