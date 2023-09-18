@@ -31,12 +31,14 @@ namespace JonathonOH.RoadGeneration
 
         public void StepUntilChoiceIsFound()
         {
-            for (int i = 0; i < MAX_ITERATIONS; i++)
+            int i;
+            for (i = 0; i < MAX_ITERATIONS; i++)
             {
                 if (_combinationGenerator.IsImpossible()) break;
                 if (HasFoundChoice()) break;
                 Step(1);
             }
+            if (Debug.IsDebugBuild) Debug.Log($"RoadGeneratorChoiceEngine force stepped {i} times.");
         }
 
         public void Step(int choiceEngineStepsPerFrame)
