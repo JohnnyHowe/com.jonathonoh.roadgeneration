@@ -4,12 +4,12 @@ using UnityEngine;
 namespace Other
 {
 #if (UNITY_EDITOR)
-    public class ReadOnlyAttribute : PropertyAttribute
+    public class ReadOnly : PropertyAttribute
     {
 
     }
 
-    [CustomPropertyDrawer(typeof(ReadOnlyAttribute))]
+    [CustomPropertyDrawer(typeof(ReadOnly))]
     public class ReadOnlyDrawer : PropertyDrawer
     {
         public override float GetPropertyHeight(SerializedProperty property,

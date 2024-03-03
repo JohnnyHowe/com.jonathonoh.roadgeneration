@@ -72,7 +72,7 @@ namespace JonathonOH.RoadGeneration
         {
             if (_autoHorizontalFlipPieces)
             {
-                Debug.LogWarning("RoadSection auto flip only works when start is along z axis!");
+                // Debug.LogWarning("RoadSection auto flip only works when start is along z axis!");
             }
 
             int i = 0;
