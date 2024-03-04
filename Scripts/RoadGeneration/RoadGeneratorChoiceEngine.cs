@@ -38,7 +38,7 @@ namespace JonathonOH.RoadGeneration
                 if (HasFoundChoice()) break;
                 Step(1);
             }
-            if (Debug.isDebugBuild && i > 0) Debug.Log($"RoadGeneratorChoiceEngine force stepped {i} times.");
+            // if (Debug.isDebugBuild && i > 0) Debug.Log($"RoadGeneratorChoiceEngine force stepped {i} times.");
         }
 
         public void Step(int choiceEngineStepsPerFrame)
