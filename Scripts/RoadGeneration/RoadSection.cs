@@ -76,6 +76,16 @@ namespace JonathonOH.RoadGeneration
             _SetShape();
         }
 
+        public void AlignByEndPoint(TransformData newEndPoint)
+        {
+            TransformData currentEnd = TransformData.FromTransform(_endPoint);
+            Vector3 rotationChange = newEndPoint.Rotation.eulerAngles - currentEnd.Rotation.eulerAngles;
+            transform.RotateAround(currentEnd.Position, Vector3.up, rotationChange.y);
+            Vector3 positionChange = newEndPoint.Position - currentEnd.Position;
+            transform.position += positionChange;
+            _SetShape();
+        }
+
         public RoadSection Clone()
         {
             GameObject clone = Instantiate(gameObject);
