@@ -55,15 +55,17 @@ namespace JonathonOH.RoadGeneration
 
         private void _DrawEndPoints()
         {
-            if (_startPoint != null)
-            {
-                Vector3 startDir = _startPoint.rotation * Quaternion.Euler(0, 0, 1).eulerAngles;
-                DrawArrow.ForGizmo(_startPoint.position - startDir, startDir);
-            }
-            if (_endPoint != null)
-            {
-                DrawArrow.ForGizmo(_endPoint.position, _endPoint.rotation * Quaternion.Euler(0, 0, 1).eulerAngles);
-            }
+            if (_startPoint != null) DrawPoint(_startPoint);
+            if (_endPoint != null) DrawPoint(_endPoint);
+        }
+
+        private void DrawPoint(Transform point)
+        {
+            Vector3 dir = point.rotation * Quaternion.Euler(0, 0, 1).eulerAngles;
+            DrawArrow.ForGizmo(point.position - dir, dir, Color.white);
+            DrawArrow.ForGizmo(point.position, point.rotation * Quaternion.Euler(0, 1, 0).eulerAngles * 0.5f, Color.green);
+            DrawArrow.ForGizmo(point.position, point.rotation * Quaternion.Euler(1, 0, 0).eulerAngles * 0.5f, Color.red);
+            DrawArrow.ForGizmo(point.position, dir, Color.blue);
         }
 
         public void AlignByStartPoint(TransformData newStartPoint)
