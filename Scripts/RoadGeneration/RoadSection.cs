@@ -87,5 +87,10 @@ namespace JonathonOH.RoadGeneration
         {
             return _shapeRelativeToStart;
         }
+
+        public void ClearShape()
+        {
+            _shapeRelativeToStart = null;
+        }
     }
 }
