@@ -18,7 +18,6 @@ namespace JonathonOH.RoadGeneration
         [SerializeField] private int _choiceEngineCheckDepth = 5;
         [SerializeField] protected List<RoadSection> _roadSectionChoices;
         [SerializeField] private Transform _roadSectionContainer;
-        [SerializeField] private bool _autoHorizontalFlipPieces = true;
         [SerializeField] private bool placeAllPresetPiecesOnStart = true;
         [SerializeField] private List<PresetPiece> piecesToPlaceFirst;
         private RoadGeneratorChoiceEngine _choiceEngine;
@@ -64,17 +63,12 @@ namespace JonathonOH.RoadGeneration
         private void PlacePresetPiece(PresetPiece presetPiece)
         {
             int prototypeIndex = presetPiece.pieceIndex;
-            if (_autoHorizontalFlipPieces) prototypeIndex = prototypeIndex * 2 + (presetPiece.flipped ? 1 : 0);
+            prototypeIndex = prototypeIndex * 2 + (presetPiece.flipped ? 1 : 0);
             _PlaceNewPiece(prototypes[prototypeIndex]);
         }
 
         private void _CreatePrototypes()
         {
-            if (_autoHorizontalFlipPieces)
-            {
-                // Debug.LogWarning("RoadSection auto flip only works when start is along z axis!");
-            }
-
             int i = 0;
             prototypes = new List<RoadSection>();
             foreach (RoadSection roadSection in _roadSectionChoices)
@@ -83,12 +77,15 @@ namespace JonathonOH.RoadGeneration
                 section.PieceTypeId = i;
                 prototypes.Add(section);
 
-                RoadSection flippedSection = _CreatePrototype(roadSection);
-                flippedSection.PieceTypeId = i;
-                _Flip(flippedSection);
-                flippedSection.IsFlipped = true;
-                flippedSection.name += "Flipped";
-                prototypes.Add(flippedSection);
+                if (roadSection.autoFlip)
+                {
+                    RoadSection flippedSection = _CreatePrototype(roadSection);
+                    flippedSection.PieceTypeId = i;
+                    _Flip(flippedSection);
+                    flippedSection.IsFlipped = true;
+                    flippedSection.name += "Flipped";
+                    prototypes.Add(flippedSection);
+                }
 
                 i++;
             }

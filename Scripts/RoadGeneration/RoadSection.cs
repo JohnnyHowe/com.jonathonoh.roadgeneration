@@ -13,6 +13,7 @@ namespace JonathonOH.RoadGeneration
         [SerializeField] private MeshFilter _boundingMesh;
         [SerializeField] private bool _infiniteHeight = false;
         [SerializeField] private List<Vector2> topology;
+        [SerializeField] public bool autoFlip = true;
 
         [SerializeField][ReadOnly] public int PieceTypeId;
         [SerializeField][ReadOnly] public bool IsFlipped;
