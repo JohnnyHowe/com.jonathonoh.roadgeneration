@@ -16,7 +16,7 @@ namespace JonathonOH.RoadGeneration
 
         public DFSCombinationGenerator _combinationGenerator;
         private List<RoadSection> _currentPiecesInWorld;
-        private List<RoadSection> _candidatePrototypes;
+        public List<RoadSection> _candidatePrototypes;
 
         private const int MAX_ITERATIONS = 10000000;
         private bool _impossible;
@@ -38,7 +38,6 @@ namespace JonathonOH.RoadGeneration
                 if (HasFoundChoice()) break;
                 Step(1);
             }
-            // if (Debug.isDebugBuild && i > 0) Debug.Log($"RoadGeneratorChoiceEngine force stepped {i} times.");
         }
 
         public void Step(int choiceEngineStepsPerFrame)
@@ -53,7 +52,6 @@ namespace JonathonOH.RoadGeneration
                 }
                 catch (DFSCombinationGenerator.OutOfCombinationsException _)
                 {
-                    Debug.Log("No Choice Found!");
                     _impossible = true;
                 }
             }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 namespace JonathonOH.RoadGeneration
@@ -122,7 +123,7 @@ namespace JonathonOH.RoadGeneration
                     }
                     catch (RoadGeneratorChoiceEngine.NoChoiceFoundException _)
                     {
-                        // Debug.Log("Could not find valid road section choice!");
+                        OnNoChoiceFound();
                     }
                     if (_choiceEngine.HasFoundChoice())
                     {
@@ -131,7 +132,7 @@ namespace JonathonOH.RoadGeneration
                     }
                     else
                     {
-                        // Debug.Log("Could not find valid road section choice!");
+                        OnNoChoiceFound();
                     }
                 }
             }
@@ -142,7 +143,7 @@ namespace JonathonOH.RoadGeneration
 
             if (ShouldRemoveLastPiece())
             {
-                _RemoveLastPiece();
+                RemoveLastPiece();
                 OnPieceRemoved();
             }
         }
@@ -151,6 +152,7 @@ namespace JonathonOH.RoadGeneration
         protected virtual void OnPieceRemoved() { }
         protected abstract bool ShouldPlaceNewPiece();
         protected abstract bool ShouldRemoveLastPiece();
+        protected virtual void OnNoChoiceFound() { }
         protected abstract List<RoadSection> GetPiecesInPreferenceOrder(List<RoadSection> sectionPrototypes);
 
         private List<RoadSection> _GetCurrentPiecesInWorld()
@@ -158,7 +160,7 @@ namespace JonathonOH.RoadGeneration
             return currentPieces;
         }
 
-        private void _RemoveLastPiece()
+        protected void RemoveLastPiece()
         {
             if (currentPieces.Count == 0) return;
             RoadSection lastSection = currentPieces[0];
