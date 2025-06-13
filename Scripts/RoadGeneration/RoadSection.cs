@@ -32,7 +32,7 @@ namespace JonathonOH.RoadGeneration
         }
         private RoadSectionShape _localShapeReal;
 
-        private void OnDrawGizmos()
+        protected void OnDrawGizmos()
         {
             if (_localShapeReal != null) _shapeRelativeToStart.DebugDraw();
             _DrawEndPoints();
@@ -56,11 +56,11 @@ namespace JonathonOH.RoadGeneration
 
         private void _DrawEndPoints()
         {
-            if (_startPoint != null) DrawPoint(_startPoint);
-            if (_endPoint != null) DrawPoint(_endPoint);
+            if (_startPoint != null) _DrawPoint(_startPoint);
+            if (_endPoint != null) _DrawPoint(_endPoint);
         }
 
-        private void DrawPoint(Transform point)
+        protected void _DrawPoint(Transform point)
         {
             Vector3 dir = point.rotation * Quaternion.Euler(0, 0, 1).eulerAngles;
             DrawArrow.ForGizmo(point.position - dir, dir, Color.white);
