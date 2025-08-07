@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using Other;
 using UnityEngine;
@@ -48,6 +46,8 @@ namespace JonathonOH.RoadGeneration
             _localShapeReal.SetBoundaryFromMesh(_boundingMesh.sharedMesh, TransformData.FromTransform(_boundingMesh.transform), _shapeRelativeToStart.Start, _infiniteHeight);
             _localShapeReal.DebugDraw();
         }
+
+        public virtual void OnPrototypeCreated() { }
 
         void Update()
         {

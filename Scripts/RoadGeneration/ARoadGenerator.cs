@@ -87,7 +87,6 @@ namespace JonathonOH.RoadGeneration
                     flippedSection.name += "Flipped";
                     prototypes.Add(flippedSection);
                 }
-
                 i++;
             }
         }
@@ -100,6 +99,7 @@ namespace JonathonOH.RoadGeneration
             prototype.SetActive(false);
             prototype.transform.SetGlobalScale(_roadSectionContainer.lossyScale);
             RoadSection instantiatedSection = prototype.GetComponent<RoadSection>();
+            instantiatedSection.OnPrototypeCreated();
             return instantiatedSection;
         }
 
