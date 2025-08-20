@@ -17,7 +17,7 @@ namespace JonathonOH.RoadGeneration
 
         protected void Awake()
         {
-            roadSectionPool = new RoadSectionPool(_roadSectionChoices, transform, minObjectsPerSectionForPool);
+            roadSectionPool = new RoadSectionPool(_roadSectionChoices, _roadSectionContainer, minObjectsPerSectionForPool);
             _choiceEngine = new RoadGeneratorChoiceEngine();
             PopulateCurrentPiecesFromWorld();
             ResetEngine();
