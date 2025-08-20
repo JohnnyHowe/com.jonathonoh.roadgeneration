@@ -6,15 +6,15 @@ namespace JonathonOH.RoadGeneration
 {
     public class RoadSection : MonoBehaviour
     {
+        [SerializeField][ReadOnly] public int N;
         [SerializeField] private Transform _startPoint;
         [SerializeField] private Transform _endPoint;
         [SerializeField] private MeshFilter _boundingMesh;
         [SerializeField] private bool _infiniteHeight = false;
-        [SerializeField] private List<Vector2> topology;
         [SerializeField] public bool autoFlip = true;
 
-        [SerializeField][ReadOnly] public int PieceTypeId;
         [SerializeField][ReadOnly] public bool IsFlipped;
+        [SerializeField][ReadOnly] public string pieceTypeId;
 
         private RoadSectionShape _shapeRelativeToStart
         {
@@ -44,15 +44,9 @@ namespace JonathonOH.RoadGeneration
             _localShapeReal.Start.Scale = Vector3.one;
             _localShapeReal.End.Scale = Vector3.one;
             _localShapeReal.SetBoundaryFromMesh(_boundingMesh.sharedMesh, TransformData.FromTransform(_boundingMesh.transform), _shapeRelativeToStart.Start, _infiniteHeight);
-            _localShapeReal.DebugDraw();
         }
 
-        public virtual void OnPrototypeCreated() { }
-
-        void Update()
-        {
-            topology = _localShapeReal?._topologyGlobal.GetVertices();
-        }
+        public virtual void OnPoolObjectCreated() { }
 
         private void _DrawEndPoints()
         {
@@ -76,7 +70,7 @@ namespace JonathonOH.RoadGeneration
             transform.RotateAround(currentStart.Position, Vector3.up, rotationChange.y);
             Vector3 positionChange = newStartPoint.Position - currentStart.Position;
             transform.position += positionChange;
-            _SetShape();
+            ResetShape();
         }
 
         public void AlignByEndPoint(TransformData newEndPoint)
@@ -101,9 +95,22 @@ namespace JonathonOH.RoadGeneration
             return _shapeRelativeToStart;
         }
 
-        public void ClearShape()
+        public void ResetShape()
         {
             _shapeRelativeToStart = null;
+        }
+
+        public void SetFlipped(bool flipped)
+        {
+            Vector3 localScale = transform.localScale;
+            localScale.x = Mathf.Abs(localScale.x) * (flipped ? -1 : 1);
+            transform.localScale = localScale;
+            IsFlipped = flipped;
+        }
+
+        public string GetFullId()
+        {
+            return pieceTypeId + (IsFlipped ? "Flipped" : "");
         }
     }
 }

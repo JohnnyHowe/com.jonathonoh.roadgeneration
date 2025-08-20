@@ -1,5 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using JonathonOH.RoadGeneration;
 using UnityEngine;
 
@@ -7,22 +7,18 @@ public class RoadGeneratorDemo : ARoadGenerator
 {
     [SerializeField] private int _targetRoadLength = 10;
     [SerializeField] private float _timeBetweenPiecePlacing = 0.5f;
-    [SerializeField] private float _maxTimeBetweenRemovingPieces = 1f;
     private float _timeUntilNextPiece;
-    private float _timeUntilRemovingNextPiece;
 
     private new void Awake()
     {
         base.Awake();
         _timeUntilNextPiece = 0;
-        _timeUntilRemovingNextPiece = 0;
     }
 
     private new void Update()
     {
         base.Update();
         _timeUntilNextPiece -= Time.deltaTime;
-        _timeUntilRemovingNextPiece -= Time.deltaTime;
     }
 
     protected override bool ShouldPlaceNewPiece()
@@ -32,19 +28,22 @@ public class RoadGeneratorDemo : ARoadGenerator
 
     protected override bool ShouldRemoveLastPiece()
     {
-        return currentPieces.Count > _targetRoadLength || _timeUntilRemovingNextPiece <= 0;
+        return roadSectionPool.GetAllUsedSections().Count() > _targetRoadLength;
     }
 
     protected override void OnNewPiecePlaced(RoadSection section)
     {
         _timeUntilNextPiece += _timeBetweenPiecePlacing;
-        _timeUntilRemovingNextPiece = _maxTimeBetweenRemovingPieces;
     }
 
-    protected override void OnPieceRemoved()
+    protected override void OnNoChoiceFound()
     {
-        _timeUntilNextPiece = _timeBetweenPiecePlacing;
-        _timeUntilRemovingNextPiece += _maxTimeBetweenRemovingPieces;
+        Debug.Log("No choice found!");
+    }
+
+    protected override void OnPoolEmpty()
+    {
+        //Debug.Log("Pool is empty!");
     }
 
     protected override List<RoadSection> GetPiecesInPreferenceOrder(List<RoadSection> sectionPrototypes)

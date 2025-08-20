@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -31,16 +30,15 @@ namespace JonathonOH.RoadGeneration
 
         public void StepUntilChoiceIsFound()
         {
-            int i;
-            for (i = 0; i < MAX_ITERATIONS; i++)
+            for (int i = 0; i < MAX_ITERATIONS; i++)
             {
                 if (_combinationGenerator.IsImpossible()) break;
                 if (HasFoundChoice()) break;
-                Step(1);
+                Step();
             }
         }
 
-        public void Step(int choiceEngineStepsPerFrame)
+        public void Step()
         {
             if (HasFoundChoice() || _impossible) return;
             if (_combinationGenerator.IsImpossible()) return;
