@@ -121,7 +121,7 @@ namespace JonathonOH.RoadGeneration
             else _choiceEngine.Reset(GetAllCurrentSections().ToList(), choices, _choiceEngineCheckDepth);
         }
 
-        private RoadSection GetNewestSection()
+        public RoadSection GetNewestSection()
         {
             RoadSection newestSection = roadSectionPool.GetNewestSection();
             if (newestSection) return newestSection;
@@ -129,6 +129,12 @@ namespace JonathonOH.RoadGeneration
             if (presetPieces.Count != 0) return presetPieces[presetPieces.Count - 1];
 
             return null;
+        }
+
+        public RoadSection GetOldestSection()
+        {
+            if (presetPieces.Count != 0) return presetPieces[0];
+            return roadSectionPool.GetOldestSection();
         }
 
         public IEnumerable<RoadSection> GetAllCurrentSections()

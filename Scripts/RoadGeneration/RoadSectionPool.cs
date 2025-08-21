@@ -79,9 +79,11 @@ namespace JonathonOH.RoadGeneration
 
             gameObject.transform.parent = container;
             gameObject.SetActive(false);
+            gameObject.transform.SetGlobalScale(container.lossyScale);
 
             RoadSection instantiatedSection = gameObject.GetComponent<RoadSection>();
             gameObject.name = instantiatedSection.GetFullId();
+            instantiatedSection.SetFlipped(instantiatedSection.IsFlipped);
             return instantiatedSection;
         }
 
