@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Other;
 using UnityEngine;
 
@@ -30,6 +29,8 @@ namespace JonathonOH.RoadGeneration
         }
         private RoadSectionShape _localShapeReal;
 
+        public virtual void OnSectionEnabled() { }
+
         protected void OnDrawGizmos()
         {
             if (_localShapeReal != null) _shapeRelativeToStart.DebugDraw();
@@ -45,8 +46,6 @@ namespace JonathonOH.RoadGeneration
             _localShapeReal.End.Scale = Vector3.one;
             _localShapeReal.SetBoundaryFromMesh(_boundingMesh.sharedMesh, TransformData.FromTransform(_boundingMesh.transform), _shapeRelativeToStart.Start, _infiniteHeight);
         }
-
-        public virtual void OnPoolObjectCreated() { }
 
         private void _DrawEndPoints()
         {

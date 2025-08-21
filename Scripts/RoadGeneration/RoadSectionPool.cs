@@ -87,7 +87,6 @@ namespace JonathonOH.RoadGeneration
 
         public void AddInstantiatedObject(RoadSection instantiatedSection)
         {
-            instantiatedSection.OnPoolObjectCreated();
             availableSections[instantiatedSection.GetFullId()].Add(instantiatedSection);
         }
 
@@ -117,6 +116,7 @@ namespace JonathonOH.RoadGeneration
             availableSections[instantiatedSection.GetFullId()].Remove(instantiatedSection);
             usedSections[instantiatedSection.GetFullId()].Add(instantiatedSection);
             instantiatedSection.gameObject.SetActive(true);
+            instantiatedSection.OnSectionEnabled();
         }
 
         public void ReleaseOldestInstantiatedSection()

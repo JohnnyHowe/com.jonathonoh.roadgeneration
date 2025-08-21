@@ -28,7 +28,7 @@ public class RoadGeneratorDemo : ARoadGenerator
 
     protected override bool ShouldRemoveLastPiece()
     {
-        return roadSectionPool.GetAllUsedSections().Count() > _targetRoadLength;
+        return GetAllCurrentSections().Count() > _targetRoadLength;
     }
 
     protected override void OnNewPiecePlaced(RoadSection section)
@@ -43,7 +43,7 @@ public class RoadGeneratorDemo : ARoadGenerator
 
     protected override void OnPoolEmpty()
     {
-        //Debug.Log("Pool is empty!");
+        Debug.Log("Pool is empty!");
     }
 
     protected override List<RoadSection> GetPiecesInPreferenceOrder(List<RoadSection> sectionPrototypes)
