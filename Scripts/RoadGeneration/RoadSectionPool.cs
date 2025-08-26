@@ -5,21 +5,25 @@ using UnityEngine;
 
 namespace JonathonOH.RoadGeneration
 {
+    [Serializable]
     public class RoadSectionPool
     {
-        private int objectsPerSection;
+        [SerializeField][Tooltip("Setting to zero will make this lazy initialize pieces.")] private int objectsPerSection = 5;
+        [SerializeField][Tooltip("Must be at least check depth.")] private int minNumberOfTotalUnusedRoadSectionsToGenerateMore = 10;
+        [SerializeField] private int minNumberOfUnusedRoadSectionsToCreateMore = 10;
+
         // id, pieces
         public Dictionary<string, List<RoadSection>> availableSections;
         public Dictionary<string, List<RoadSection>> usedSections;
         public Dictionary<string, RoadSection> prototypes;
         private Transform container;
 
-        public RoadSectionPool(List<RoadSection> uninstantiatedRoadSections, Transform gameObjectContainer, int objectsPerSection)
+        public void Reset(List<RoadSection> uninstantiatedRoadSections, Transform gameObjectContainer)
         {
             container = gameObjectContainer;
-            this.objectsPerSection = objectsPerSection;
             CreatePrototypes(uninstantiatedRoadSections);
             CreateObjects();
+            EnsureEnoughUnusedPiecesExist();
         }
 
         private void CreatePrototypes(List<RoadSection> uninstantiatedSections)
@@ -70,6 +74,7 @@ namespace JonathonOH.RoadGeneration
                 {
                     AddInstantiatedObject(CreateObject(prototype));
                 }
+
             }
         }
 
@@ -106,7 +111,7 @@ namespace JonathonOH.RoadGeneration
             // do we have one available?
             if (roadSections.Count == 0)
             {
-                //TODO add createIfNoneAvailable
+                // Should never get here
                 throw new Exception("No available section");
             }
 
@@ -119,6 +124,37 @@ namespace JonathonOH.RoadGeneration
             usedSections[instantiatedSection.GetFullId()].Add(instantiatedSection);
             instantiatedSection.gameObject.SetActive(true);
             instantiatedSection.OnSectionEnabled();
+            EnsureEnoughUnusedPiecesExist();
+        }
+
+        private void EnsureEnoughUnusedPiecesExist()
+        {
+            foreach (RoadSection roadSection in prototypes.Values)
+            {
+                EnsureEnoughUnusedPiecesExist(roadSection);
+            }
+
+            EnsureEnoughTotalUnusedPiecesExist();
+        }
+
+        private void EnsureEnoughUnusedPiecesExist(RoadSection roadSection)
+        {
+            int currentCount = availableSections[roadSection.GetFullId()].Count;
+            int moreToMake = minNumberOfUnusedRoadSectionsToCreateMore - currentCount;
+            for (int i = 0; i < moreToMake; i++)
+            {
+                AddInstantiatedObject(CreateObject(prototypes[roadSection.GetFullId()]));
+            }
+        }
+
+        private void EnsureEnoughTotalUnusedPiecesExist()
+        {
+            if (GetAllAvailableSections().Count() >= minNumberOfTotalUnusedRoadSectionsToGenerateMore) return;
+
+            foreach (RoadSection prototype in prototypes.Values)
+            {
+                AddInstantiatedObject(CreateObject(prototype));
+            }
         }
 
         public void ReleaseOldestInstantiatedSection()
@@ -186,6 +222,9 @@ namespace JonathonOH.RoadGeneration
             }
         }
 
+        /// <summary>
+        /// Oldest first
+        /// </summary>
         public IEnumerable<RoadSection> GetAllUsedSectionsOrdered()
         {
             return GetAllUsedSections().OrderBy(section => section.N);
@@ -194,6 +233,11 @@ namespace JonathonOH.RoadGeneration
         public IEnumerable<RoadSection> GetAllUsedSections()
         {
             return GetAllDictionaryValues(usedSections);
+        }
+
+        public IEnumerable<RoadSection> GetAllAvailableSections()
+        {
+            return GetAllDictionaryValues(availableSections);
         }
 
         private static IEnumerable<T> GetAllDictionaryValues<K, T>(Dictionary<K, List<T>> dict)

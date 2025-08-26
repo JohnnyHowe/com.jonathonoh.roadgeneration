@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -8,17 +7,16 @@ namespace JonathonOH.RoadGeneration
     public abstract class ARoadGenerator : MonoBehaviour
     {
         [SerializeField] private int _choiceEngineCheckDepth = 5;
-        [SerializeField] private int minObjectsPerSectionForPool = 5;
         [SerializeField] protected List<RoadSection> _roadSectionChoices;
         [SerializeField] private Transform _roadSectionContainer;
+        [SerializeField] protected RoadSectionPool roadSectionPool = new RoadSectionPool();
 
-        protected RoadSectionPool roadSectionPool;
         private RoadGeneratorChoiceEngine _choiceEngine;
         private List<RoadSection> presetPieces;
 
         protected void Awake()
         {
-            roadSectionPool = new RoadSectionPool(_roadSectionChoices, _roadSectionContainer, minObjectsPerSectionForPool);
+            roadSectionPool.Reset(_roadSectionChoices, _roadSectionContainer);
             _choiceEngine = new RoadGeneratorChoiceEngine();
             PopulateCurrentPiecesFromWorld();
             ResetEngine();
