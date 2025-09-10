@@ -19,6 +19,10 @@ namespace JonathonOH.RoadGeneration
             roadSectionPool.Reset(_roadSectionChoices, _roadSectionContainer);
             _choiceEngine = new RoadGeneratorChoiceEngine();
             PopulateCurrentPiecesFromWorld();
+        }
+
+        protected void Start()
+        {
             ResetEngine();
         }
 
