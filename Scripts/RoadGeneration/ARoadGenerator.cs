@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace JonathonOH.RoadGeneration
 {
@@ -8,7 +9,8 @@ namespace JonathonOH.RoadGeneration
     {
         [SerializeField] private int _choiceEngineCheckDepth = 5;
         [SerializeField] protected List<RoadSection> _roadSectionChoices;
-        [SerializeField] private Transform _roadSectionContainer;
+        [FormerlySerializedAs("_roadSectionContainer")]
+        [SerializeField] public Transform roadSectionContainer;
         [SerializeField] protected RoadSectionPool roadSectionPool = new RoadSectionPool();
 
         private RoadGeneratorChoiceEngine _choiceEngine;
@@ -16,7 +18,7 @@ namespace JonathonOH.RoadGeneration
 
         protected void Awake()
         {
-            roadSectionPool.Reset(_roadSectionChoices, _roadSectionContainer);
+            roadSectionPool.Reset(_roadSectionChoices, roadSectionContainer);
             _choiceEngine = new RoadGeneratorChoiceEngine();
             PopulateCurrentPiecesFromWorld();
         }
@@ -29,7 +31,7 @@ namespace JonathonOH.RoadGeneration
         private void PopulateCurrentPiecesFromWorld()
         {
             presetPieces = new List<RoadSection>();
-            foreach (Transform child in _roadSectionContainer)
+            foreach (Transform child in roadSectionContainer)
             {
                 if (!child.gameObject.activeInHierarchy) continue;
 
