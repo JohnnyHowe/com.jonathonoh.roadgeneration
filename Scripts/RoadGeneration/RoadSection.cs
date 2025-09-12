@@ -12,7 +12,18 @@ namespace JonathonOH.RoadGeneration
         [SerializeField] private bool _infiniteHeight = false;
         [SerializeField] public bool autoFlip = true;
 
-        [SerializeField][ReadOnly] public bool IsFlipped;
+        public bool IsFlipped
+        {
+            get
+            {
+                return transform.localScale.x < 0;
+            }
+            set
+            {
+                SetFlipped(value);
+            }
+        }
+
         [SerializeField][ReadOnly] public string pieceTypeId;
 
         private RoadSectionShape _shapeRelativeToStart
@@ -104,7 +115,6 @@ namespace JonathonOH.RoadGeneration
             Vector3 localScale = transform.localScale;
             localScale.x = Mathf.Abs(localScale.x) * (flipped ? -1 : 1);
             transform.localScale = localScale;
-            IsFlipped = flipped;
         }
 
         public string GetFullId()

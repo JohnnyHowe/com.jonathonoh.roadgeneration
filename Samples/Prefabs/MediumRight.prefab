@@ -81,9 +81,7 @@ MonoBehaviour:
   _endPoint: {fileID: 5420271672908664402}
   _boundingMesh: {fileID: 3979720280059065024}
   _infiniteHeight: 1
-  topology: []
   autoFlip: 1
-  IsFlipped: 0
   pieceTypeId: 
 --- !u!1 &8660267180200734540
 GameObject:
