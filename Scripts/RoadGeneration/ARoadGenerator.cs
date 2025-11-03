@@ -111,8 +111,8 @@ namespace JonathonOH.RoadGeneration
 
             RoadSection roadSection = roadSectionPool.ClaimUninstantiatedSection(_choiceEngine.GetChoicePrototype());
             roadSection.N = nextN;
-
             roadSection.AlignByStartPoint(nextStartPosition);
+            roadSectionPool.ActivateSection(roadSection);
             ResetEngine();
 
             return roadSection;

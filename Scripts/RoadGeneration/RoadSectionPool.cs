@@ -121,9 +121,13 @@ namespace JonathonOH.RoadGeneration
         {
             availableSections[instantiatedSection.GetFullId()].Remove(instantiatedSection);
             usedSections[instantiatedSection.GetFullId()].Add(instantiatedSection);
+            EnsureEnoughUnusedPiecesExist();
+        }
+
+        public void ActivateSection(RoadSection instantiatedSection)
+        {
             instantiatedSection.gameObject.SetActive(true);
             instantiatedSection.OnSectionEnabled();
-            EnsureEnoughUnusedPiecesExist();
         }
 
         private void EnsureEnoughUnusedPiecesExist()
