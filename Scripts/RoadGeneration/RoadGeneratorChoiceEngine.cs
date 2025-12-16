@@ -48,7 +48,7 @@ namespace JonathonOH.RoadGeneration
                 {
                     _combinationGenerator.StepInvalid();
                 }
-                catch (DFSCombinationGenerator.OutOfCombinationsException _)
+                catch (DFSCombinationGenerator.OutOfCombinationsException)
                 {
                     _impossible = true;
                 }
