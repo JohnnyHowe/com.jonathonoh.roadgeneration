@@ -70,7 +70,6 @@ namespace JonathonOH.RoadGeneration
             if (ShouldRemoveLastPiece())
             {
                 RemoveLastPiece();
-                OnPieceRemoved();
             }
         }
 
@@ -93,6 +92,7 @@ namespace JonathonOH.RoadGeneration
             {
                 roadSectionPool.ReleaseOldestInstantiatedSection();
             }
+			OnPieceRemoved();
             ResetEngine();
         }
 
