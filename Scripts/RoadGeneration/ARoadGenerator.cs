@@ -2,12 +2,19 @@ using System.Collections.Generic;
 using System.Linq;
 using JonathonOH.RoadGeneration.ChoiceEngine;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Serialization;
 
 namespace JonathonOH.RoadGeneration
 {
 	public abstract class ARoadGenerator : MonoBehaviour
 	{
+		public readonly UnityEvent<RoadSection> NewSectionPlacedValue = new UnityEvent<RoadSection>();
+		public readonly UnityEvent NewSectionPlaced = new UnityEvent();
+		public readonly UnityEvent LastSectionRemoved = new UnityEvent();
+		public readonly UnityEvent NoChoiceFound = new UnityEvent();
+		public readonly UnityEvent PoolEmpty = new UnityEvent();
+
 		[SerializeField] private int _choiceEngineCheckDepth = 5;
 		[SerializeField] protected List<RoadSection> _roadSectionChoices;
 		[FormerlySerializedAs("_roadSectionContainer")]
@@ -19,14 +26,11 @@ namespace JonathonOH.RoadGeneration
 
 		protected abstract bool ShouldPlaceNewSection();
 		protected abstract List<RoadSection> GetSectionsInPreferenceOrder(List<RoadSection> sectionPrototypes);
-		protected virtual void NewSectionPlaced(RoadSection newPiece) { }
 		protected abstract bool ShouldRemoveLastSection();
-		protected virtual void LastSectionRemoved() { }
-		protected virtual void NoChoiceFound() { }
-		protected virtual void PoolEmpty() { }
 
 		protected void Awake()
 		{
+			NewSectionPlacedValue.AddListener((roadSection) => NewSectionPlaced.Invoke());
 			roadSectionPool.Reset(_roadSectionChoices, roadSectionContainer);
 			PopulateCurrentSectionsFromWorld();
 		}
@@ -56,27 +60,8 @@ namespace JonathonOH.RoadGeneration
 
 			if (ShouldPlaceNewSection())
 			{
-				choiceEngine.StepUntilChoiceIsFound();
-
-				var result = choiceEngine.CurrentChoiceResult;
-				if (result.IsChoiceFound)
-				{
-					RoadSection newPiece = TryPlaceNewPiece(result.ChosenSection);
-					if (newPiece is null)
-					{
-						PoolEmpty();
-					}
-					else
-					{
-						NewSectionPlaced(newPiece);
-					}
-				}
-				else
-				{
-					NoChoiceFound();
-				}
+				TryPlaceNewSection();
 			}
-
 			if (ShouldRemoveLastSection())
 			{
 				RemoveLastPiece();
@@ -95,11 +80,33 @@ namespace JonathonOH.RoadGeneration
 				roadSectionPool.ReleaseOldestInstantiatedSection();
 			}
 
-			LastSectionRemoved();
+			LastSectionRemoved.Invoke();
 			ResetEngine();
 		}
 
-		private RoadSection TryPlaceNewPiece(RoadSection prototype)
+		private void TryPlaceNewSection()
+		{
+			choiceEngine.StepUntilChoiceIsFound();
+
+			var result = choiceEngine.CurrentChoiceResult;
+			if (!result.IsChoiceFound)
+			{
+				NoChoiceFound.Invoke();
+				return;
+			}
+
+			RoadSection newSection = TryPlaceNewSection(result.ChosenSection);
+			if (newSection is null)
+			{
+				PoolEmpty.Invoke();
+			}
+			else
+			{
+				NewSectionPlacedValue.Invoke(newSection);
+			}
+		}
+
+		private RoadSection TryPlaceNewSection(RoadSection prototype)
 		{
 			if (roadSectionPool.GetAllAvailablePrototypes().Count() == 0) return null;
 
@@ -134,7 +141,7 @@ namespace JonathonOH.RoadGeneration
 
 			if (choices.Count == 0)
 			{
-				PoolEmpty();
+				PoolEmpty.Invoke();
 			}
 			else
 			{

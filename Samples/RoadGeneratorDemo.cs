@@ -11,6 +11,9 @@ public class RoadGeneratorDemo : ARoadGenerator
 
     private new void Awake()
     {
+		NewSectionPlacedValue.AddListener(OnNewSectionPlaced);
+		NoChoiceFound.AddListener(OnNoChoiceFound);
+		PoolEmpty.AddListener(OnPoolEmpty);
         base.Awake();
         _timeUntilNextPiece = 0;
     }
@@ -31,17 +34,17 @@ public class RoadGeneratorDemo : ARoadGenerator
         return GetAllCurrentSections().Count() > _targetRoadLength;
     }
 
-    protected override void NewSectionPlaced(RoadSection section)
+    protected void OnNewSectionPlaced(RoadSection section)
     {
         _timeUntilNextPiece += _timeBetweenPiecePlacing;
     }
 
-    protected override void NoChoiceFound()
+    protected void OnNoChoiceFound()
     {
         Debug.Log("No choice found!");
     }
 
-    protected override void PoolEmpty()
+    protected void OnPoolEmpty()
     {
         Debug.Log("Pool is empty!");
     }
