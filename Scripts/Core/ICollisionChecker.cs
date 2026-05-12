@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace JonathonOH.RoadGeneration.Collision
+namespace JonathonOH.RoadGeneration
 {
 	public interface ICollisionChecker
 	{
