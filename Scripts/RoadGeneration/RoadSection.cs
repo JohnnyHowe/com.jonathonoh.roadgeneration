@@ -15,11 +15,22 @@ namespace JonathonOH.RoadGeneration
 		[SerializeField] public UnityEvent Removed = new UnityEvent();
 
 		[SerializeField][ReadOnly] public int N;
-		[SerializeField] private Transform _startPoint;
-		[SerializeField] private Transform _endPoint;
+
+		[SerializeField] private Transform startPoint;
+		[SerializeField] private Transform endPoint;
+
 		[SerializeField] protected MeshFilter _boundingMesh;
 		[SerializeField] private bool _infiniteHeight = false;
 		[SerializeField] public bool autoFlip = true;
+
+		public TransformData StartPoint
+		{
+			get => TransformData.FromTransform(startPoint);
+		}
+		public TransformData EndPoint
+		{
+			get => TransformData.FromTransform(endPoint);
+		}
 
 		public bool IsFlipped
 		{
@@ -32,7 +43,7 @@ namespace JonathonOH.RoadGeneration
 				SetFlipped(value);
 			}
 		}
-		
+
 		[SerializeField][ReadOnly] public string pieceTypeId;
 
 		private RoadSectionShape _shapeRelativeToStart
@@ -79,8 +90,8 @@ namespace JonathonOH.RoadGeneration
 		private void _SetShape()
 		{
 			_localShapeReal = new RoadSectionShape();
-			_localShapeReal.Start = TransformData.FromTransform(_startPoint);
-			_localShapeReal.End = TransformData.FromTransform(_endPoint);
+			_localShapeReal.Start = TransformData.FromTransform(startPoint);
+			_localShapeReal.End = TransformData.FromTransform(endPoint);
 			_localShapeReal.Start.Scale = Vector3.one;
 			_localShapeReal.End.Scale = Vector3.one;
 			_localShapeReal.SetBoundaryFromMesh(_boundingMesh.sharedMesh, TransformData.FromTransform(_boundingMesh.transform), _shapeRelativeToStart.Start, _infiniteHeight);
@@ -89,8 +100,8 @@ namespace JonathonOH.RoadGeneration
 
 		private void _DrawEndPoints()
 		{
-			if (_startPoint != null) _DrawPoint(_startPoint);
-			if (_endPoint != null) _DrawPoint(_endPoint);
+			if (startPoint != null) _DrawPoint(startPoint);
+			if (endPoint != null) _DrawPoint(endPoint);
 		}
 
 		protected void _DrawPoint(Transform point)
@@ -104,7 +115,7 @@ namespace JonathonOH.RoadGeneration
 
 		public void AlignByStartPoint(TransformData newStartPoint)
 		{
-			TransformData currentStart = TransformData.FromTransform(_startPoint);
+			TransformData currentStart = TransformData.FromTransform(startPoint);
 			Vector3 rotationChange = newStartPoint.Rotation.eulerAngles - currentStart.Rotation.eulerAngles;
 			transform.RotateAround(currentStart.Position, Vector3.up, rotationChange.y);
 			Vector3 positionChange = newStartPoint.Position - currentStart.Position;
@@ -114,7 +125,7 @@ namespace JonathonOH.RoadGeneration
 
 		public void AlignByEndPoint(TransformData newEndPoint)
 		{
-			TransformData currentEnd = TransformData.FromTransform(_endPoint);
+			TransformData currentEnd = TransformData.FromTransform(endPoint);
 			Vector3 rotationChange = newEndPoint.Rotation.eulerAngles - currentEnd.Rotation.eulerAngles;
 			transform.RotateAround(currentEnd.Position, Vector3.up, rotationChange.y);
 			Vector3 positionChange = newEndPoint.Position - currentEnd.Position;

@@ -117,7 +117,7 @@ namespace JonathonOH.RoadGeneration
 			if (newestSection != null)
 			{
 				nextN = newestSection.N + 1;
-				nextStartPosition = newestSection.GetShape().End;
+				nextStartPosition = newestSection.EndPoint;
 			}
 
 			RoadSection roadSection = roadSectionPool.ClaimUninstantiatedSection(prototype);
