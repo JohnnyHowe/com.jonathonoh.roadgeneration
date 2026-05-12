@@ -127,7 +127,7 @@ namespace JonathonOH.RoadGeneration
         public void ActivateSection(RoadSection instantiatedSection)
         {
             instantiatedSection.gameObject.SetActive(true);
-            instantiatedSection.OnSectionEnabled();
+			instantiatedSection._OnClaimed();
         }
 
         private void EnsureEnoughUnusedPiecesExist()
@@ -204,6 +204,7 @@ namespace JonathonOH.RoadGeneration
             usedSections[instantiatedSection.GetFullId()].Remove(instantiatedSection);
             availableSections[instantiatedSection.GetFullId()].Add(instantiatedSection);
             instantiatedSection.gameObject.SetActive(false);
+			instantiatedSection._OnRemoved();
         }
 
         public IEnumerable<RoadSection> GetUniqueAvailableSections()

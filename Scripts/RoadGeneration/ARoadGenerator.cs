@@ -79,6 +79,7 @@ namespace JonathonOH.RoadGeneration
         protected abstract bool ShouldRemoveLastPiece();
         protected virtual void OnNoChoiceFound() { }
         protected virtual void OnPoolEmpty() { }
+
         protected abstract List<RoadSection> GetPiecesInPreferenceOrder(List<RoadSection> sectionPrototypes);
 
         protected void RemoveLastPiece()
@@ -92,6 +93,7 @@ namespace JonathonOH.RoadGeneration
             {
                 roadSectionPool.ReleaseOldestInstantiatedSection();
             }
+
 			OnPieceRemoved();
             ResetEngine();
         }
