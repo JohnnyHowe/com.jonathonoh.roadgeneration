@@ -4,6 +4,6 @@ namespace JonathonOH.RoadGeneration.Collision
 {
 	public interface ICollisionChecker
 	{
-		public CollisionCheckResult CheckOneAgainstMany(RoadSection subject, IEnumerable<RoadSection> alreadyAligned, IEnumerable<RoadSection> toAlign);
+		public CollisionCheckResult CheckOneAgainstMany(RoadSection subject, IEnumerable<RoadSection> alreadyAligned, IEnumerable<RoadSection> candidates);
 	}
 }

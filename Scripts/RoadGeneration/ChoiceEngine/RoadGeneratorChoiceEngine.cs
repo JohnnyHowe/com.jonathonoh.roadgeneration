@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using Other;
 using JonathonOH.RoadGeneration.ChoiceEngine;
+using JonathonOH.RoadGeneration.Collision;
 
 namespace JonathonOH.RoadGeneration
 {
@@ -12,18 +13,20 @@ namespace JonathonOH.RoadGeneration
 	/// </summary>
 	public class RoadGeneratorChoiceEngine
 	{
-		public DFSCombinationGenerator _combinationGenerator;
+		public DFSCombinationGenerator combinationGenerator;
 		public ChoiceRequest CurrentChoiceRequest { get; private set; }
 		public ChoiceResult CurrentChoiceResult { get; private set; }
 
 		public bool IsSearching { get; private set; } = true;
 
 		private const int MAX_ITERATIONS = 10000000;
+		private ICollisionChecker collisionChecker;
 
-		public RoadGeneratorChoiceEngine(ChoiceRequest choiceRequest)
+		public RoadGeneratorChoiceEngine(ChoiceRequest choiceRequest, ICollisionChecker collisionChecker)
 		{
 			CurrentChoiceRequest = choiceRequest;
-			_combinationGenerator = new DFSCombinationGenerator(choiceRequest.SectionsInPreferenceOrder.Count, choiceRequest.MaxCheckDepth);
+			combinationGenerator = new DFSCombinationGenerator(choiceRequest.SectionsInPreferenceOrder.Count, choiceRequest.MaxCheckDepth);
+			this.collisionChecker = collisionChecker;
 
 			CurrentChoiceResult = new ChoiceResult()
 			{
@@ -58,18 +61,18 @@ namespace JonathonOH.RoadGeneration
 
 		private void CheckCombinationTermination()
 		{
-			if (_combinationGenerator.HasFoundSolution())
+			if (combinationGenerator.HasFoundSolution())
 			{
 				CurrentChoiceResult = new ChoiceResult()
 				{
 					IsChoiceFound = true,
-					ChosenSection = CurrentChoiceRequest.SectionsInPreferenceOrder[_combinationGenerator.GetState()[0]],
+					ChosenSection = CurrentChoiceRequest.SectionsInPreferenceOrder[combinationGenerator.GetState()[0]],
 					FailureReason = ChoiceResult.ChoiceFailureReason.NoFailure
 				};
 				IsSearching = false;
 				// Debug.Log($"Solution found! {CurrentChoiceResult}");
 			}
-			else if (_combinationGenerator.IsImpossible())
+			else if (combinationGenerator.IsImpossible())
 			{
 				CurrentChoiceResult = new ChoiceResult()
 				{
@@ -83,88 +86,40 @@ namespace JonathonOH.RoadGeneration
 
 		private void RunCollisionCheckAndStepCombinationGenerator()
 		{
-			RoadSection sectionCausingCollision = GetTheSectionCurrentCandidateCollidesWithWhenAligned();
-			if (sectionCausingCollision != null)
+			CollisionCheckResult collisionCheckResult = GetCollisionResultForCurrentCandidates();
+			if (collisionCheckResult.HasCollision)
 			{
-				// Debug.Log($"Current candidate {GetCandidateRoadSections().Last()} overlaps with {sectionCausingCollision}");
-				_combinationGenerator.StepInvalid();
+				Debug.Log($"Current candidate {collisionCheckResult.Subject} overlaps with {collisionCheckResult.CollidesWith}");
+				combinationGenerator.StepInvalid();
 			}
 			else
 			{
-				_combinationGenerator.StepValid();
+				combinationGenerator.StepValid();
 			}
 		}
 
 		/// <summary>
 		/// Null if no collision.
 		/// </summary>
-		private RoadSection GetTheSectionCurrentCandidateCollidesWithWhenAligned()
+		private CollisionCheckResult GetCollisionResultForCurrentCandidates()
 		{
-			var allCandidates = GetCandidateRoadSections();
-			var allCandidateShapes = GetCandidatesAligned(allCandidates);
+			List<RoadSection> allCandidates = GetCandidateRoadSections();
 
-			RoadSectionShape currentCandidateShape = allCandidateShapes.Last();
+			IEnumerable<RoadSection> previousCandidates = allCandidates.Take(allCandidates.Count - 1);
+			RoadSection currentCandidate = allCandidates.Last();
 
-			// Check against sections in world 
-			foreach (RoadSection roadSection in CurrentChoiceRequest.CurrentSectionsInWorld.Reverse())
-			{
-				RoadSectionShape toCheck = roadSection.GetShape();
-				if (currentCandidateShape.DoesOverlapWith(toCheck))
-				{
-					return roadSection;
-				}
-			}
-
-			// Check against other candidates
-			for (int i = 0; i < allCandidateShapes.Count - 1; i++) // -1 because the final IS the subject
-			{
-				RoadSectionShape toCheck = allCandidateShapes[i];
-				if (currentCandidateShape.DoesOverlapWith(toCheck))
-				{
-					return allCandidates[i];
-				}
-			}
-
-			return null;
-		}
-
-		private List<RoadSectionShape> GetCandidatesAligned(IEnumerable<RoadSection> candidateRoadSections)
-		{
-			// Figuring out the architecture so this method could exist was a nightmare.
-			// Both big redesigns were a result of this.
-			// I hope it looks obvious and easy to make yourself - that means I've done it right
-			List<RoadSectionShape> alignedCandidates = new List<RoadSectionShape>();
-			TransformData nextStartPoint = GetFirstCandidateStartPoint();
-			foreach (RoadSection candidateSection in candidateRoadSections)
-			{
-				RoadSectionShape alignedCandidateShape = candidateSection.GetShape().GetTranslatedCopy(nextStartPoint);
-				alignedCandidates.Add(alignedCandidateShape);
-				nextStartPoint = alignedCandidateShape.End;
-			}
-			return alignedCandidates;
+			return collisionChecker.CheckOneAgainstMany(currentCandidate, CurrentChoiceRequest.CurrentSectionsInWorld, previousCandidates);
 		}
 
 		private List<RoadSection> GetCandidateRoadSections()
 		{
 			List<RoadSection> candidates = new List<RoadSection>();
-			foreach (int candidateChoiceIndex in _combinationGenerator.GetState())
+			foreach (int candidateChoiceIndex in combinationGenerator.GetState())
 			{
 				if (candidateChoiceIndex == -1) break;
 				candidates.Add(CurrentChoiceRequest.SectionsInPreferenceOrder[candidateChoiceIndex]);
 			}
 			return candidates;
-		}
-
-		private TransformData GetFirstCandidateStartPoint()
-		{
-			// TODO this is copied in RoadGenerator - they both define start points - should not be separate
-			var sectionsInWorld = CurrentChoiceRequest.CurrentSectionsInWorld;
-			if (sectionsInWorld.Count == 0)
-			{
-				return new TransformData(Vector3.zero, Quaternion.Euler(0, 0, 1), Vector3.one);
-			}
-			return sectionsInWorld[sectionsInWorld.Count - 1].GetShape().End;
-
-		}
+		}	
 	}
 }

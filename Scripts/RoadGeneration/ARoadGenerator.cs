@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using JonathonOH.RoadGeneration.ChoiceEngine;
+using JonathonOH.RoadGeneration.Collision;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
@@ -145,7 +146,7 @@ namespace JonathonOH.RoadGeneration
 			}
 			else
 			{
-				choiceEngine = new RoadGeneratorChoiceEngine(choiceRequest);
+				choiceEngine = new RoadGeneratorChoiceEngine(choiceRequest, new RoadSectionShapeCollisionChecker());
 			}
 		}
 
