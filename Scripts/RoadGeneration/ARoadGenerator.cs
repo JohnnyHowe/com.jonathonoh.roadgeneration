@@ -15,13 +15,15 @@ namespace JonathonOH.RoadGeneration
 		[SerializeField] protected RoadSectionPool roadSectionPool = new RoadSectionPool();
 
 		private RoadGeneratorChoiceEngine choiceEngine;
-		private List<RoadSection> presetPieces;
+		private List<RoadSection> presetSections;
 
 		protected abstract bool ShouldPlaceNewSection();
+		protected abstract List<RoadSection> GetSectionsInPreferenceOrder(List<RoadSection> sectionPrototypes);
 		protected virtual void NewSectionPlaced(RoadSection newPiece) { }
 		protected abstract bool ShouldRemoveLastSection();
 		protected virtual void LastSectionRemoved() { }
 		protected virtual void NoChoiceFound() { }
+		protected virtual void PoolEmpty() { }
 
 		protected void Awake()
 		{
@@ -36,21 +38,22 @@ namespace JonathonOH.RoadGeneration
 
 		private void PopulateCurrentSectionsFromWorld()
 		{
-			presetPieces = new List<RoadSection>();
+			presetSections = new List<RoadSection>();
 			foreach (Transform child in roadSectionContainer)
 			{
 				if (!child.gameObject.activeInHierarchy) continue;
 
 				RoadSection section = child.GetComponent<RoadSection>();
-				presetPieces.Add(section);
+				presetSections.Add(section);
 
-				section.N = presetPieces.Count - 1;
+				section.N = presetSections.Count - 1;
 			}
 		}
 
 		protected void Update()
 		{
 			choiceEngine.Step();
+
 			if (ShouldPlaceNewSection())
 			{
 				try
@@ -64,7 +67,7 @@ namespace JonathonOH.RoadGeneration
 				if (choiceEngine.HasFoundChoice())
 				{
 					RoadSection newPiece = TryPlaceNewPiece();
-					if (newPiece is null) OnPoolEmpty();
+					if (newPiece is null) PoolEmpty();
 					else NewSectionPlaced(newPiece);
 				}
 				else
@@ -78,16 +81,13 @@ namespace JonathonOH.RoadGeneration
 				RemoveLastPiece();
 			}
 		}
-		protected virtual void OnPoolEmpty() { }
-
-		protected abstract List<RoadSection> GetPiecesInPreferenceOrder(List<RoadSection> sectionPrototypes);
 
 		protected void RemoveLastPiece()
 		{
-			if (presetPieces.Count > 0)
+			if (presetSections.Count > 0)
 			{
-				Destroy(presetPieces[0].gameObject);
-				presetPieces.RemoveAt(0);
+				Destroy(presetSections[0].gameObject);
+				presetSections.RemoveAt(0);
 			}
 			else
 			{
@@ -122,7 +122,7 @@ namespace JonathonOH.RoadGeneration
 
 		private void ResetEngine()
 		{
-			List<RoadSection> choices = GetPiecesInPreferenceOrder(roadSectionPool.GetAllAvailablePrototypes().ToList());
+			List<RoadSection> choices = GetSectionsInPreferenceOrder(roadSectionPool.GetAllAvailablePrototypes().ToList());
 
 			ChoiceRequest choiceRequest = new ChoiceRequest()
 			{
@@ -133,7 +133,7 @@ namespace JonathonOH.RoadGeneration
 
 			if (choices.Count == 0)
 			{
-				OnPoolEmpty();
+				PoolEmpty();
 			}
 			else
 			{
@@ -146,20 +146,20 @@ namespace JonathonOH.RoadGeneration
 			RoadSection newestSection = roadSectionPool.GetNewestSection();
 			if (newestSection) return newestSection;
 
-			if (presetPieces.Count != 0) return presetPieces[presetPieces.Count - 1];
+			if (presetSections.Count != 0) return presetSections[presetSections.Count - 1];
 
 			return null;
 		}
 
 		public RoadSection GetOldestSection()
 		{
-			if (presetPieces.Count != 0) return presetPieces[0];
+			if (presetSections.Count != 0) return presetSections[0];
 			return roadSectionPool.GetOldestSection();
 		}
 
 		public IEnumerable<RoadSection> GetAllCurrentSections()
 		{
-			foreach (RoadSection section in presetPieces) { yield return section; }
+			foreach (RoadSection section in presetSections) { yield return section; }
 			foreach (RoadSection section in roadSectionPool.GetAllUsedSectionsOrdered()) { yield return section; }
 		}
 	}

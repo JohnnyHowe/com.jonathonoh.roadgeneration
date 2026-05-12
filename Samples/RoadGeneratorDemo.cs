@@ -41,12 +41,12 @@ public class RoadGeneratorDemo : ARoadGenerator
         Debug.Log("No choice found!");
     }
 
-    protected override void OnPoolEmpty()
+    protected override void PoolEmpty()
     {
         Debug.Log("Pool is empty!");
     }
 
-    protected override List<RoadSection> GetPiecesInPreferenceOrder(List<RoadSection> sectionPrototypes)
+    protected override List<RoadSection> GetSectionsInPreferenceOrder(List<RoadSection> sectionPrototypes)
     {
         List<RoadSection> shuffled = new List<RoadSection>(sectionPrototypes);
         Shuffle(shuffled);
