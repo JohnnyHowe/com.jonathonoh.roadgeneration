@@ -67,7 +67,7 @@ namespace JonathonOH.RoadGeneration
 					FailureReason = ChoiceResult.ChoiceFailureReason.NoFailure
 				};
 				IsSearching = false;
-				Debug.Log($"Solution found! {CurrentChoiceResult}");
+				// Debug.Log($"Solution found! {CurrentChoiceResult}");
 			}
 			else if (_combinationGenerator.IsImpossible())
 			{
@@ -86,7 +86,7 @@ namespace JonathonOH.RoadGeneration
 			RoadSection sectionCausingCollision = GetTheSectionCurrentCandidateCollidesWithWhenAligned();
 			if (sectionCausingCollision != null)
 			{
-				Debug.Log($"Current candidate {GetCandidateRoadSections().Last()} overlaps with {sectionCausingCollision}");
+				// Debug.Log($"Current candidate {GetCandidateRoadSections().Last()} overlaps with {sectionCausingCollision}");
 				_combinationGenerator.StepInvalid();
 			}
 			else
