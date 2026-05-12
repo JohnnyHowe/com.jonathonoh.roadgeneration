@@ -79,6 +79,7 @@ namespace Other
                 {
                     _exhaustedSearch = true;
 					Debug.Log("search exhausted!");
+					return;
                 }
 
                 // do backtrack

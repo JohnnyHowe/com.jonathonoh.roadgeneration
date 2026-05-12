@@ -11,14 +11,12 @@ namespace JonathonOH.RoadGeneration.ChoiceEngine
 	{
 		public DFSCombinationGenerator combinationGenerator;
 		public readonly ChoiceRequest choiceRequest;
-		private readonly ICollisionChecker collisionChecker;
 
 		private const int MAX_ITERATIONS = 10000000;
 
-		public RoadGeneratorChoiceEngineInstance(ICollisionChecker collisionChecker, ChoiceRequest choiceRequest)
+		public RoadGeneratorChoiceEngineInstance(ChoiceRequest choiceRequest)
 		{
 			this.choiceRequest = choiceRequest;
-			this.collisionChecker = collisionChecker;
 			combinationGenerator = new DFSCombinationGenerator(choiceRequest.SectionsInPreferenceOrder.Count, choiceRequest.MaxCheckDepth);
 		}
 

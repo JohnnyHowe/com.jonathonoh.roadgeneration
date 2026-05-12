@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Other;
+using JonathonOH.RoadGeneration.ChoiceEngine;
+using System.Runtime.Serialization;
 
 namespace JonathonOH.RoadGeneration
 {
@@ -11,22 +13,25 @@ namespace JonathonOH.RoadGeneration
 	/// </summary>
 	public class RoadGeneratorChoiceEngine
 	{
-		public class NoChoiceFoundException : Exception { }
-
 		public DFSCombinationGenerator _combinationGenerator;
-		private List<RoadSection> sectionsInWorld;
-		private List<RoadSection> sectionPrototypes;
+		public ChoiceRequest CurrentChoiceRequest { get; private set; }
+		public ChoiceResult CurrentChoiceResult { get; private set; }
+		public bool IsSearching { get; private set; } = false;
 
 		private const int MAX_ITERATIONS = 10000000;
-		private bool _impossible;
 
 		public void Reset(List<RoadSection> currentPiecesInWorld, List<RoadSection> possibleChoicesInPreferenceOrder, int checkDepth)
 		{
+			CurrentChoiceRequest = new ChoiceRequest()
+			{
+				CurrentSectionsInWorld = currentPiecesInWorld,
+				SectionsInPreferenceOrder = possibleChoicesInPreferenceOrder,
+				MaxCheckDepth = checkDepth
+			};
+
 			Debug.Log("RoadGenerationChoiceEngine Reset");
 			_combinationGenerator = new DFSCombinationGenerator(possibleChoicesInPreferenceOrder.Count, checkDepth);
-			sectionsInWorld = currentPiecesInWorld;
-			sectionPrototypes = possibleChoicesInPreferenceOrder;
-			_impossible = false;
+			IsSearching = true;
 		}
 
 		public void StepUntilChoiceIsFound()
@@ -41,78 +46,83 @@ namespace JonathonOH.RoadGeneration
 
 		public void Step()
 		{
-			if (_combinationGenerator.HasFoundSolution())
-			{
-				return;
-			}
-			if (_combinationGenerator.IsImpossible())
+			if (!IsSearching)
 			{
 				return;
 			}
 
-			Debug.Log("About to call _DoesLastCandidateSectionOverlapWithOthers()");
-			if (_DoesLastCandidateSectionOverlapWithOthers())
+			RunCollisionCheckAndStepCombinationGenerator();
+			CheckCombinationTermination();
+		}
+
+		private void CheckCombinationTermination()
+		{
+			if (_combinationGenerator.HasFoundSolution())
 			{
-				Debug.Log("FUCK Invalid Path Hit\n" + string.Join(", ", GetFullChainToCheck().Select((section) => section.gameObject.name)));
+				IsSearching = false;
+				Debug.Log($"Solution found! {CurrentChoiceResult}");
+			}
+			else if (_combinationGenerator.IsImpossible())
+			{
+				IsSearching = false;
+			}
+		}
+
+		private void RunCollisionCheckAndStepCombinationGenerator()
+		{
+			RoadSection sectionCausingCollision = GetTheSectionCurrentCandidateCollidesWithWhenAligned();
+			if (sectionCausingCollision != null)
+			{
+				Debug.Log($"Current candidate {GetCandidateRoadSections().Last()} overlaps with {sectionCausingCollision}");
 				_combinationGenerator.StepInvalid();
 			}
 			else
 			{
 				_combinationGenerator.StepValid();
 			}
-			Debug.Log("Step finished");
-		}
-
-		private bool _DoesLastCandidateSectionOverlapWithOthers()
-		{
-			Debug.Log("Checking overlap");
-
-			List<RoadSectionShape> allPiecesAligned = _GetCandidatesAndCurrentPiecesInWorldAligned();
-			// TODO can allPiecesAligned.Count ever be zero? If so, prevent it from breaking
-			RoadSectionShape currentCandidate = allPiecesAligned[allPiecesAligned.Count - 1];
-
-			// foreach (RoadSectionShape worldRoadSectionShape in allPiecesAligned.Take(allPiecesAligned.Count - 1))
-			for (int i = 0; i < allPiecesAligned.Count - 1; i++)
-			{
-				RoadSectionShape toCheck = allPiecesAligned[i];
-
-				if (currentCandidate.DoesOverlapWith(toCheck))
-				{
-					Debug.Log($"Most recent section overlaps with current index {i}");
-					return true;
-				}
-			}
-
-			Debug.Log("Passed overlap check!");
-			return false;
 		}
 
 		/// <summary>
-		/// Current sections in world + sections we are going to check
+		/// Null if no collision.
 		/// </summary>
-		private IEnumerable<RoadSection> GetFullChainToCheck()
+		private RoadSection GetTheSectionCurrentCandidateCollidesWithWhenAligned()
 		{
-			return sectionsInWorld.Concat(GetCandidatesNotAligned());
+			var allCandidates = GetCandidateRoadSections();
+			var allCandidateShapes = GetCandidatesAligned(allCandidates);
+
+			RoadSectionShape currentCandidateShape = allCandidateShapes.Last();
+
+			// Check against sections in world 
+			foreach (RoadSection roadSection in CurrentChoiceRequest.CurrentSectionsInWorld.Reverse())
+			{
+				RoadSectionShape toCheck = roadSection.GetShape();
+				if (currentCandidateShape.DoesOverlapWith(toCheck))
+				{
+					return roadSection;
+				}
+			}
+
+			// Check against other candidates
+			for (int i = 0; i < allCandidateShapes.Count - 1; i++) // -1 because the final IS the subject
+			{
+				RoadSectionShape toCheck = allCandidateShapes[i];
+				if (currentCandidateShape.DoesOverlapWith(toCheck))
+				{
+					return allCandidates[i];
+				}
+			}
+
+			return null;
 		}
 
-		private List<RoadSectionShape> _GetCandidatesAndCurrentPiecesInWorldAligned()
-		{
-			return _GetCurrentPiecesInWorldShapes().Concat(GetCandidatesAligned()).ToList();
-		}
-
-		private List<RoadSectionShape> _GetCurrentPiecesInWorldShapes()
-		{
-			return sectionsInWorld.Select(section => section.GetShape()).ToList();
-		}
-
-		private List<RoadSectionShape> GetCandidatesAligned()
+		private List<RoadSectionShape> GetCandidatesAligned(IEnumerable<RoadSection> candidateRoadSections)
 		{
 			// Figuring out the architecture so this method could exist was a nightmare.
 			// Both big redesigns were a result of this.
 			// I hope it looks obvious and easy to make yourself - that means I've done it right
 			List<RoadSectionShape> alignedCandidates = new List<RoadSectionShape>();
-			TransformData nextStartPoint = _GetFirstCandidateStartPoint();
-			foreach (RoadSection candidateSection in GetCandidatesNotAligned())
+			TransformData nextStartPoint = GetFirstCandidateStartPoint();
+			foreach (RoadSection candidateSection in candidateRoadSections)
 			{
 				RoadSectionShape alignedCandidateShape = candidateSection.GetShape().GetTranslatedCopy(nextStartPoint);
 				alignedCandidates.Add(alignedCandidateShape);
@@ -121,20 +131,21 @@ namespace JonathonOH.RoadGeneration
 			return alignedCandidates;
 		}
 
-		private List<RoadSection> GetCandidatesNotAligned()
+		private List<RoadSection> GetCandidateRoadSections()
 		{
 			List<RoadSection> candidates = new List<RoadSection>();
 			foreach (int candidateChoiceIndex in _combinationGenerator.GetState())
 			{
 				if (candidateChoiceIndex == -1) break;
-				candidates.Add(sectionPrototypes[candidateChoiceIndex]);
+				candidates.Add(CurrentChoiceRequest.SectionsInPreferenceOrder[candidateChoiceIndex]);
 			}
 			return candidates;
 		}
 
-		private TransformData _GetFirstCandidateStartPoint()
+		private TransformData GetFirstCandidateStartPoint()
 		{
 			// TODO this is copied in RoadGenerator - they both define start points - should not be separate
+			var sectionsInWorld = CurrentChoiceRequest.CurrentSectionsInWorld;
 			if (sectionsInWorld.Count == 0)
 			{
 				return new TransformData(Vector3.zero, Quaternion.Euler(0, 0, 1), Vector3.one);
@@ -148,13 +159,15 @@ namespace JonathonOH.RoadGeneration
 			return _combinationGenerator.HasFoundSolution();
 		}
 
+		internal class NoChoiceFoundException : Exception { }
+
 		public RoadSection GetChoicePrototype()
 		{
 			if (!HasFoundChoice())
 			{
 				throw new NoChoiceFoundException();
 			}
-			return sectionPrototypes[_combinationGenerator.GetState()[0]];
+			return CurrentChoiceRequest.SectionsInPreferenceOrder[_combinationGenerator.GetState()[0]];
 		}
 	}
 }
