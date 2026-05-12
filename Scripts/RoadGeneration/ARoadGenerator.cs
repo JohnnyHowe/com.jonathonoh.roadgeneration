@@ -17,14 +17,11 @@ namespace JonathonOH.RoadGeneration
 		private RoadGeneratorChoiceEngine choiceEngine;
 		private List<RoadSection> presetPieces;
 
-		protected virtual void OnNewPiecePlaced(RoadSection newPiece) { }
-		protected virtual void OnPieceRemoved() { }
-		protected abstract bool ShouldPlaceNewPiece();
-		protected abstract bool ShouldRemoveLastPiece();
-		protected virtual void OnNoChoiceFound()
-		{
-			Debug.LogError("No RoadSection choice found!");
-		}
+		protected abstract bool ShouldPlaceNewSection();
+		protected virtual void NewSectionPlaced(RoadSection newPiece) { }
+		protected abstract bool ShouldRemoveLastSection();
+		protected virtual void LastSectionRemoved() { }
+		protected virtual void NoChoiceFound() { }
 
 		protected void Awake()
 		{
@@ -54,7 +51,7 @@ namespace JonathonOH.RoadGeneration
 		protected void Update()
 		{
 			choiceEngine.Step();
-			if (ShouldPlaceNewPiece())
+			if (ShouldPlaceNewSection())
 			{
 				try
 				{
@@ -62,21 +59,21 @@ namespace JonathonOH.RoadGeneration
 				}
 				catch (RoadGeneratorChoiceEngine.NoChoiceFoundException)
 				{
-					OnNoChoiceFound();
+					NoChoiceFound();
 				}
 				if (choiceEngine.HasFoundChoice())
 				{
 					RoadSection newPiece = TryPlaceNewPiece();
 					if (newPiece is null) OnPoolEmpty();
-					else OnNewPiecePlaced(newPiece);
+					else NewSectionPlaced(newPiece);
 				}
 				else
 				{
-					OnNoChoiceFound();
+					NoChoiceFound();
 				}
 			}
 
-			if (ShouldRemoveLastPiece())
+			if (ShouldRemoveLastSection())
 			{
 				RemoveLastPiece();
 			}
@@ -97,7 +94,7 @@ namespace JonathonOH.RoadGeneration
 				roadSectionPool.ReleaseOldestInstantiatedSection();
 			}
 
-			OnPieceRemoved();
+			LastSectionRemoved();
 			ResetEngine();
 		}
 
@@ -138,7 +135,8 @@ namespace JonathonOH.RoadGeneration
 			{
 				OnPoolEmpty();
 			}
-			else {
+			else
+			{
 				choiceEngine = new RoadGeneratorChoiceEngine(choiceRequest);
 			}
 		}

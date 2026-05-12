@@ -21,22 +21,22 @@ public class RoadGeneratorDemo : ARoadGenerator
         _timeUntilNextPiece -= Time.deltaTime;
     }
 
-    protected override bool ShouldPlaceNewPiece()
+    protected override bool ShouldPlaceNewSection()
     {
         return _timeUntilNextPiece <= 0;
     }
 
-    protected override bool ShouldRemoveLastPiece()
+    protected override bool ShouldRemoveLastSection()
     {
         return GetAllCurrentSections().Count() > _targetRoadLength;
     }
 
-    protected override void OnNewPiecePlaced(RoadSection section)
+    protected override void NewSectionPlaced(RoadSection section)
     {
         _timeUntilNextPiece += _timeBetweenPiecePlacing;
     }
 
-    protected override void OnNoChoiceFound()
+    protected override void NoChoiceFound()
     {
         Debug.Log("No choice found!");
     }
