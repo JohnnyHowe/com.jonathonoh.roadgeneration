@@ -78,7 +78,7 @@ namespace Other
                 if (!_CanBacktrack())
                 {
                     _exhaustedSearch = true;
-                    throw new OutOfCombinationsException();
+					Debug.Log("search exhausted!");
                 }
 
                 // do backtrack

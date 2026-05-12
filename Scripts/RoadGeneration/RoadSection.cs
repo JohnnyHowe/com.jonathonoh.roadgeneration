@@ -84,6 +84,7 @@ namespace JonathonOH.RoadGeneration
 			_localShapeReal.Start.Scale = Vector3.one;
 			_localShapeReal.End.Scale = Vector3.one;
 			_localShapeReal.SetBoundaryFromMesh(_boundingMesh.sharedMesh, TransformData.FromTransform(_boundingMesh.transform), _shapeRelativeToStart.Start, _infiniteHeight);
+			_localShapeReal.parent = this;
 		}
 
 		private void _DrawEndPoints()

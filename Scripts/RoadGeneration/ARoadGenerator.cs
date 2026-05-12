@@ -77,7 +77,10 @@ namespace JonathonOH.RoadGeneration
         protected virtual void OnPieceRemoved() { }
         protected abstract bool ShouldPlaceNewPiece();
         protected abstract bool ShouldRemoveLastPiece();
-        protected virtual void OnNoChoiceFound() { }
+        protected virtual void OnNoChoiceFound()
+		{
+			Debug.LogError("No RoadSection choice found!");
+		}
         protected virtual void OnPoolEmpty() { }
 
         protected abstract List<RoadSection> GetPiecesInPreferenceOrder(List<RoadSection> sectionPrototypes);

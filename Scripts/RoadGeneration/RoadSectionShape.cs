@@ -18,6 +18,7 @@ namespace JonathonOH.RoadGeneration
         private FloatRange _heightRange;
         public ConvexShape2D _topologyGlobal;
         private bool _infiniteHeight;
+		public RoadSection parent;
 
         public void SetBoundaryFromMesh(Mesh mesh, TransformData meshGlobalTransform, TransformData handle, bool infiniteHeight = false)
         {
