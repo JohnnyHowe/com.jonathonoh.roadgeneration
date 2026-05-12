@@ -4,7 +4,6 @@ using System.Linq;
 using UnityEngine;
 using Other;
 using JonathonOH.RoadGeneration.ChoiceEngine;
-using System.Runtime.Serialization;
 
 namespace JonathonOH.RoadGeneration
 {
@@ -20,17 +19,10 @@ namespace JonathonOH.RoadGeneration
 
 		private const int MAX_ITERATIONS = 10000000;
 
-		public void Reset(List<RoadSection> currentPiecesInWorld, List<RoadSection> possibleChoicesInPreferenceOrder, int checkDepth)
+		public void Reset(ChoiceRequest choiceRequest)
 		{
-			CurrentChoiceRequest = new ChoiceRequest()
-			{
-				CurrentSectionsInWorld = currentPiecesInWorld,
-				SectionsInPreferenceOrder = possibleChoicesInPreferenceOrder,
-				MaxCheckDepth = checkDepth
-			};
-
-			Debug.Log("RoadGenerationChoiceEngine Reset");
-			_combinationGenerator = new DFSCombinationGenerator(possibleChoicesInPreferenceOrder.Count, checkDepth);
+			CurrentChoiceRequest = choiceRequest;
+			_combinationGenerator = new DFSCombinationGenerator(choiceRequest.SectionsInPreferenceOrder.Count, choiceRequest.MaxCheckDepth);
 			IsSearching = true;
 		}
 
