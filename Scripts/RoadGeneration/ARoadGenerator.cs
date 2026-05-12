@@ -56,19 +56,20 @@ namespace JonathonOH.RoadGeneration
 
 			if (ShouldPlaceNewSection())
 			{
-				try
+				choiceEngine.StepUntilChoiceIsFound();
+
+				var result = choiceEngine.CurrentChoiceResult;
+				if (result.IsChoiceFound)
 				{
-					choiceEngine.StepUntilChoiceIsFound();
-				}
-				catch (RoadGeneratorChoiceEngine.NoChoiceFoundException)
-				{
-					NoChoiceFound();
-				}
-				if (choiceEngine.HasFoundChoice())
-				{
-					RoadSection newPiece = TryPlaceNewPiece();
-					if (newPiece is null) PoolEmpty();
-					else NewSectionPlaced(newPiece);
+					RoadSection newPiece = TryPlaceNewPiece(result.ChosenSection);
+					if (newPiece is null)
+					{
+						PoolEmpty();
+					}
+					else
+					{
+						NewSectionPlaced(newPiece);
+					}
 				}
 				else
 				{
@@ -98,7 +99,7 @@ namespace JonathonOH.RoadGeneration
 			ResetEngine();
 		}
 
-		private RoadSection TryPlaceNewPiece()
+		private RoadSection TryPlaceNewPiece(RoadSection prototype)
 		{
 			if (roadSectionPool.GetAllAvailablePrototypes().Count() == 0) return null;
 
@@ -111,7 +112,7 @@ namespace JonathonOH.RoadGeneration
 				nextStartPosition = newestSection.GetShape().End;
 			}
 
-			RoadSection roadSection = roadSectionPool.ClaimUninstantiatedSection(choiceEngine.GetChoicePrototype());
+			RoadSection roadSection = roadSectionPool.ClaimUninstantiatedSection(prototype);
 			roadSection.N = nextN;
 			roadSection.AlignByStartPoint(nextStartPosition);
 			roadSectionPool.ActivateSection(roadSection);

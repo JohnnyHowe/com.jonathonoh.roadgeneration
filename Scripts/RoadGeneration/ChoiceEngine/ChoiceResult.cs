@@ -2,8 +2,15 @@ namespace JonathonOH.RoadGeneration.ChoiceEngine
 {
 	public readonly struct ChoiceResult
 	{
-		public readonly bool ChoiceFound { get; init; }
+		public enum ChoiceFailureReason
+		{
+			SearchNotFinished,
+			NoChoiceFound,
+			NoFailure
+		}
+
+		public readonly bool IsChoiceFound { get; init; }
 		public readonly RoadSection ChosenSection { get; init; }
-		public readonly string FailureReason { get; init; }
+		public readonly ChoiceFailureReason FailureReason { get; init; }
 	}
 }

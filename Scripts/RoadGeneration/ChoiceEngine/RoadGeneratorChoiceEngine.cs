@@ -15,7 +15,8 @@ namespace JonathonOH.RoadGeneration
 		public DFSCombinationGenerator _combinationGenerator;
 		public ChoiceRequest CurrentChoiceRequest { get; private set; }
 		public ChoiceResult CurrentChoiceResult { get; private set; }
-		public bool IsSearching { get; private set; } = false;
+
+		public bool IsSearching { get; private set; } = true;
 
 		private const int MAX_ITERATIONS = 10000000;
 
@@ -23,13 +24,12 @@ namespace JonathonOH.RoadGeneration
 		{
 			CurrentChoiceRequest = choiceRequest;
 			_combinationGenerator = new DFSCombinationGenerator(choiceRequest.SectionsInPreferenceOrder.Count, choiceRequest.MaxCheckDepth);
-			IsSearching = true;
 
 			CurrentChoiceResult = new ChoiceResult()
 			{
-				ChoiceFound = false,
+				IsChoiceFound = false,
 				ChosenSection = null,
-				FailureReason = "Search unfinished"	
+				FailureReason = ChoiceResult.ChoiceFailureReason.SearchNotFinished
 			};
 		}
 
@@ -37,8 +37,10 @@ namespace JonathonOH.RoadGeneration
 		{
 			for (int i = 0; i < MAX_ITERATIONS; i++)
 			{
-				if (_combinationGenerator.IsImpossible()) break;
-				if (HasFoundChoice()) break;
+				if (!IsSearching)
+				{
+					break;
+				}
 				Step();
 			}
 		}
@@ -58,11 +60,23 @@ namespace JonathonOH.RoadGeneration
 		{
 			if (_combinationGenerator.HasFoundSolution())
 			{
+				CurrentChoiceResult = new ChoiceResult()
+				{
+					IsChoiceFound = true,
+					ChosenSection = CurrentChoiceRequest.SectionsInPreferenceOrder[_combinationGenerator.GetState()[0]],
+					FailureReason = ChoiceResult.ChoiceFailureReason.NoFailure
+				};
 				IsSearching = false;
 				Debug.Log($"Solution found! {CurrentChoiceResult}");
 			}
 			else if (_combinationGenerator.IsImpossible())
 			{
+				CurrentChoiceResult = new ChoiceResult()
+				{
+					IsChoiceFound = false,
+					ChosenSection = null,
+					FailureReason = ChoiceResult.ChoiceFailureReason.NoChoiceFound
+				};
 				IsSearching = false;
 			}
 		}
@@ -151,22 +165,6 @@ namespace JonathonOH.RoadGeneration
 			}
 			return sectionsInWorld[sectionsInWorld.Count - 1].GetShape().End;
 
-		}
-
-		public bool HasFoundChoice()
-		{
-			return _combinationGenerator.HasFoundSolution();
-		}
-
-		internal class NoChoiceFoundException : Exception { }
-
-		public RoadSection GetChoicePrototype()
-		{
-			if (!HasFoundChoice())
-			{
-				throw new NoChoiceFoundException();
-			}
-			return CurrentChoiceRequest.SectionsInPreferenceOrder[_combinationGenerator.GetState()[0]];
 		}
 	}
 }
