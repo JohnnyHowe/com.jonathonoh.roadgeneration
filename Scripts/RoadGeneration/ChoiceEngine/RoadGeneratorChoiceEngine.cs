@@ -19,11 +19,18 @@ namespace JonathonOH.RoadGeneration
 
 		private const int MAX_ITERATIONS = 10000000;
 
-		public void Reset(ChoiceRequest choiceRequest)
+		public RoadGeneratorChoiceEngine(ChoiceRequest choiceRequest)
 		{
 			CurrentChoiceRequest = choiceRequest;
 			_combinationGenerator = new DFSCombinationGenerator(choiceRequest.SectionsInPreferenceOrder.Count, choiceRequest.MaxCheckDepth);
 			IsSearching = true;
+
+			CurrentChoiceResult = new ChoiceResult()
+			{
+				ChoiceFound = false,
+				ChosenSection = null,
+				FailureReason = "Search unfinished"	
+			};
 		}
 
 		public void StepUntilChoiceIsFound()

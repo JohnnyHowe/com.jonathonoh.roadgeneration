@@ -14,14 +14,22 @@ namespace JonathonOH.RoadGeneration
 		[SerializeField] public Transform roadSectionContainer;
 		[SerializeField] protected RoadSectionPool roadSectionPool = new RoadSectionPool();
 
-		private RoadGeneratorChoiceEngine _choiceEngine;
+		private RoadGeneratorChoiceEngine choiceEngine;
 		private List<RoadSection> presetPieces;
+
+		protected virtual void OnNewPiecePlaced(RoadSection newPiece) { }
+		protected virtual void OnPieceRemoved() { }
+		protected abstract bool ShouldPlaceNewPiece();
+		protected abstract bool ShouldRemoveLastPiece();
+		protected virtual void OnNoChoiceFound()
+		{
+			Debug.LogError("No RoadSection choice found!");
+		}
 
 		protected void Awake()
 		{
 			roadSectionPool.Reset(_roadSectionChoices, roadSectionContainer);
-			_choiceEngine = new RoadGeneratorChoiceEngine();
-			PopulateCurrentPiecesFromWorld();
+			PopulateCurrentSectionsFromWorld();
 		}
 
 		protected void Start()
@@ -29,7 +37,7 @@ namespace JonathonOH.RoadGeneration
 			ResetEngine();
 		}
 
-		private void PopulateCurrentPiecesFromWorld()
+		private void PopulateCurrentSectionsFromWorld()
 		{
 			presetPieces = new List<RoadSection>();
 			foreach (Transform child in roadSectionContainer)
@@ -45,18 +53,18 @@ namespace JonathonOH.RoadGeneration
 
 		protected void Update()
 		{
-			_choiceEngine.Step();
+			choiceEngine.Step();
 			if (ShouldPlaceNewPiece())
 			{
 				try
 				{
-					_choiceEngine.StepUntilChoiceIsFound();
+					choiceEngine.StepUntilChoiceIsFound();
 				}
 				catch (RoadGeneratorChoiceEngine.NoChoiceFoundException)
 				{
 					OnNoChoiceFound();
 				}
-				if (_choiceEngine.HasFoundChoice())
+				if (choiceEngine.HasFoundChoice())
 				{
 					RoadSection newPiece = TryPlaceNewPiece();
 					if (newPiece is null) OnPoolEmpty();
@@ -72,15 +80,6 @@ namespace JonathonOH.RoadGeneration
 			{
 				RemoveLastPiece();
 			}
-		}
-
-		protected virtual void OnNewPiecePlaced(RoadSection newPiece) { }
-		protected virtual void OnPieceRemoved() { }
-		protected abstract bool ShouldPlaceNewPiece();
-		protected abstract bool ShouldRemoveLastPiece();
-		protected virtual void OnNoChoiceFound()
-		{
-			Debug.LogError("No RoadSection choice found!");
 		}
 		protected virtual void OnPoolEmpty() { }
 
@@ -115,7 +114,7 @@ namespace JonathonOH.RoadGeneration
 				nextStartPosition = newestSection.GetShape().End;
 			}
 
-			RoadSection roadSection = roadSectionPool.ClaimUninstantiatedSection(_choiceEngine.GetChoicePrototype());
+			RoadSection roadSection = roadSectionPool.ClaimUninstantiatedSection(choiceEngine.GetChoicePrototype());
 			roadSection.N = nextN;
 			roadSection.AlignByStartPoint(nextStartPosition);
 			roadSectionPool.ActivateSection(roadSection);
@@ -135,8 +134,13 @@ namespace JonathonOH.RoadGeneration
 				MaxCheckDepth = _choiceEngineCheckDepth
 			};
 
-			if (choices.Count == 0) OnPoolEmpty();
-			else _choiceEngine.Reset(choiceRequest);
+			if (choices.Count == 0)
+			{
+				OnPoolEmpty();
+			}
+			else {
+				choiceEngine = new RoadGeneratorChoiceEngine(choiceRequest);
+			}
 		}
 
 		public RoadSection GetNewestSection()
