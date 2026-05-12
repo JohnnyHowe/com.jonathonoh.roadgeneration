@@ -1,57 +1,44 @@
+using Other;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace JonathonOH.RoadGeneration
+namespace JonathonOH.RoadGeneration.Logging
 {
-	/// <summary>
-	/// Purely logging for the ARoadGenerator.
-	/// </summary>
 	[RequireComponent(typeof(ARoadGenerator))]
-	public class RoadGeneratorDebugLogger : MonoBehaviour
+	public class RoadGeneratorDebugLogRecorder : MonoBehaviour
 	{
-		private ARoadGenerator roadGenerator;
+		[SerializeField] private bool logToConsole;
+		[SerializeField][ReadOnly] private RoadGeneratorDebugLog log;
 
+		private ARoadGenerator roadGenerator;
 		private UnityAction<RoadSection> onNewSectionPlacedValue;
 		private UnityAction onNewSectionPlaced;
 		private UnityAction onLastSectionRemoved;
 		private UnityAction onNoChoiceFound;
 		private UnityAction onPoolEmpty;
 
-		private bool verbose => enabled && gameObject.activeInHierarchy;
+		public RoadGeneratorDebugLog Log => log;
 
 		private void Awake()
 		{
+			log = new RoadGeneratorDebugLog();
+
 			roadGenerator = GetComponent<ARoadGenerator>();
 
-			onNewSectionPlacedValue = roadSection =>
-			{
-				if (!verbose) return;
-				Debug.Log($"NewSectionPlacedValue invoked with {roadSection}", this);
-			};
+			onNewSectionPlacedValue = roadSection => AddLog($"NewSectionPlacedValue invoked with {roadSection}");
+			onNewSectionPlaced = () => AddLog("NewSectionPlaced invoked");
+			onLastSectionRemoved = () => AddLog("LastSectionRemoved invoked");
+			onNoChoiceFound = () => AddLog("NoChoiceFound invoked");
+			onPoolEmpty = () => AddLog("PoolEmpty invoked");
+		}
 
-			onNewSectionPlaced = () =>
+		private void AddLog(string text)
+		{
+			if (logToConsole)
 			{
-				if (!verbose) return;
-				Debug.Log("NewSectionPlaced invoked", this);
-			};
-
-			onLastSectionRemoved = () =>
-			{
-				if (!verbose) return;
-				Debug.Log("LastSectionRemoved invoked", this);
-			};
-
-			onNoChoiceFound = () =>
-			{
-				if (!verbose) return;
-				Debug.Log("NoChoiceFound invoked", this);
-			};
-
-			onPoolEmpty = () =>
-			{
-				if (!verbose) return;
-				Debug.Log("PoolEmpty invoked", this);
-			};
+				Debug.Log(text);
+			}
+			log.Add(text);
 		}
 
 		private void OnEnable()
