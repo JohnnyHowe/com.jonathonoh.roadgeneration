@@ -9,7 +9,7 @@ namespace JonathonOH.RoadGeneration
 	/// Lifecycle
 	/// 
 	/// </summary>
-	public class RoadSection : MonoBehaviour
+	public class RoadSection : MonoBehaviour, IRoadSection, IAlignable
 	{
 		[SerializeField] public UnityEvent Created = new UnityEvent();
 		[SerializeField] public UnityEvent Claimed = new UnityEvent();
@@ -116,7 +116,7 @@ namespace JonathonOH.RoadGeneration
 			DrawArrow.ForGizmo(point.position, dir, Color.blue);
 		}
 
-		public void AlignByStartPoint(TransformData newStartPoint)
+		public void AlignStart(TransformData newStartPoint)
 		{
 			TransformData currentStart = TransformData.FromTransform(startPoint);
 			Vector3 rotationChange = newStartPoint.Rotation.eulerAngles - currentStart.Rotation.eulerAngles;
@@ -126,7 +126,7 @@ namespace JonathonOH.RoadGeneration
 			ResetShape();
 		}
 
-		public void AlignByEndPoint(TransformData newEndPoint)
+		public void AlignEnd(TransformData newEndPoint)
 		{
 			TransformData currentEnd = TransformData.FromTransform(endPoint);
 			Vector3 rotationChange = newEndPoint.Rotation.eulerAngles - currentEnd.Rotation.eulerAngles;

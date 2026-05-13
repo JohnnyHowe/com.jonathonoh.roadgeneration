@@ -122,7 +122,7 @@ namespace JonathonOH.RoadGeneration
 
 			RoadSection roadSection = roadSectionPool.ClaimUninstantiatedSection(prototype);
 			roadSection.N = nextN;
-			roadSection.AlignByStartPoint(nextStartPosition);
+			roadSection.AlignStart(nextStartPosition);
 			roadSectionPool.ActivateSection(roadSection);
 			ResetEngine();
 
