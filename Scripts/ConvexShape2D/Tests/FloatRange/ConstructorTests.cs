@@ -6,7 +6,7 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests
 	internal class ConstructorTests
 	{
 		[Test]
-		public void WhenFirstValueIsLessThanSecond_SetsMinAndMaxDirectly()
+		public void FirstValueIsLessThanSecond_SetsMinAndMaxDirectly()
 		{
 			FloatRange range = new FloatRange(1f, 3f);
 
@@ -15,7 +15,7 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests
 		}
 
 		[Test]
-		public void WhenFirstValueIsGreaterThanSecond_NormalizesMinAndMax()
+		public void FirstValueIsGreaterThanSecond_NormalizesMinAndMax()
 		{
 			FloatRange range = new FloatRange(3f, 1f);
 
@@ -24,7 +24,7 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests
 		}
 
 		[Test]
-		public void WhenValuesAreEqual_CreatesSinglePointRange()
+		public void ValuesAreEqual_CreatesSinglePointRange()
 		{
 			FloatRange range = new FloatRange(2f, 2f);
 
@@ -33,7 +33,7 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests
 		}
 
 		[Test]
-		public void WhenBothValuesAreNegative_NormalizesCorrectly()
+		public void BothValuesAreNegative_NormalizesCorrectly()
 		{
 			FloatRange range = new FloatRange(-2f, -5f);
 
@@ -42,7 +42,7 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests
 		}
 
 		[Test]
-		public void WhenRangeCrossesZero_NormalizesCorrectly()
+		public void RangeCrossesZero_NormalizesCorrectly()
 		{
 			FloatRange range = new FloatRange(4f, -1f);
 
@@ -51,7 +51,7 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests
 		}
 
 		[Test]
-		public void WhenOneValueIsZero_SetsBoundsCorrectly()
+		public void OneValueIsZero_SetsBoundsCorrectly()
 		{
 			FloatRange range = new FloatRange(0f, -5f);
 
