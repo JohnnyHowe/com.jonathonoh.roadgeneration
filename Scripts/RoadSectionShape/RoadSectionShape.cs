@@ -66,10 +66,21 @@ namespace JonathonOH.RoadGeneration
 
         public bool DoesOverlapWith(RoadSectionShape other)
         {
-            if (!_infiniteHeight && !_heightRange.OverlapsWith(other._heightRange)) return false;
-            if (!_topologyGlobal.DoesOverlapWith(other._topologyGlobal)) return false;
-            return true;
+			if (!OverlapsWithOnVerticalAxis(other))
+			{
+				return false;
+			}
+            return _topologyGlobal.OverlapsWith(other._topologyGlobal);
         }
+
+		private bool OverlapsWithOnVerticalAxis(RoadSectionShape other)
+		{
+			if (_infiniteHeight || other._infiniteHeight)
+			{
+				return true;
+			}	
+			return _heightRange.OverlapsWith(other._heightRange);
+		}
 
         public void DebugDraw()
 		{

@@ -24,7 +24,7 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D
 			Normals = ConvexHullUtility.GetNormalsFromTangents(Tangents).ToList();
 		}
 
-		public bool DoesOverlapWith(ConvexHull other)
+		public bool OverlapsWith(ConvexHull other)
 		{
 			// for each normal of both objects
 			IEnumerable<Vector2> allnormals = Normals.Concat(other.Normals).Distinct().ToList();
