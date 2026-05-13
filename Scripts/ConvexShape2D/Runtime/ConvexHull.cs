@@ -25,14 +25,14 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D
 		}
 
 		/// <summary>
-        /// Includes when they only touch at a boundary -> true.
+		/// Returns true when this hull overlaps another hull, including when they only touch at a boundary.
 		/// </summary>
 		public bool OverlapsWith(ConvexHull other)
 		{
-			IEnumerable<Vector2> allnormals = Normals.Concat(other.Normals).Distinct(TangentComparer.Instance);
-			foreach (Vector2 axis in allnormals)
+			IEnumerable<Vector2> allNormals = Normals.Concat(other.Normals).Distinct(TangentComparer.Instance);
+			foreach (Vector2 axis in allNormals)
 			{
-				if (!OverlapsWith(other, axis))
+				if (!ProjectionOverlapsOnAxis(other, axis))
 				{
 					return false;
 				}
@@ -40,7 +40,7 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D
 			return true;
 		}
 
-		private bool OverlapsWith(ConvexHull other, Vector2 axis)
+		private bool ProjectionOverlapsOnAxis(ConvexHull other, Vector2 axis)
 		{
 			FloatRange thisProjectionRange = ProjectionUtility.ProjectAll(Vertices, axis);
 			FloatRange otherProjectionRange = ProjectionUtility.ProjectAll(other.Vertices, axis);

@@ -36,7 +36,7 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests.ConvexHullTests
 				new Vector2(3f, -2f),
 				new Vector2(1f, 0f));
 
-			Assert.That(rectangle.OverlapsWith(shiftedDiamond), Is.True);
+			TestUtility.AssertOverlapIsSymmetric(rectangle, shiftedDiamond, true);
 		}
 
 		[Test]
@@ -55,6 +55,5 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests.ConvexHullTests
 
 			Assert.That(rectangle.OverlapsWith(shiftedDiamond), Is.False);
 		}
-
 	}
 }
