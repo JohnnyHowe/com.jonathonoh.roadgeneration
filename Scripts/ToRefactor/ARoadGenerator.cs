@@ -17,6 +17,7 @@ namespace JonathonOH.RoadGeneration
 		public readonly UnityEvent PoolEmpty = new UnityEvent();
 
 		[SerializeField] private int _choiceEngineCheckDepth = 5;
+		[SerializeField] private int stepsPerFrame = 4;
 		[SerializeField] protected List<RoadSection> _roadSectionChoices;
 		[FormerlySerializedAs("_roadSectionContainer")]
 		[SerializeField] public Transform roadSectionContainer;
@@ -58,7 +59,7 @@ namespace JonathonOH.RoadGeneration
 
 		protected void Update()
 		{
-			choiceEngine.Step();
+			StepEngine();
 
 			if (ShouldPlaceNewSection())
 			{
@@ -67,6 +68,18 @@ namespace JonathonOH.RoadGeneration
 			if (ShouldRemoveLastSection())
 			{
 				RemoveLastPiece();
+			}
+		}
+
+		private void StepEngine()
+		{
+			for (int i = 0; i < Mathf.Max(1, stepsPerFrame); i++)
+			{
+				if (!choiceEngine.IsSearching)
+				{
+					break;
+				}
+				choiceEngine.Step();
 			}
 		}
 
