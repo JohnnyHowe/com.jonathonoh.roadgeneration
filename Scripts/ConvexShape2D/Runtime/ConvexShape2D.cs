@@ -53,7 +53,7 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D
                 FloatRange thisProjectionRange = GetProjection(axis);
                 FloatRange otherProjectionRange = other.GetProjection(axis);
                 // if there is a gap, return false - there is no overlap
-                if (!thisProjectionRange.DoesOverlapWith(otherProjectionRange)) return false;
+                if (!thisProjectionRange.OverlapsWith(otherProjectionRange)) return false;
             }
             return true;
         }
