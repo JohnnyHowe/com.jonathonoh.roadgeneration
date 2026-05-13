@@ -86,6 +86,10 @@ namespace JonathonOH.RoadGeneration
 			CollisionCheckResult collisionCheckResult = GetCollisionResultForCurrentCandidates();
 			if (collisionCheckResult.HasCollision)
 			{
+				Debug.Log(
+					$"Invalid chain found. Candidate {collisionCheckResult.Request.Subject} overlaps with {collisionCheckResult.CollidesWith}\n" + 
+					$"Full chain: {collisionCheckResult.Request.GetFullChain()}"
+				);
 				combinationGenerator.StepInvalid();
 			}
 			else
@@ -99,12 +103,22 @@ namespace JonathonOH.RoadGeneration
 		/// </summary>
 		private CollisionCheckResult GetCollisionResultForCurrentCandidates()
 		{
+			return collisionChecker.CheckOneAgainstMany(CreateCollisionCheckRequest());
+		}
+
+		private CollisionCheckRequest CreateCollisionCheckRequest()
+		{
 			List<RoadSection> allCandidates = GetCandidateRoadSections();
 
 			IEnumerable<RoadSection> previousCandidates = allCandidates.Take(allCandidates.Count - 1);
 			RoadSection currentCandidate = allCandidates.Last();
 
-			return collisionChecker.CheckOneAgainstMany(currentCandidate, CurrentChoiceRequest.CurrentSectionsInWorld, previousCandidates);
+			return new CollisionCheckRequest()
+			{
+				Subject = currentCandidate,
+				AlreadyPlaced = CurrentChoiceRequest.CurrentSectionsInWorld,
+				Candidates = previousCandidates.ToList()
+			};
 		}
 
 		private List<RoadSection> GetCandidateRoadSections()
@@ -116,6 +130,6 @@ namespace JonathonOH.RoadGeneration
 				candidates.Add(CurrentChoiceRequest.SectionsInPreferenceOrder[candidateChoiceIndex]);
 			}
 			return candidates;
-		}	
+		}
 	}
 }

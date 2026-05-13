@@ -5,31 +5,42 @@ namespace JonathonOH.RoadGeneration.Collision
 {
 	public class RoadSectionShapeCollisionChecker : ICollisionChecker
 	{
-		public CollisionCheckResult CheckOneAgainstMany(RoadSection subject, IEnumerable<RoadSection> alreadyPlaced, IEnumerable<RoadSection> candidates)
+		public CollisionCheckResult CheckOneAgainstMany(CollisionCheckRequest request)
 		{
-			List<RoadSection> alreadyPlacedList = alreadyPlaced.ToList();
-			List<RoadSection> candidatesList = candidates.ToList();
-
-			List<RoadSectionShape> shapesToCheckAgainstAligned = GetShapesAligned(alreadyPlacedList, candidatesList).ToList();
-			RoadSectionShape subjectShapeAligned = GetShapeAligned(shapesToCheckAgainstAligned.Last(), subject);
+			List<RoadSectionShape> shapesToCheckAgainstAligned = GetShapesAligned(request.AlreadyPlaced, request.Candidates).ToList();
+			RoadSectionShape subjectShapeAligned = GetShapeAligned(shapesToCheckAgainstAligned.Last(), request.Subject);
 
 			int shapeCausingCollisionIndex = GetIndexOfShapeWithOverlap(subjectShapeAligned, shapesToCheckAgainstAligned);
 
 			// No collision
 			if (shapeCausingCollisionIndex == -1)
 			{
-				return CollisionCheckResult.CreateWithoutCollision(subject);
+				return new CollisionCheckResult()
+				{
+					Request = request,
+					HasCollision = false,
+					CollidesWith = null
+				};
 			}
+
+			RoadSection collidingSection;
 
 			// Collides with already placed section
-			if (shapeCausingCollisionIndex < alreadyPlacedList.Count)
+			if (shapeCausingCollisionIndex < request.AlreadyPlaced.Count)
 			{
-				return CollisionCheckResult.CreateWithCollision(subject, alreadyPlacedList[shapeCausingCollisionIndex]);
+				collidingSection = request.AlreadyPlaced[shapeCausingCollisionIndex];
+			}
+			else
+			{
+				collidingSection = request.Candidates[shapeCausingCollisionIndex - request.AlreadyPlaced.Count];
 			}
 
-			// Collides with candidate section
-			int shapeCausingCollisionIndexInCandidates = shapeCausingCollisionIndex - alreadyPlacedList.Count;
-			return CollisionCheckResult.CreateWithCollision(subject, candidatesList[shapeCausingCollisionIndexInCandidates]);
+			return new CollisionCheckResult()
+			{
+				Request = request,
+				HasCollision = true,
+				CollidesWith = collidingSection
+			};
 		}
 
 		/// <summary>
