@@ -68,7 +68,6 @@ namespace JonathonOH.RoadGeneration
 					FailureReason = ChoiceResult.ChoiceFailureReason.NoFailure
 				};
 				IsSearching = false;
-				// Debug.Log($"Solution found! {CurrentChoiceResult}");
 			}
 			else if (combinationGenerator.IsImpossible())
 			{
@@ -87,7 +86,6 @@ namespace JonathonOH.RoadGeneration
 			CollisionCheckResult collisionCheckResult = GetCollisionResultForCurrentCandidates();
 			if (collisionCheckResult.HasCollision)
 			{
-				Debug.Log($"Current candidate {collisionCheckResult.Subject} overlaps with {collisionCheckResult.CollidesWith}");
 				combinationGenerator.StepInvalid();
 			}
 			else
