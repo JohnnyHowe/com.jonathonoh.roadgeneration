@@ -22,7 +22,7 @@ namespace JonathonOH.RoadGeneration
 		[FormerlySerializedAs("_endPoint")]
 		[SerializeField] private Transform endPoint;
 
-		[SerializeField] protected MeshFilter _boundingMesh;
+		[SerializeField] protected internal MeshFilter _boundingMesh;
 		[SerializeField] private bool _infiniteHeight = false;
 		[SerializeField] public bool autoFlip = true;
 
@@ -61,7 +61,7 @@ namespace JonathonOH.RoadGeneration
 				_localShapeReal = value;
 			}
 		}
-		private RoadSectionShape _localShapeReal;
+		internal RoadSectionShape _localShapeReal;
 
 		#region Pool callbacks
 		internal void _OnCreated()
@@ -86,7 +86,6 @@ namespace JonathonOH.RoadGeneration
 
 		protected void OnDrawGizmos()
 		{
-			if (_localShapeReal != null) _shapeRelativeToStart.DebugDraw();
 			_DrawEndPoints();
 		}
 
