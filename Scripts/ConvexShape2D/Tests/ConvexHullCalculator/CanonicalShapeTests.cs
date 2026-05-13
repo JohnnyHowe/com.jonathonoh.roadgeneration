@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests.ConvexHullCalculatorTests
 {
+	/// <summary>
+	/// Verifies hull construction for representative non-degenerate point sets with known expected boundaries.
+	/// </summary>
 	internal class CanonicalShapeTests
 	{
 		[Test]

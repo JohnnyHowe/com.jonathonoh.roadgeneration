@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests.ConvexHullCalculatorTests
 {
+	/// <summary>
+	/// Verifies the early-return behavior for empty, single-point, and two-point inputs.
+	/// </summary>
 	internal class TrivialCaseTests
 	{
 		[Test]

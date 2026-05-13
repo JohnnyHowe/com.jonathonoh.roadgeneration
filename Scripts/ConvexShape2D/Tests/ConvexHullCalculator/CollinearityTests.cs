@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests.ConvexHullCalculatorTests
 {
+	/// <summary>
+	/// Verifies how the calculator handles fully and partially collinear input points.
+	/// </summary>
 	internal class CollinearityTests
 	{
 		[Test]

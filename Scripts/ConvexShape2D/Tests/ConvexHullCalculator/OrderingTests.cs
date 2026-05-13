@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests.ConvexHullCalculatorTests
 {
+	/// <summary>
+	/// Verifies deterministic hull ordering, clockwise winding, and basic output invariants.
+	/// </summary>
 	internal class OrderingTests
 	{
 		[Test]

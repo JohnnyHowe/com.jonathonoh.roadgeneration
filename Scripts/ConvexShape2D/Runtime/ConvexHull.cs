@@ -14,6 +14,7 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D
 		public ConvexHull(IEnumerable<Vector2> allVertices)
 		{
 			Vertices = ConvexHullCalculator.GetConvexHull(allVertices).ToList();
+			Tangents = ConvexHullUtility.GetTangentsFromHull(Vertices).ToList();
 
 			throw new NotImplementedException();
 			// Tangents = ConvexHullUtility2D.GetConvexHullAxes(vertices);

@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests.ConvexHullCalculatorTests
 {
+	/// <summary>
+	/// Verifies that duplicate input points do not produce incorrect or redundant hull vertices.
+	/// </summary>
 	internal class DuplicatePointTests
 	{
 		[Test]
