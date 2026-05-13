@@ -1,7 +1,7 @@
 
 using System.Collections.Generic;
 
-namespace JonathonOH.RoadGeneration
+namespace JonathonOH.RoadGeneration.ChoiceEngine
 {
 	public readonly struct ChoiceRequest
 	{
