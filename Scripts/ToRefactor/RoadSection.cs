@@ -9,7 +9,7 @@ namespace JonathonOH.RoadGeneration
 	/// Lifecycle
 	/// 
 	/// </summary>
-	public class RoadSection : MonoBehaviour, IRoadSection, IAlignable
+	public class RoadSection : MonoBehaviour, IRoadSection
 	{
 		[SerializeField] public UnityEvent Created = new UnityEvent();
 		[SerializeField] public UnityEvent Claimed = new UnityEvent();
