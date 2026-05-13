@@ -24,28 +24,26 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D
 			Normals = ConvexHullUtility.GetNormalsFromTangents(Tangents).ToList();
 		}
 
+		/// <summary>
+        /// Includes when they only touch at a boundary -> true.
+		/// </summary>
 		public bool OverlapsWith(ConvexHull other)
 		{
-			// for each normal of both objects
-			IEnumerable<Vector2> allnormals = Normals.Concat(other.Normals).Distinct(TangentComparer.Instance).ToList();
-
+			IEnumerable<Vector2> allnormals = Normals.Concat(other.Normals).Distinct(TangentComparer.Instance);
 			foreach (Vector2 axis in allnormals)
 			{
-				if (DoesOverlapWith(other, axis))
+				if (!OverlapsWith(other, axis))
 				{
-					return true;
+					return false;
 				}
 			}
-			return false;
+			return true;
 		}
 
-		private bool DoesOverlapWith(ConvexHull other, Vector2 axis)
+		private bool OverlapsWith(ConvexHull other, Vector2 axis)
 		{
-			// get the projection of each object on the axis
 			FloatRange thisProjectionRange = ProjectionUtility.ProjectAll(Vertices, axis);
 			FloatRange otherProjectionRange = ProjectionUtility.ProjectAll(other.Vertices, axis);
-
-			// if there is a gap, return false - there is no overlap
 			return thisProjectionRange.OverlapsWith(otherProjectionRange);
 		}
 	}
