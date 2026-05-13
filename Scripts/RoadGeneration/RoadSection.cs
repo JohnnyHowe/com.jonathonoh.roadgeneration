@@ -1,6 +1,7 @@
 using Other;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace JonathonOH.RoadGeneration
 {
@@ -16,7 +17,9 @@ namespace JonathonOH.RoadGeneration
 
 		[SerializeField][ReadOnly] public int N;
 
+		[FormerlySerializedAs("_startPoint")]
 		[SerializeField] private Transform startPoint;
+		[FormerlySerializedAs("_endPoint")]
 		[SerializeField] private Transform endPoint;
 
 		[SerializeField] protected MeshFilter _boundingMesh;
