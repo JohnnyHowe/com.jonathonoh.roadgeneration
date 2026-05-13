@@ -1,8 +1,5 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using JonathonOH.RoadGeneration.ConvexShape2D;
-using Other;
 using UnityEngine;
 
 namespace JonathonOH.RoadGeneration
