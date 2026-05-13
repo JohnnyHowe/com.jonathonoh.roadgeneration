@@ -17,7 +17,7 @@ namespace JonathonOH.RoadGeneration
         public TransformData End;
         public List<Vector3> _boundaryVerticesRelativeToHandle;
         private FloatRange _heightRange;
-        public Shape _topologyGlobal;
+        public ConvexHull _topologyGlobal;
         private bool _infiniteHeight;
 		public RoadSection parent;
 
@@ -60,7 +60,7 @@ namespace JonathonOH.RoadGeneration
                 _maxHeight = Mathf.Max(globalVertex.y, _maxHeight);
                 topology.Add(new Vector2(globalVertex.x, globalVertex.z));
             }
-            _topologyGlobal = new Shape(topology);
+            _topologyGlobal = new ConvexHull(topology);
             _heightRange = new FloatRange(_minHeight, _maxHeight);
         }
 
@@ -78,7 +78,7 @@ namespace JonathonOH.RoadGeneration
 
         public void DebugDraw(Color color)
         {
-            List<Vector2> topology = _topologyGlobal.GetVertices();
+            IEnumerable<Vector2> topology = _topologyGlobal.Vertices;
             foreach (Vector2 vertex1 in topology)
             {
                 Debug.DrawLine(new Vector3(vertex1.x, _heightRange.Min, vertex1.y), new Vector3(vertex1.x, _heightRange.Max, vertex1.y), color);

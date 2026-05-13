@@ -2,7 +2,7 @@ using System;
 
 namespace JonathonOH.RoadGeneration.ConvexShape2D
 {
-    public struct FloatRange 
+    public readonly struct FloatRange 
     {
         public readonly float Min;
         public readonly float Max;

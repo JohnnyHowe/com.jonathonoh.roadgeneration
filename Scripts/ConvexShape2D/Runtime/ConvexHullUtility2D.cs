@@ -4,11 +4,6 @@ using UnityEngine;
 
 namespace JonathonOH.RoadGeneration.ConvexShape2D
 {
-    /// <summary>
-    /// Ugly ass code
-    /// Definitely not AI generated
-    /// Does it really matter? It's tested good
-    /// </summary>
     public static class ConvexHullUtility2D
     {
         private class Vector2EqualityComparer : IEqualityComparer<Vector2>
@@ -51,7 +46,7 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D
 
                 tangents.Add(tangent.normalized);
             }
-            return tangents.Distinct(new Vector2EqualityComparer()).ToList(); ;
+            return tangents.Distinct(new Vector2EqualityComparer()).ToList();
         }
 
         public static List<(Vector2, Vector2)> GetConvexHull(List<Vector2> points)
