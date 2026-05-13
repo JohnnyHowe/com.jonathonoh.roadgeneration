@@ -23,6 +23,7 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests.ConvexHullUtilityTests
 
 			Assert.That(result, Is.Not.Empty);
 			Assert.That(result.All(tangent => Mathf.Approximately(tangent.magnitude, 1f)), Is.True);
+			Assert.That(result.Distinct(Vector2EqualityComparer.Instance).Count(), Is.EqualTo(result.Length));
 		}
 	}
 }

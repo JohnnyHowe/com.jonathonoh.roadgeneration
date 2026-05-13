@@ -7,9 +7,9 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D
 {
 	public readonly struct ConvexHull
 	{
-		public readonly IReadOnlyCollection<Vector2> Vertices;
-		public readonly IReadOnlyCollection<Vector2> Tangents;
-		public readonly IReadOnlyCollection<Vector2> Normals;
+		public readonly IReadOnlyList<Vector2> Vertices;
+		public readonly IReadOnlyList<Vector2> Tangents;
+		public readonly IReadOnlyList<Vector2> Normals;
 
 		public ConvexHull(IEnumerable<Vector2> allVertices)
 		{

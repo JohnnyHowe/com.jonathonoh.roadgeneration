@@ -1,4 +1,4 @@
-using System.Linq;
+using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -12,7 +12,7 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests.ConvexHullUtilityTests
 		[Test]
 		public void EmptyHull_ReturnsEmpty()
 		{
-			Vector2[] result = ConvexHullUtility.GetTangentsFromHull(Enumerable.Empty<Vector2>()).ToArray();
+			Vector2[] result = ConvexHullUtility.GetTangentsFromHull(new List<Vector2>()).ToArray();
 
 			Assert.That(result, Is.Empty);
 		}

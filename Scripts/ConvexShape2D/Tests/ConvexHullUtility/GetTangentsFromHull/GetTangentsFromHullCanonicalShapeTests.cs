@@ -1,4 +1,3 @@
-using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -30,7 +29,7 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests.ConvexHullUtilityTests
 		}
 
 		[Test]
-		public void Rectangle_ReturnsTangentsInHullOrder()
+		public void Rectangle_ReturnsUniqueTangentsInHullOrder()
 		{
 			Vector2[] hullClockwise =
 			{
@@ -45,9 +44,7 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests.ConvexHullUtilityTests
 			Assert.That(result, Is.EqualTo(new[]
 			{
 				Vector2.right,
-				Vector2.down,
-				Vector2.left,
-				Vector2.up
+				Vector2.down
 			}).Using(Vector2EqualityComparer.Instance));
 		}
 	}

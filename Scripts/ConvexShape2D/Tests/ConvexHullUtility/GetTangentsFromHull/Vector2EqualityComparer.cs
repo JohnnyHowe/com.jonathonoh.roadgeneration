@@ -1,25 +1,21 @@
-using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests.ConvexHullUtilityTests
 {
-	internal sealed class Vector2EqualityComparer : IEqualityComparer
+	internal sealed class Vector2EqualityComparer : IEqualityComparer<Vector2>
 	{
 		public static readonly Vector2EqualityComparer Instance = new Vector2EqualityComparer();
 
-		public new bool Equals(object x, object y)
+		public bool Equals(Vector2 x, Vector2 y)
 		{
-			if (x is not Vector2 left || y is not Vector2 right)
-			{
-				return false;
-			}
-
-			return Vector2.Distance(left, right) < 0.0001f;
+			return Vector2.Distance(x, y) < 0.0001f
+				|| Vector2.Distance(x, -y) < 0.0001f;
 		}
 
-		public int GetHashCode(object obj)
+		public int GetHashCode(Vector2 obj)
 		{
-			return obj?.GetHashCode() ?? 0;
+			return obj.GetHashCode();
 		}
 	}
 }
