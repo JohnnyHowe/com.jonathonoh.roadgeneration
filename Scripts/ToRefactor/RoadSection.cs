@@ -84,11 +84,6 @@ namespace JonathonOH.RoadGeneration
 		protected virtual void OnRemoved() { }
 		#endregion
 
-		protected void OnDrawGizmos()
-		{
-			_DrawEndPoints();
-		}
-
 		private void _SetShape()
 		{
 			_localShapeReal = new RoadSectionShape();
@@ -98,21 +93,6 @@ namespace JonathonOH.RoadGeneration
 			_localShapeReal.End.Scale = Vector3.one;
 			_localShapeReal.SetBoundaryFromMesh(_boundingMesh.sharedMesh, TransformData.FromTransform(_boundingMesh.transform), _shapeRelativeToStart.Start, _infiniteHeight);
 			_localShapeReal.parent = this;
-		}
-
-		private void _DrawEndPoints()
-		{
-			if (startPoint != null) _DrawPoint(startPoint);
-			if (endPoint != null) _DrawPoint(endPoint);
-		}
-
-		protected void _DrawPoint(Transform point)
-		{
-			Vector3 dir = point.rotation * Quaternion.Euler(0, 0, 1).eulerAngles;
-			DrawArrow.ForGizmo(point.position - dir, dir, Color.white);
-			DrawArrow.ForGizmo(point.position, point.rotation * Quaternion.Euler(0, 1, 0).eulerAngles * 0.5f, Color.green);
-			DrawArrow.ForGizmo(point.position, point.rotation * Quaternion.Euler(1, 0, 0).eulerAngles * 0.5f, Color.red);
-			DrawArrow.ForGizmo(point.position, dir, Color.blue);
 		}
 
 		public void AlignStart(TransformData newStartPoint)
