@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace JonathonOH.RoadGeneration.ConvexShape2D
 {
-	public static class ConvexHullUtility
+	internal static class ConvexHullUtility
 	{
 		private class Vector2CloseEnoughEqualityComparer : IEqualityComparer<Vector2>
 		{

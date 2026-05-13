@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace JonathonOH.RoadGeneration.ConvexShape2D
 {
-	public static class ProjectionUtility
+	internal static class ProjectionUtility
 	{
 		public static FloatRange ProjectAll(IReadOnlyList<Vector2> points, Vector2 axis)
 		{

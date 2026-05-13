@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace JonathonOH.RoadGeneration.ConvexShape2D
 {
-	public static class ConvexHullCalculator
+	internal static class ConvexHullCalculator
 	{
 		/// <summary>
 		/// Uses Andrew's monotone chain convex hull algorithm.
