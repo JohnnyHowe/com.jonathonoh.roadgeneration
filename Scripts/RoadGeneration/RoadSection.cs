@@ -116,26 +116,6 @@ namespace JonathonOH.RoadGeneration
 			DrawArrow.ForGizmo(point.position, dir, Color.blue);
 		}
 
-		public void AlignByStartPoint(TransformData newStartPoint)
-		{
-			TransformData currentStart = TransformData.FromTransform(startPoint);
-			Vector3 rotationChange = newStartPoint.Rotation.eulerAngles - currentStart.Rotation.eulerAngles;
-			transform.RotateAround(currentStart.Position, Vector3.up, rotationChange.y);
-			Vector3 positionChange = newStartPoint.Position - currentStart.Position;
-			transform.position += positionChange;
-			ResetShape();
-		}
-
-		public void AlignByEndPoint(TransformData newEndPoint)
-		{
-			TransformData currentEnd = TransformData.FromTransform(endPoint);
-			Vector3 rotationChange = newEndPoint.Rotation.eulerAngles - currentEnd.Rotation.eulerAngles;
-			transform.RotateAround(currentEnd.Position, Vector3.up, rotationChange.y);
-			Vector3 positionChange = newEndPoint.Position - currentEnd.Position;
-			transform.position += positionChange;
-			_SetShape();
-		}
-
 		public RoadSection Clone()
 		{
 			GameObject clone = Instantiate(gameObject);

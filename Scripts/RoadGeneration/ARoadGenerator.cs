@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using JonathonOH.RoadGeneration.ChoiceEngine;
 using JonathonOH.RoadGeneration.Collision;
 using UnityEngine;
 using UnityEngine.Events;
@@ -122,7 +121,7 @@ namespace JonathonOH.RoadGeneration
 
 			RoadSection roadSection = roadSectionPool.ClaimUninstantiatedSection(prototype);
 			roadSection.N = nextN;
-			roadSection.AlignByStartPoint(nextStartPosition);
+			Aligner.AlignByStart(roadSection, nextStartPosition);
 			roadSectionPool.ActivateSection(roadSection);
 			ResetEngine();
 
