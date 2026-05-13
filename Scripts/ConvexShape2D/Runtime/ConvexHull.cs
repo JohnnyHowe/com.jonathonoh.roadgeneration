@@ -14,6 +14,12 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D
 		public ConvexHull(IEnumerable<Vector2> allVertices)
 		{
 			Vertices = ConvexHullCalculator.GetConvexHull(allVertices).ToList();
+
+			if (Vertices.Count == 0)
+			{
+				throw new ArgumentException("Cannot create a convex hull with zero vertices!");
+			}
+
 			Tangents = ConvexHullUtility.GetTangentsFromHull(Vertices).ToList();
 			Normals = ConvexHullUtility.GetNormalsFromTangents(Tangents).ToList();
 		}
