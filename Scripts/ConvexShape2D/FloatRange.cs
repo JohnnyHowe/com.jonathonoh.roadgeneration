@@ -1,6 +1,6 @@
 using System;
 
-namespace Other
+namespace JonathonOH.RoadGeneration.ConvexShape2D
 {
     public class FloatRange : IEquatable<FloatRange>
     {

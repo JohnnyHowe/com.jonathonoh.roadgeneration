@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using JonathonOH.RoadGeneration.ConvexShape2D;
 using Other;
 using UnityEngine;
 
@@ -16,7 +17,7 @@ namespace JonathonOH.RoadGeneration
         public TransformData End;
         public List<Vector3> _boundaryVerticesRelativeToHandle;
         private FloatRange _heightRange;
-        public ConvexShape2D _topologyGlobal;
+        public Shape _topologyGlobal;
         private bool _infiniteHeight;
 		public RoadSection parent;
 
@@ -59,7 +60,7 @@ namespace JonathonOH.RoadGeneration
                 _maxHeight = Mathf.Max(globalVertex.y, _maxHeight);
                 topology.Add(new Vector2(globalVertex.x, globalVertex.z));
             }
-            _topologyGlobal = new ConvexShape2D(topology);
+            _topologyGlobal = new Shape(topology);
             _heightRange = new FloatRange(_minHeight, _maxHeight);
         }
 

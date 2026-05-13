@@ -1,17 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Other;
-using System;
 
-namespace Other
+namespace JonathonOH.RoadGeneration.ConvexShape2D
 {
-    public class ConvexShape2D
+    public class Shape
     {
         private List<Vector2> _vertices;
         private List<Vector2> _axes;
 
-        public ConvexShape2D(List<Vector2> vertices)
+        public Shape(List<Vector2> vertices)
         {
             _vertices = vertices;
             _axes = ConvexHullUtility2D.GetConvexHullAxes(vertices);
@@ -45,7 +43,7 @@ namespace Other
             return Vector2.Dot(axis, point) / axis.magnitude;
         }
 
-        public bool DoesOverlapWith(ConvexShape2D other)
+        public bool DoesOverlapWith(Shape other)
         {
             // for each axis of both objects
             IEnumerable<Vector2> axes = GetAxes().Concat(other.GetAxes()).Distinct().ToList();

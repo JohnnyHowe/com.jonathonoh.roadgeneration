@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Other
+namespace JonathonOH.RoadGeneration.ConvexShape2D
 {
     /// <summary>
     /// Ugly ass code
