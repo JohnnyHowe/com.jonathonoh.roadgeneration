@@ -14,7 +14,7 @@ namespace JonathonOH.RoadGeneration
 			if (roadSection._localShapeReal != null) roadSection._localShapeReal.DebugDraw();
 		}
 
-		static void DrawWireMesh(MeshFilter meshFilter)
+		internal static void DrawWireMesh(MeshFilter meshFilter)
 		{
 			var mesh = meshFilter.sharedMesh;
 			var verts = mesh.vertices;

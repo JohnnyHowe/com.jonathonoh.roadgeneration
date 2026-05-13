@@ -71,15 +71,20 @@ namespace JonathonOH.RoadGeneration
         }
 
         public void DebugDraw()
+		{
+			DebugDraw(Color.red);
+		}
+
+        public void DebugDraw(Color color)
         {
             List<Vector2> topology = _topologyGlobal.GetVertices();
             foreach (Vector2 vertex1 in topology)
             {
-                Debug.DrawLine(new Vector3(vertex1.x, _heightRange.Min, vertex1.y), new Vector3(vertex1.x, _heightRange.Max, vertex1.y), Color.red);
+                Debug.DrawLine(new Vector3(vertex1.x, _heightRange.Min, vertex1.y), new Vector3(vertex1.x, _heightRange.Max, vertex1.y), color);
                 foreach (Vector2 vertex2 in topology)
                 {
-                    Debug.DrawLine(new Vector3(vertex1.x, _heightRange.Min, vertex1.y), new Vector3(vertex2.x, _heightRange.Min, vertex2.y), Color.red);
-                    Debug.DrawLine(new Vector3(vertex1.x, _heightRange.Max, vertex1.y), new Vector3(vertex2.x, _heightRange.Max, vertex2.y), Color.red);
+                    Debug.DrawLine(new Vector3(vertex1.x, _heightRange.Min, vertex1.y), new Vector3(vertex2.x, _heightRange.Min, vertex2.y), color);
+                    Debug.DrawLine(new Vector3(vertex1.x, _heightRange.Max, vertex1.y), new Vector3(vertex2.x, _heightRange.Max, vertex2.y), color);
                 }
             }
         }

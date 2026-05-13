@@ -21,6 +21,7 @@ namespace JonathonOH.RoadGeneration
 		[FormerlySerializedAs("_roadSectionContainer")]
 		[SerializeField] public Transform roadSectionContainer;
 		[SerializeField] protected RoadSectionPool roadSectionPool = new RoadSectionPool();
+		[SerializeField] private bool allowSteppingUntilChoiceFound = true;
 
 		private RoadGeneratorChoiceEngine choiceEngine;
 		private List<RoadSection> presetSections;
@@ -87,6 +88,7 @@ namespace JonathonOH.RoadGeneration
 
 		private void TryPlaceNewSection()
 		{
+			if (choiceEngine.IsSearching && !allowSteppingUntilChoiceFound) return;
 			choiceEngine.StepUntilChoiceIsFound();
 
 			var result = choiceEngine.CurrentChoiceResult;
