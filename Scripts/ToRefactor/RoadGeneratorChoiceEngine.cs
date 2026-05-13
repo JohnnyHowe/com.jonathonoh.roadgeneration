@@ -87,10 +87,6 @@ namespace JonathonOH.RoadGeneration
 			CollisionCheckResult collisionCheckResult = GetCollisionResultForCurrentCandidates();
 			if (collisionCheckResult.HasCollision)
 			{
-				Debug.Log(
-					$"Invalid chain found. Candidate {collisionCheckResult.Request.Subject.gameObject.name} overlaps with {collisionCheckResult.CollidesWith.gameObject.name}\n" +
-					$"Full chain: {string.Join(", ", collisionCheckResult.Request.GetFullChain().Select(section => section.gameObject.name))}"
-				);
 				combinationGenerator.StepInvalid();
 			}
 			else
