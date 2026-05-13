@@ -62,7 +62,10 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D
 
 		public static IEnumerable<Vector2> GetNormalsFromTangents(IEnumerable<Vector2> tangents)
 		{
-			throw new NotImplementedException();
+			foreach (Vector2 tangent in tangents)
+			{
+				yield return new Vector2(-tangent.y, tangent.x);
+			}
 		}
 	}
 }
