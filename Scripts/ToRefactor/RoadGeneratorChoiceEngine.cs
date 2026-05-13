@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using Other;
 using JonathonOH.RoadGeneration.ChoiceEngine;
+using JonathonOH.RoadGeneration.Collision;
 
 namespace JonathonOH.RoadGeneration
 {

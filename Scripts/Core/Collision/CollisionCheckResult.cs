@@ -1,5 +1,5 @@
 
-namespace JonathonOH.RoadGeneration
+namespace JonathonOH.RoadGeneration.Collision
 {
 	public readonly struct CollisionCheckResult
 	{
