@@ -15,9 +15,7 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D
 		{
 			Vertices = ConvexHullCalculator.GetConvexHull(allVertices).ToList();
 			Tangents = ConvexHullUtility.GetTangentsFromHull(Vertices).ToList();
-
-			throw new NotImplementedException();
-			// Tangents = ConvexHullUtility2D.GetConvexHullAxes(vertices);
+			Normals = ConvexHullUtility.GetNormalsFromTangents(Tangents).ToList();
 		}
 
 		public FloatRange GetProjection(Vector2 axis)
