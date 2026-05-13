@@ -1,7 +1,7 @@
 
 using NUnit.Framework;
 
-namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests
+namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests.FloatRangeTests
 {
 	internal class ConstructorTests
 	{

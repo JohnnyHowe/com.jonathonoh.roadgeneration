@@ -2,7 +2,7 @@ using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 
-namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests
+namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests.ConvexHullCalculatorTests
 {
 	internal class TrivialCaseTests
 	{

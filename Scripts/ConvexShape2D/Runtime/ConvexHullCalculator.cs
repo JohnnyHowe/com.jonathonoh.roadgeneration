@@ -16,10 +16,47 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D
 		/// </summary>
 		public static IEnumerable<Vector2> GetConvexHull(IEnumerable<Vector2> unorderedPoints)
 		{
-			throw new NotImplementedException();
+			Vector2[] points = GetPointsSortedLexicographically(unorderedPoints).ToArray();
+
+			if (points.Length <= 2)
+			{
+				return unorderedPoints;
+			}
+
+			List<Vector2> lowerHull = new List<Vector2>();
+			foreach (Vector2 point in points)
+			{
+				while (lowerHull.Count >= 2 &&
+						Cross(lowerHull[lowerHull.Count - 2], lowerHull[lowerHull.Count - 1], point) <= 0f)
+				{
+					lowerHull.RemoveAt(lowerHull.Count - 1);
+				}
+
+				lowerHull.Add(point);
+			}
+
+			List<Vector2> upperHull = new List<Vector2>();
+			for (int i = points.Length - 1; i >= 0; i--)
+			{
+				Vector2 point = points[i];
+				while (upperHull.Count >= 2 &&
+						Cross(upperHull[upperHull.Count - 2], upperHull[upperHull.Count - 1], point) <= 0f)
+				{
+					upperHull.RemoveAt(upperHull.Count - 1);
+				}
+
+				upperHull.Add(point);
+			}
+
+			lowerHull.RemoveAt(lowerHull.Count - 1);
+			upperHull.RemoveAt(upperHull.Count - 1);
+
+			return lowerHull
+				.Concat(upperHull)
+				.Reverse()
+				.ToList();
 		}
 
-		
 		/// <summary>
 		/// Returns the input points sorted lexicographically by ascending x, then ascending y for equal x values.
 		/// </summary>
@@ -42,4 +79,4 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D
 		}
 	}
 }
- 
+
