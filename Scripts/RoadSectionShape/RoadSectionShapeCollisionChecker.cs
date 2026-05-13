@@ -90,8 +90,6 @@ namespace JonathonOH.RoadGeneration.Collision
 
 		private bool AreColliding(RoadSectionShape shape1, RoadSectionShape shape2)
 		{
-			shape1.DebugDraw(Color.white);
-			shape2.DebugDraw(Color.yellow);
 			return shape1.DoesOverlapWith(shape2);
 		}
 	}
