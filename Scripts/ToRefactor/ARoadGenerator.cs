@@ -16,9 +16,9 @@ namespace JonathonOH.RoadGeneration
 		public readonly UnityEvent NoChoiceFound = new UnityEvent();
 		public readonly UnityEvent PoolEmpty = new UnityEvent();
 
-		[SerializeField] private int _choiceEngineCheckDepth = 5;
+		[SerializeField] public int _choiceEngineCheckDepth = 5;
 		[SerializeField] private int stepsPerFrame = 4;
-		[SerializeField] protected List<RoadSection> _roadSectionChoices;
+		[SerializeField] public List<RoadSection> _roadSectionChoices;
 		[FormerlySerializedAs("_roadSectionContainer")]
 		[SerializeField] public Transform roadSectionContainer;
 		[SerializeField] protected RoadSectionPool roadSectionPool = new RoadSectionPool();
