@@ -6,6 +6,7 @@ namespace JonathonOH.RoadGeneration.Collision
 {
 	public class RoadSectionShapeCollisionChecker : ICollisionChecker
 	{
+		private const bool debugDraw = false;
 		public CollisionCheckResult CheckOneAgainstMany(CollisionCheckRequest request)
 		{
 			List<RoadSectionShape> shapesToCheckAgainstAligned = GetShapesAligned(request.AlreadyPlaced, request.Candidates).ToList();
@@ -49,11 +50,17 @@ namespace JonathonOH.RoadGeneration.Collision
 		/// </summary>
 		private int GetIndexOfShapeWithOverlap(RoadSectionShape subject, List<RoadSectionShape> toCheckAgainst)
 		{
+			if (debugDraw) subject.DebugDraw(Color.red);
 			for (int i = 0; i < toCheckAgainst.Count(); i++)
 			{
 				if (AreColliding(subject, toCheckAgainst[i]))
 				{
+					if (debugDraw) toCheckAgainst[i].DebugDraw(Color.red);
 					return i;
+				}
+				else if (debugDraw)
+				{
+					toCheckAgainst[i].DebugDraw(Color.white);
 				}
 			}
 			return -1;
