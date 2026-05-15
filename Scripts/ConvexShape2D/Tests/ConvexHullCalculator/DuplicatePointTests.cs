@@ -36,6 +36,34 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests.ConvexHullCalculatorTest
 		}
 
 		[Test]
+		public void NearlyDuplicateCorners_DoNotCreateDuplicateHullVertices()
+		{
+			float floatingPointError = Mathf.Epsilon;
+			Vector2[] points =
+			{
+				new Vector2(0f, 0f),
+				new Vector2(2f, 0f),
+				new Vector2(2f, 1f),
+				new Vector2(0f, 1f),
+				new Vector2(0f + floatingPointError, 0f + floatingPointError),
+				new Vector2(2f - floatingPointError, 0f + floatingPointError),
+				new Vector2(2f - floatingPointError, 1f - floatingPointError),
+				new Vector2(0f + floatingPointError, 1f - floatingPointError),
+				new Vector2(1f, 0.5f)
+			};
+
+			Vector2[] result = ConvexHullCalculator.GetConvexHull(points).ToArray();
+
+			Assert.That(result, Is.EqualTo(new[]
+			{
+				new Vector2(0f, 1f),
+				new Vector2(2f, 1f),
+				new Vector2(2f, 0f),
+				new Vector2(0f, 0f)
+			}));
+		}
+
+		[Test]
 		public void ThreeIdenticalPoints_ReturnsTwoCopiesOfThatPoint()
 		{
 			Vector2 point = new Vector2(2f, 3f);
