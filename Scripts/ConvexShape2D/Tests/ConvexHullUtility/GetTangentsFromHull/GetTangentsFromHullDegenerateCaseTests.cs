@@ -27,7 +27,7 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests.ConvexHullUtilityTests
 			};
 
 			Vector2[] result = ConvexHullUtility.GetTangentsFromHull(hullClockwise).ToArray();
-			Assert.That(result, Is.EqualTo(expected).Using(Vector2EqualityComparer.Instance));
+			Assert.That(result, Is.EqualTo(expected).Using(TangentComparer.Instance));
 		}
 
 		[Test]
@@ -49,7 +49,7 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests.ConvexHullUtilityTests
 			};
 
 			Vector2[] result = ConvexHullUtility.GetTangentsFromHull(hullClockwise).ToArray();
-			Assert.That(result, Is.EqualTo(expected).Using(Vector2EqualityComparer.Instance));
+			Assert.That(result, Is.EqualTo(expected).Using(TangentComparer.Instance));
 		}
 
 
@@ -71,7 +71,7 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests.ConvexHullUtilityTests
 			};
 
 			Vector2[] result = ConvexHullUtility.GetTangentsFromHull(hullClockwise).ToArray();
-			Assert.That(result, Is.EqualTo(expected).Using(Vector2EqualityComparer.Instance));
+			Assert.That(result, Is.EquivalentTo(expected).Using(TangentComparer.Instance));
 		}
 	}
 }

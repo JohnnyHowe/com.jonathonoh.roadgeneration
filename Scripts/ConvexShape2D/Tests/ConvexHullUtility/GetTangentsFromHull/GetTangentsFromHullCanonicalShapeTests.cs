@@ -25,7 +25,7 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests.ConvexHullUtilityTests
 				new Vector2(1f, -1f).normalized,
 				new Vector2(-2f, 0f).normalized,
 				new Vector2(1f, 1f).normalized
-			}).Using(Vector2EqualityComparer.Instance));
+			}).Using(TangentComparer.Instance));
 		}
 
 		[Test]
@@ -45,7 +45,7 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests.ConvexHullUtilityTests
 			{
 				Vector2.right,
 				Vector2.down
-			}).Using(Vector2EqualityComparer.Instance));
+			}).Using(TangentComparer.Instance));
 		}
 	}
 }

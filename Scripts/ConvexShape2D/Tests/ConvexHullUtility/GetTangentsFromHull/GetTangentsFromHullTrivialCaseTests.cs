@@ -40,7 +40,7 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D.Tests.ConvexHullUtilityTests
 			Assert.That(result, Is.EqualTo(new[]
 			{
 				new Vector2(3f, 4f).normalized
-			}).Using(Vector2EqualityComparer.Instance));
+			}).Using(TangentComparer.Instance));
 		}
 	}
 }

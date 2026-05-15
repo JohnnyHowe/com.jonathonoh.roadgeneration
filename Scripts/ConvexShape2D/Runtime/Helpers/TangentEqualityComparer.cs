@@ -10,12 +10,18 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D
 
 		public bool Equals(Vector2 v1, Vector2 v2)
 		{
-			return (v1 - v2).SqrMagnitude() < Mathf.Epsilon || (v1 + v2).SqrMagnitude() < Mathf.Epsilon;
+			return AreVectorsSimilarEnough(v1, v2)
+				|| AreVectorsSimilarEnough(v1, -v2);
+		}
+
+		private static bool AreVectorsSimilarEnough(Vector2 v1, Vector2 v2)
+		{
+			return (v1 - v2).normalized == Vector2.zero;
 		}
 
 		public int GetHashCode(Vector2 vector)
 		{
-			return vector.GetHashCode();
+			return 0;
 		}
 	}
 }

@@ -11,7 +11,12 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D
 			List<Vector2> tangents = new List<Vector2>();
 			foreach ((Vector2, Vector2) edge in GetEdges(convexHullClockwise))
 			{
-				tangents.Add((edge.Item2 - edge.Item1).normalized);
+				Vector2 tangent = (edge.Item2 - edge.Item1).normalized;
+				// If the edge points are too close, the normalized vector is zero, skip this
+				if (tangent != Vector2.zero)
+				{
+					tangents.Add(tangent);
+				}
 			}
 			return tangents.Distinct(TangentComparer.Instance).ToList();
 		}
@@ -23,10 +28,7 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D
 			{
 				Vector2 current = convexHullClockwise[i];
 				Vector2 next = convexHullClockwise[(i + 1) % nPoints];
-				if ((current - next).SqrMagnitude() > Mathf.Epsilon)
-				{
-					yield return (current, next);
-				}
+				yield return (current, next);
 			}
 		}
 
