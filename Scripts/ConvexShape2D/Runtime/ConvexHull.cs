@@ -46,5 +46,28 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D
 			FloatRange otherProjectionRange = ProjectionUtility.ProjectAll(other.Vertices, axis);
 			return thisProjectionRange.OverlapsWith(otherProjectionRange);
 		}
+
+		public override string ToString()
+		{
+			Rect bounds = GetBoundingRect();
+			return $"ConvexHull<Center={bounds.center}, size={bounds.size}>";
+		}
+
+		public Rect GetBoundingRect()
+		{
+			if (Vertices.Count == 0)
+				return new Rect();
+
+			Vector2 min = Vertices[0];
+			Vector2 max = Vertices[0];
+
+			for (int i = 1; i < Vertices.Count; i++)
+			{
+				min = Vector2.Min(min, Vertices[i]);
+				max = Vector2.Max(max, Vertices[i]);
+			}
+
+			return Rect.MinMaxRect(min.x, min.y, max.x, max.y);
+		}
 	}
 }
