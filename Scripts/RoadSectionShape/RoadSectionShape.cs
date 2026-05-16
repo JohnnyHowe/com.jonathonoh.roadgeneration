@@ -16,7 +16,6 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 		private FloatRange _heightRange;
 		public ConvexHull _topologyGlobal;
 		private bool _infiniteHeight;
-		public RoadSection parent;
 
 		public void SetBoundaryFromMesh(Mesh mesh, TransformData meshGlobalTransform, TransformData handle, bool infiniteHeight = false)
 		{
