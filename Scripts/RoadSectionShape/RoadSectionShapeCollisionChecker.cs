@@ -8,10 +8,17 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 	public class RoadSectionShapeCollisionChecker : ICollisionChecker
 	{
 		private const bool debugDraw = true;
+		private ShapeCache shapeCache;
+
+		public RoadSectionShapeCollisionChecker()
+		{
+			shapeCache = new ShapeCache();
+		}
+
 		public CollisionCheckResult CheckOneAgainstMany(CollisionCheckRequest request)
 		{
 			List<RoadSectionShape> shapesToCheckAgainstAligned = GetShapesAligned(request.AlreadyPlaced, request.Candidates).ToList();
-			RoadSectionShape subjectShapeAligned = GetShapeAligned(shapesToCheckAgainstAligned.Last(), request.Subject);
+			RoadSectionShape subjectShapeAligned = ShapeAligner.GetAligned(shapesToCheckAgainstAligned.Last().End, request.Subject.GetShape());
 
 			int shapeCausingCollisionIndex = GetIndexOfShapeWithOverlap(subjectShapeAligned, shapesToCheckAgainstAligned);
 
@@ -69,31 +76,10 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 
 		private IEnumerable<RoadSectionShape> GetShapesAligned(IEnumerable<RoadSection> alreadyPlaced, IEnumerable<RoadSection> candidates)
 		{
-			TransformData previousSectionEnd = TransformData.Default();
-
-			foreach (RoadSection section in alreadyPlaced)
-			{
-				RoadSectionShape sectionShape = section.GetShape();
-				previousSectionEnd = sectionShape.End;
-				yield return sectionShape;
-			}
-
-			foreach (RoadSection section in candidates)
-			{
-				RoadSectionShape sectionShape = GetShapeAligned(previousSectionEnd, section);
-				previousSectionEnd = sectionShape.End;
-				yield return sectionShape;
-			}
-		}
-
-		private RoadSectionShape GetShapeAligned(RoadSectionShape previous, RoadSection toAlign)
-		{
-			return GetShapeAligned(previous.End, toAlign);
-		}
-
-		private RoadSectionShape GetShapeAligned(TransformData start, RoadSection toAlign)
-		{
-			return toAlign.GetShape().GetTranslatedCopy(start);
+			return ShapeAligner.GetAllAligned(
+				alreadyPlaced.Select(section => section.GetShape()).ToList(),
+				candidates.Select(section => section.GetShape())
+			);
 		}
 
 		private bool AreColliding(RoadSectionShape shape1, RoadSectionShape shape2)

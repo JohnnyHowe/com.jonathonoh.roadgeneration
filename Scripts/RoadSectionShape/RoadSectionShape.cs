@@ -7,6 +7,7 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 	/// <summary>
 	/// Describes the shape of a road section
 	/// Contains logic for bounding areas, and start and end position alignment.
+	/// TODO make readonly
 	/// </summary>
 	public class RoadSectionShape
 	{
@@ -31,13 +32,13 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 			RecalculateCollisionBoundaries();
 		}
 
-		public RoadSectionShape GetTranslatedCopy(TransformData newHandlePosition)
+		public RoadSectionShape GetTranslatedCopy(TransformData newStart)
 		{
 			RoadSectionShape newShape = new RoadSectionShape();
-			newShape.Start = newHandlePosition;
+			newShape.Start = newStart;
 			newShape._boundaryVerticesRelativeToHandle = _boundaryVerticesRelativeToHandle;
-			newShape.Start = newHandlePosition;
-			newShape.End = newHandlePosition.TransformPoint(Start.InverseTransformPoint(End));
+			newShape.Start = newStart;
+			newShape.End = newStart.TransformPoint(Start.InverseTransformPoint(End));
 			newShape._infiniteHeight = _infiniteHeight;
 
 			newShape.RecalculateCollisionBoundaries();

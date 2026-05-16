@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 
 namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 {
-	[Serializable]
 	internal class ShapeCache
 	{
 		private Dictionary<string, RoadSectionShape> cache;
@@ -15,7 +13,15 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 
 		public RoadSectionShape GetShape(IRoadSectionShapeCollisionCheckable section)
 		{
-			throw new NotImplementedException();
+			string id = section.GetId();
+
+			if (!cache.ContainsKey(id))
+			{
+				cache[id] = section.GetRoadSectionShape();
+				// Add temp debug log here to ensure we're only getting the bits we need
+			}
+
+			return cache[id];
 		}
 	}
 }
