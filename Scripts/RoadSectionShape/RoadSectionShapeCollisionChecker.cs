@@ -7,7 +7,7 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 {
 	public class RoadSectionShapeCollisionChecker : ICollisionChecker
 	{
-		private const bool debugDraw = false;
+		private const bool debugDraw = true;
 		public CollisionCheckResult CheckOneAgainstMany(CollisionCheckRequest request)
 		{
 			List<RoadSectionShape> shapesToCheckAgainstAligned = GetShapesAligned(request.AlreadyPlaced, request.Candidates).ToList();
