@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
+using JonathonOH.RoadGeneration.Collision;
 using UnityEngine;
 
-namespace JonathonOH.RoadGeneration.Collision
+namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 {
 	public class RoadSectionShapeCollisionChecker : ICollisionChecker
 	{

@@ -1,3 +1,4 @@
+using JonathonOH.RoadGeneration.RoadSectionShapeCollision;
 using Other;
 using UnityEngine;
 using UnityEngine.Events;
@@ -9,7 +10,7 @@ namespace JonathonOH.RoadGeneration
 	/// Lifecycle
 	/// 
 	/// </summary>
-	public class RoadSection : MonoBehaviour, IRoadSection
+	public class RoadSection : MonoBehaviour
 	{
 		[SerializeField] public UnityEvent Created = new UnityEvent();
 		[SerializeField] public UnityEvent Claimed = new UnityEvent();

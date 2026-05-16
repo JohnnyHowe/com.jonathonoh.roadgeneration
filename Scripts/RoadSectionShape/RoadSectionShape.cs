@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using JonathonOH.RoadGeneration.ConvexShape2D;
 using UnityEngine;
 
-namespace JonathonOH.RoadGeneration
+namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 {
 	/// <summary>
 	/// Describes the shape of a road section
