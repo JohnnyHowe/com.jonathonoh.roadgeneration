@@ -17,7 +17,7 @@ namespace JonathonOH.Spatial
 		/// </summary>
 		public static Pose TransformPose(this Pose pose, Pose localPose)
 		{
-			throw new NotImplementedException();
+			return localPose.GetTransformedBy(pose);
 		}
 
 		/// <summary>
