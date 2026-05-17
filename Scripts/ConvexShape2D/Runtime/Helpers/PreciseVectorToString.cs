@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace JonathonOH.RoadGeneration.ConvexShape2D
 {
-	public static class PreciseVectorToString
+	internal static class PreciseVectorToString
 	{
 		public static string ToStringPrecise(this Vector2 v)
 		{
