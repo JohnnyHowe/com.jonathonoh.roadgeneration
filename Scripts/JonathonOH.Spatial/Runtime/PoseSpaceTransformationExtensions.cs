@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace JonathonOH.Spatial
@@ -29,16 +28,10 @@ namespace JonathonOH.Spatial
 		/// </summary>
 		public static Pose InverseTransformPose(this Pose pose, Pose worldPose)
 		{
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
-		/// Mirrors Transform.TransformPoint.
-		/// https://docs.unity3d.com/ScriptReference/Transform.TransformPoint.html
-		/// </summary>
-		public static Vector3 TransformPoint(this Pose pose, Vector3 point)
-		{
-			throw new NotImplementedException();
+			Quaternion inverseRotation = Quaternion.Inverse(pose.rotation);
+			return new Pose(
+				inverseRotation * (worldPose.position - pose.position),
+				inverseRotation * worldPose.rotation);
 		}
 	}
 }
