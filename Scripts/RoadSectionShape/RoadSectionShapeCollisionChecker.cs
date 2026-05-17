@@ -57,35 +57,44 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 			return GetIndexOfAlignedShapeWithCollision(shapesAligned, subjectShapeAligned);
 		}
 
+		private int GetIndexOfAlignedShapeWithCollision(IReadOnlyList<RoadSectionShape> shapesAligned, RoadSectionShape subjectShapeAligned)
+		{
+			List<int> collisionCheckOrder = CollisionCheckOrderer.GetCollisionCheckOrder(shapesAligned.Count).ToList();
+			int indexOfShapeWithCollision = GetIndexOfAlignedShapeWithCollision(shapesAligned, subjectShapeAligned, collisionCheckOrder);
+
+			if (debugDraw)
+			{
+				subjectShapeAligned.DebugDraw(subjectColor);
+
+				bool hasPassedShapeWithCollision = false;
+				foreach (int checkIndex in collisionCheckOrder)
+				{
+					if (indexOfShapeWithCollision == checkIndex)
+					{
+						hasPassedShapeWithCollision = true;
+					}
+					Color color = indexOfShapeWithCollision == checkIndex ? collisionColor : hasPassedShapeWithCollision ? uncheckedColor : checkedColor;
+					shapesAligned[checkIndex].DebugDraw(color);
+				}
+			}
+
+			return indexOfShapeWithCollision;
+		}
+
 		/// <summary>
 		/// Returns -1 if no collision.
 		/// </summary>
-		private int GetIndexOfAlignedShapeWithCollision(IReadOnlyList<RoadSectionShape> shapesAligned, RoadSectionShape subjectShapeAligned)
+		private int GetIndexOfAlignedShapeWithCollision(IReadOnlyList<RoadSectionShape> shapesAligned, RoadSectionShape subjectShapeAligned, IEnumerable<int> checkOrder)
 		{
-			if (debugDraw) subjectShapeAligned.DebugDraw(subjectColor);
-
-			// Reverse search beacuse we're more likely to overlap with something recent.
-			for (int i = shapesAligned.Count - 1; i >= 0; i--)
+			foreach (int shapeIndexToCheck in checkOrder)
 			{
-				RoadSectionShape shapeToCheckAgainst = shapesAligned[i];
+				RoadSectionShape shapeToCheckAgainst = shapesAligned[shapeIndexToCheck];
 				if (AreColliding(shapeToCheckAgainst, subjectShapeAligned))
 				{
-					if (debugDraw)
-					{
-						shapesAligned[i].DebugDraw(collisionColor);
-						for (int j = i - 1; j >= 0; j--)
-						{
-							shapesAligned[j].DebugDraw(uncheckedColor);
-						}
-					}
-
-					return i;
-				}
-				else
-				{
-					if (debugDraw) shapesAligned[i].DebugDraw(checkedColor);
+					return shapeIndexToCheck;
 				}
 			}
+
 			return -1;
 		}
 
