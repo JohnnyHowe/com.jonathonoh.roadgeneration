@@ -29,13 +29,13 @@ namespace JonathonOH.RoadGeneration
 		[SerializeField] private bool _infiniteHeight = false;
 		[SerializeField] public bool autoFlip = true;
 
-		public Pose Entry
+		public TransformData Entry
 		{
-			get => Pose.FromTransform(entry);
+			get => TransformData.FromTransform(entry);
 		}
-		public Pose Exit
+		public TransformData Exit
 		{
-			get => Pose.FromTransform(exit);
+			get => TransformData.FromTransform(exit);
 		}
 
 		public bool IsFlipped
@@ -90,11 +90,11 @@ namespace JonathonOH.RoadGeneration
 		// private void _SetShape()
 		// {
 		// 	_localShapeReal = new RoadSectionShape();
-		// 	_localShapeReal.Start = Pose.FromTransform(startPoint);
-		// 	_localShapeReal.End = Pose.FromTransform(endPoint);
+		// 	_localShapeReal.Start = TransformData.FromTransform(startPoint);
+		// 	_localShapeReal.End = TransformData.FromTransform(endPoint);
 		// 	_localShapeReal.Start.Scale = Vector3.one;
 		// 	_localShapeReal.End.Scale = Vector3.one;
-		// 	_localShapeReal.SetBoundaryFromMesh(_boundingMesh.sharedMesh, Pose.FromTransform(_boundingMesh.transform), _shapeRelativeToStart.Start, _infiniteHeight);
+		// 	_localShapeReal.SetBoundaryFromMesh(_boundingMesh.sharedMesh, TransformData.FromTransform(_boundingMesh.transform), _shapeRelativeToStart.Start, _infiniteHeight);
 		// }
 
 		public Mesh GetBoundaryInEntrySpace()
@@ -105,7 +105,7 @@ namespace JonathonOH.RoadGeneration
 			}
 
 			Mesh mesh = Instantiate(_boundingMesh.sharedMesh);
-			Pose entryTransform = Entry;
+			TransformData entryTransform = Entry;
 			Matrix4x4 entryWorldToLocal = Matrix4x4.TRS(entryTransform.Position, entryTransform.Rotation, Vector3.one).inverse;
 			Matrix4x4 boundingMeshLocalToEntry = entryWorldToLocal * _boundingMesh.transform.localToWorldMatrix;
 			Vector3[] vertices = mesh.vertices;
@@ -120,9 +120,9 @@ namespace JonathonOH.RoadGeneration
 			return mesh;
 		}
 
-		public void AlignStart(Pose newStartPoint)
+		public void AlignStart(TransformData newStartPoint)
 		{
-			Pose currentStart = Pose.FromTransform(entry);
+			TransformData currentStart = TransformData.FromTransform(entry);
 			Vector3 rotationChange = newStartPoint.Rotation.eulerAngles - currentStart.Rotation.eulerAngles;
 			transform.RotateAround(currentStart.Position, Vector3.up, rotationChange.y);
 			Vector3 positionChange = newStartPoint.Position - currentStart.Position;
@@ -130,9 +130,9 @@ namespace JonathonOH.RoadGeneration
 			// ResetShape();
 		}
 
-		public void AlignEnd(Pose newEndPoint)
+		public void AlignEnd(TransformData newEndPoint)
 		{
-			Pose currentEnd = Pose.FromTransform(exit);
+			TransformData currentEnd = TransformData.FromTransform(exit);
 			Vector3 rotationChange = newEndPoint.Rotation.eulerAngles - currentEnd.Rotation.eulerAngles;
 			transform.RotateAround(currentEnd.Position, Vector3.up, rotationChange.y);
 			Vector3 positionChange = newEndPoint.Position - currentEnd.Position;

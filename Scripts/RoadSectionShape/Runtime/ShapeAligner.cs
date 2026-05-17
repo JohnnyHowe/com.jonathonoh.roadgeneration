@@ -9,7 +9,7 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 	/// </summary>
 	public static class ShapeAligner
 	{
-		public static readonly Pose DefaultStart = new Pose(Vector3.zero, Quaternion.identity);
+		public static readonly TransformData DefaultStart = new TransformData(Vector3.zero, Quaternion.identity, Vector3.one);
 
 		/// <summary>
 		/// Returns a new enumerable of all the shape parameters aligned in one chain.
@@ -18,12 +18,12 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 		/// </summary>
 		public static IEnumerable<RoadSectionShape> GetAligned(IReadOnlyList<RoadSectionShape> fixedShapes, IEnumerable<RoadSectionShape> shapesToAlign)
 		{
-			Pose alignmentStart = GetLastShapeEndOrDefault(fixedShapes);
+			TransformData alignmentStart = GetLastShapeEndOrDefault(fixedShapes);
 			IEnumerable<RoadSectionShape> aligned = GetAligned(alignmentStart, shapesToAlign);
 			return fixedShapes.Concat(aligned);
 		}
 
-		private static Pose GetLastShapeEndOrDefault(IReadOnlyList<RoadSectionShape> fixedShapes)
+		private static TransformData GetLastShapeEndOrDefault(IReadOnlyList<RoadSectionShape> fixedShapes)
 		{
 			if (fixedShapes.Count > 0)
 			{
@@ -43,9 +43,9 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 		/// <summary>
 		/// Returns a new enumerable of all the shape parameters aligned in one chain.
 		/// </summary>
-		public static IEnumerable<RoadSectionShape> GetAligned(Pose start, IEnumerable<RoadSectionShape> shapesToAlign)
+		public static IEnumerable<RoadSectionShape> GetAligned(TransformData start, IEnumerable<RoadSectionShape> shapesToAlign)
 		{
-			Pose nextStart = start;
+			TransformData nextStart = start;
 			foreach (RoadSectionShape shapeToAlign in shapesToAlign)
 			{
 				RoadSectionShape aligned = GetAligned(nextStart, shapeToAlign);
@@ -57,7 +57,7 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 		/// <summary>
 		/// Returns an aligned RoadSectionShape.
 		/// </summary>
-		public static RoadSectionShape GetAligned(Pose start, RoadSectionShape shapeToMove)
+		public static RoadSectionShape GetAligned(TransformData start, RoadSectionShape shapeToMove)
 		{
 			return shapeToMove.GetTranslatedCopy(start);
 		}

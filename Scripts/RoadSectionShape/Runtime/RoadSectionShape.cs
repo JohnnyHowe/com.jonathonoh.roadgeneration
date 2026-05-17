@@ -11,14 +11,14 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 	/// </summary>
 	public class RoadSectionShape
 	{
-		public Pose Start;
-		public Pose End;
+		public TransformData Start;
+		public TransformData End;
 		public List<Vector3> _boundaryVerticesRelativeToHandle;
 		private FloatRange _heightRange;
 		public ConvexHull _topologyGlobal;
 		private bool _infiniteHeight;
 
-		public void SetBoundaryFromMesh(Mesh mesh, Pose meshGlobalTransform, Pose handle, bool infiniteHeight = false)
+		public void SetBoundaryFromMesh(Mesh mesh, TransformData meshGlobalTransform, TransformData handle, bool infiniteHeight = false)
 		{
 			_infiniteHeight = infiniteHeight;
 			_boundaryVerticesRelativeToHandle = new List<Vector3>();
@@ -32,7 +32,7 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 			RecalculateCollisionBoundaries();
 		}
 
-		public RoadSectionShape GetTranslatedCopy(Pose newStart)
+		public RoadSectionShape GetTranslatedCopy(TransformData newStart)
 		{
 			RoadSectionShape newShape = new RoadSectionShape();
 			newShape.Start = newStart;
