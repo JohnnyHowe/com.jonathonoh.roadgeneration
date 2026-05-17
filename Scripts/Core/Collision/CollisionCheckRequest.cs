@@ -10,6 +10,11 @@ namespace JonathonOH.RoadGeneration.Collision
 		public readonly IReadOnlyList<RoadSection> AlreadyPlaced { get; init; }
 		public readonly IReadOnlyList<RoadSection> Candidates { get; init; }
 
+		public IReadOnlyList<RoadSection> ChainToCheckAgainst
+		{
+			get => AlreadyPlaced.Concat(Candidates).ToList();
+		}
+
 		public override string ToString()
 		{
 			string contents = string.Join(", ", new string[]

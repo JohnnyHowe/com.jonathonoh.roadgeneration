@@ -1,4 +1,3 @@
-
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -17,10 +16,10 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 		/// If fixedShapes is empty, the chain Start is the origin (Position=Vector3.zero, Rotation=Quaternion.Identity).
 		/// Order is order of inputs: [**fixedShapes, **shapesToAlign].
 		/// </summary>
-		public static IEnumerable<RoadSectionShape> GetAllAligned(IReadOnlyList<RoadSectionShape> fixedShapes, IEnumerable<RoadSectionShape> shapesToAlign)
+		public static IEnumerable<RoadSectionShape> GetAligned(IReadOnlyList<RoadSectionShape> fixedShapes, IEnumerable<RoadSectionShape> shapesToAlign)
 		{
 			TransformData alignmentStart = GetLastShapeEndOrDefault(fixedShapes);
-			IEnumerable<RoadSectionShape> aligned = GetAllAligned(alignmentStart, shapesToAlign);
+			IEnumerable<RoadSectionShape> aligned = GetAligned(alignmentStart, shapesToAlign);
 			return fixedShapes.Concat(aligned);
 		}
 
@@ -36,7 +35,15 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 		/// <summary>
 		/// Returns a new enumerable of all the shape parameters aligned in one chain.
 		/// </summary>
-		public static IEnumerable<RoadSectionShape> GetAllAligned(TransformData start, IEnumerable<RoadSectionShape> shapesToAlign)
+		public static IEnumerable<RoadSectionShape> GetAligned(IEnumerable<RoadSectionShape> shapesToAlign)
+		{
+			return GetAligned(defaultStart, shapesToAlign);
+		}
+	
+		/// <summary>
+		/// Returns a new enumerable of all the shape parameters aligned in one chain.
+		/// </summary>
+		public static IEnumerable<RoadSectionShape> GetAligned(TransformData start, IEnumerable<RoadSectionShape> shapesToAlign)
 		{
 			TransformData nextStart = start;
 			foreach (RoadSectionShape shapeToAlign in shapesToAlign)

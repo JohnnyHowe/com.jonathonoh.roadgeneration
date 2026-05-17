@@ -8,6 +8,10 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 	public class RoadSectionShapeCollisionChecker : ICollisionChecker
 	{
 		private const bool debugDraw = true;
+		private readonly Color collisionColor = Color.red;
+		private readonly Color subjectColor = Color.yellow;
+		private readonly Color defaultColor = Color.white;
+
 		private ShapeCache shapeCache;
 
 		public RoadSectionShapeCollisionChecker()
@@ -17,69 +21,69 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 
 		public CollisionCheckResult CheckOneAgainstMany(CollisionCheckRequest request)
 		{
-			List<RoadSectionShape> shapesToCheckAgainstAligned = GetShapesAligned(request.AlreadyPlaced, request.Candidates).ToList();
-			RoadSectionShape subjectShapeAligned = ShapeAligner.GetAligned(shapesToCheckAgainstAligned.Last().End, request.Subject.GetShape());
-
-			int shapeCausingCollisionIndex = GetIndexOfShapeWithOverlap(subjectShapeAligned, shapesToCheckAgainstAligned);
-
-			// No collision
-			if (shapeCausingCollisionIndex == -1)
-			{
-				return new CollisionCheckResult()
-				{
-					Request = request,
-					HasCollision = false,
-					CollidesWith = null
-				};
-			}
-
-			RoadSection collidingSection;
-
-			// Collides with already placed section
-			if (shapeCausingCollisionIndex < request.AlreadyPlaced.Count)
-			{
-				collidingSection = request.AlreadyPlaced[shapeCausingCollisionIndex];
-			}
-			else
-			{
-				collidingSection = request.Candidates[shapeCausingCollisionIndex - request.AlreadyPlaced.Count];
-			}
+			RoadSection collidingSection = GetCollidingSection(request);
 
 			return new CollisionCheckResult()
 			{
 				Request = request,
-				HasCollision = true,
+				HasCollision = collidingSection != null,
 				CollidesWith = collidingSection
 			};
 		}
 
 		/// <summary>
-		/// -1 if no overlap
+		/// Returns null if no colliding section
 		/// </summary>
-		private int GetIndexOfShapeWithOverlap(RoadSectionShape subject, List<RoadSectionShape> toCheckAgainst)
+		private RoadSection GetCollidingSection(CollisionCheckRequest request)
 		{
-			if (debugDraw) subject.DebugDraw(Color.red);
-			for (int i = 0; i < toCheckAgainst.Count(); i++)
+			IReadOnlyList<RoadSection> sections = request.GetFullChain().ToList();
+
+			if (sections.Count == 0)
 			{
-				if (AreColliding(subject, toCheckAgainst[i]))
+				return null;
+			}
+
+			IReadOnlyList<RoadSectionShape> shapes = shapeCache.GetShapes(sections).ToList();
+			// IReadOnlyList<RoadSectionShape> shapesAligned = ShapeAligner.GetAligned(shapes).ToList();
+			IReadOnlyList<RoadSectionShape> shapesAligned = ShapeAligner.GetAligned(shapes[0].Start, shapes).ToList();
+
+			RoadSectionShape subjectShape = shapeCache.GetShape(request.Subject);
+			RoadSectionShape subjectShapeAligned = ShapeAligner.GetAligned(shapesAligned.Last().End, subjectShape);
+
+			int overlappingShapeIndex = GetIndexOfSectionWithCollision(shapesAligned, subjectShapeAligned);
+
+			if (overlappingShapeIndex == -1)
+			{
+				return null;
+			}
+			else
+			{
+				return sections[overlappingShapeIndex];
+			}
+		}
+
+		/// <summary>
+		/// Returns -1 if no collision.
+		/// </summary>
+		private int GetIndexOfSectionWithCollision(IReadOnlyList<RoadSectionShape> shapesAligned, RoadSectionShape subjectShapeAligned)
+		{
+			if (debugDraw) subjectShapeAligned.DebugDraw(subjectColor);
+
+			// Reverse search beacuse we're more likely to overlap with something recent.
+			for (int i = shapesAligned.Count - 1; i >= 0; i--)
+			{
+				RoadSectionShape shapeToCheckAgainst = shapesAligned[i];
+				if (AreColliding(shapeToCheckAgainst, subjectShapeAligned))
 				{
-					if (debugDraw) toCheckAgainst[i].DebugDraw(Color.red);
+					if (debugDraw) shapesAligned[i].DebugDraw(collisionColor);
 					return i;
 				}
-				else if (debugDraw)
+				else
 				{
-					toCheckAgainst[i].DebugDraw(Color.white);
+					if (debugDraw) shapesAligned[i].DebugDraw(defaultColor);
 				}
 			}
 			return -1;
-		}
-
-		private IEnumerable<RoadSectionShape> GetShapesAligned(IEnumerable<RoadSection> alreadyPlaced, IEnumerable<RoadSection> candidates)
-		{
-			return ShapeAligner.GetAllAligned(
-				alreadyPlaced.Select(section => section.GetShape()).ToList(),
-				candidates.Select(section => section.GetShape())
-			);
 		}
 
 		private bool AreColliding(RoadSectionShape shape1, RoadSectionShape shape2)

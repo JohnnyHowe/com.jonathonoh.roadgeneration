@@ -11,9 +11,33 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 			cache = new Dictionary<string, RoadSectionShape>();
 		}
 
+		public Dictionary<IRoadSectionShapeCollisionCheckable, RoadSectionShape> GetShapesMapped(IEnumerable<IRoadSectionShapeCollisionCheckable> sections)
+		{
+			var mapping = new Dictionary<IRoadSectionShapeCollisionCheckable, RoadSectionShape>();
+			foreach (IRoadSectionShapeCollisionCheckable section in sections)
+			{
+				mapping[section] = GetShape(section);
+			}
+			return mapping;
+		}
+
+		public IEnumerable<RoadSectionShape> GetShapes(IEnumerable<IRoadSectionShapeCollisionCheckable> sections)
+		{
+			foreach (IRoadSectionShapeCollisionCheckable section in sections)
+			{
+				yield return GetShape(section);
+			}
+		}
+
 		public RoadSectionShape GetShape(IRoadSectionShapeCollisionCheckable section)
 		{
 			string id = section.GetId();
+
+			// If id was not set for whatever reason.
+			if (id.Trim() == "")
+			{
+				return section.GetRoadSectionShape();
+			}
 
 			if (!cache.ContainsKey(id))
 			{
