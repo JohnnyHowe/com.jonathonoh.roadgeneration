@@ -1,3 +1,4 @@
+using JonathonOH.Spatial;
 using UnityEngine;
 
 namespace JonathonOH.RoadGeneration.Core

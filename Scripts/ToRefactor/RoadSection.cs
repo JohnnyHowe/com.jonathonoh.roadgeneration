@@ -1,4 +1,5 @@
 using JonathonOH.RoadGeneration.Core;
+using JonathonOH.Spatial;
 using Other;
 using UnityEngine;
 using UnityEngine.Events;

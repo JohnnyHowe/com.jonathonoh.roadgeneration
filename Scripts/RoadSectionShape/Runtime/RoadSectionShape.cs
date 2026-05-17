@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using JonathonOH.RoadGeneration.ConvexShape2D;
+using JonathonOH.Spatial;
 using UnityEngine;
 
 namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision

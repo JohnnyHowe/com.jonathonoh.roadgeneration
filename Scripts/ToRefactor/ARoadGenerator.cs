@@ -3,6 +3,7 @@ using System.Linq;
 using JonathonOH.RoadGeneration.ChoiceEngine;
 using JonathonOH.RoadGeneration.Core;
 using JonathonOH.RoadGeneration.RoadSectionShapeCollision;
+using JonathonOH.Spatial;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;

@@ -1,13 +1,15 @@
 using UnityEngine;
 
-namespace JonathonOH.RoadGeneration
+namespace JonathonOH.Spatial
 {
-	[System.Serializable]
-	public struct TransformData
+	/// <summary>
+	/// A small container for holding transform information: Position, Rotation, Scale.
+	/// </summary>
+	public readonly struct TransformData
 	{
-		public Vector3 Position;
-		public Quaternion Rotation;
-		public Vector3 Scale;
+		public readonly Vector3 Position;
+		public readonly Quaternion Rotation;
+		public readonly Vector3 Scale;
 
 		public TransformData(Vector3 position, Quaternion rotation, Vector3 scale)
 		{
