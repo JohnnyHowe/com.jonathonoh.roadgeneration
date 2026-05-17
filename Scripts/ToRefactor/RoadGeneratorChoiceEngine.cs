@@ -30,6 +30,7 @@ namespace JonathonOH.RoadGeneration
 			CurrentChoiceRequest = choiceRequest;
 			CurrentChoiceResult = null;
 			currentCandidateIndex = 0;
+			ResetCollisionEngine();
 		}
 
 		public void StepUntilChoiceFound()
@@ -52,29 +53,24 @@ namespace JonathonOH.RoadGeneration
 			}
 
 			collisionEngine.Step();
+			ProcessCollisionEngineResult(collisionEngine.GetResult());
+		}
 
-			CollisionCheckResult? result = collisionEngine.GetResult();
-			if (result != null)
+		private void ProcessCollisionEngineResult(ICollisionEngine.SearchResult result)
+		{
+			if (result == ICollisionEngine.SearchResult.Impossible)
 			{
-				ProcessCollisionCheckResult((CollisionCheckResult)result);
+				NoSolutionFoundForCurrentCandidate();
+			}
+			else if (result == ICollisionEngine.SearchResult.SolutionFound)
+			{
+				SolutionFoundForCurrentCandidate();
 			}
 		}
 
-		private void ProcessCollisionCheckResult(CollisionCheckResult result)
+		private void NoSolutionFoundForCurrentCandidate()
 		{
-			if (result.HasCollision)
-			{
-				ProcessCollisionCheckResultWithCollision();
-			}
-			else
-			{
-				ProcessCollisionCheckResultWithoutCollision(result);
-			}
-		}
-
-		private void ProcessCollisionCheckResultWithCollision()
-		{
-			if (currentCandidateIndex < CurrentChoiceRequest.SectionsInPreferenceOrder.Count)
+			if (currentCandidateIndex < CurrentChoiceRequest.SectionsInPreferenceOrder.Count - 1)
 			{
 				GoToNextCandidate();
 			}
@@ -96,32 +92,37 @@ namespace JonathonOH.RoadGeneration
 		private void GoToNextCandidate()
 		{
 			currentCandidateIndex++;
+			ResetCollisionEngine();
+		}
 
-			CollisionCheckRequestNew request = CreateCollisionCheckRequestForCurrentCandidate();
+		private void ResetCollisionEngine()
+		{
+			CollisionCheckRequest request = CreateCollisionCheckRequestForCurrentCandidate();
 			collisionEngine.Reset(request);
 		}
 
-		private CollisionCheckRequestNew CreateCollisionCheckRequestForCurrentCandidate()
+		private CollisionCheckRequest CreateCollisionCheckRequestForCurrentCandidate()
 		{
-			return new CollisionCheckRequestNew()
+			return new CollisionCheckRequest()
 			{
 				Subject = currentCandidate,
 				AlreadyPlaced = CurrentChoiceRequest.CurrentSectionsInWorld,
-				MaxCheckDepth = CurrentChoiceRequest.MaxCheckDepth
+				MaxCheckDepth = CurrentChoiceRequest.MaxCheckDepth,
+				AllowedSections = CurrentChoiceRequest.SectionsInPreferenceOrder
 			};
 		}
 
-		private void ProcessCollisionCheckResultWithoutCollision(CollisionCheckResult result)
+		private void SolutionFoundForCurrentCandidate()
 		{
 			CurrentChoiceResult = new ChoiceResult()
 			{
 				IsChoiceFound = true,
-				ChosenSection = result.Request.Subject,
+				ChosenSection = currentCandidate,
 				FailureReason = ChoiceResult.ChoiceFailureReason.NoFailure
 			};
 		}
 
 		public bool IsSearchFinished() => !IsSearching();
-		public bool IsSearching() => CurrentChoiceResult != null;
+		public bool IsSearching() => CurrentChoiceResult == null;
 	}
 }

@@ -8,6 +8,7 @@ namespace JonathonOH.RoadGeneration
 		[DrawGizmo(GizmoType.NonSelected | GizmoType.Selected)]
 		static void Draw(RoadSection roadSection, GizmoType gizmoType)
 		{
+			return;
 			Color color = Color.yellow;
 			Handles.color = color;
 			DrawWireMesh(roadSection._boundingMesh);

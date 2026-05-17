@@ -1,12 +1,14 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using JonathonOH.RoadGeneration.Collision;
 using UnityEngine;
 
 namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 {
-	public class RoadSectionShapeCollisionChecker : ICollisionChecker
+	/// <summary>
+	/// TODO
+	/// Error check when sections lists are too small! 0, 1, 2(?) items
+	/// </summary>
+	public class RoadSectionShapeCollisionChecker
 	{
 		private const bool debugDraw = true;
 		private readonly Color collisionColor = Color.red;
@@ -15,61 +17,49 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 
 		private ShapeCache shapeCache;
 
-		public RoadSectionShapeCollisionChecker()
+		public RoadSectionShapeCollisionChecker(ShapeCache shapeCache)
 		{
-			shapeCache = new ShapeCache();
+			this.shapeCache = shapeCache;
 		}
 
-		public CollisionCheckResult CheckOneAgainstMany(CollisionCheckRequest request)
+		public IRoadSectionShapeCollisionCheckable GetSectionLastCollidesWith(IReadOnlyList<IRoadSectionShapeCollisionCheckable> sections)
 		{
-			throw new NotImplementedException();
-			// RoadSection collidingSection = GetCollidingSection(request);
-
-			// return new CollisionCheckResult()
-			// {
-			// 	Request = request,
-			// 	HasCollision = collidingSection != null,
-			// 	CollidesWith = collidingSection
-			// };
+			IRoadSectionShapeCollisionCheckable last = sections.Last();
+			IReadOnlyList<IRoadSectionShapeCollisionCheckable> sectionsMinusLast = sections.Take(sections.Count - 1).ToList();
+			return GetCollidingSectionOrNull(sectionsMinusLast, last);
 		}
 
-		/// <summary>
-		/// Returns null if no colliding section
-		/// </summary>
-		private RoadSection GetCollidingSection(CollisionCheckRequest request)
+		public IRoadSectionShapeCollisionCheckable GetCollidingSectionOrNull(IReadOnlyList<IRoadSectionShapeCollisionCheckable> sectionsToCheck, IRoadSectionShapeCollisionCheckable subject)
 		{
-			IReadOnlyList<RoadSection> sections = request.GetFullChain().ToList();
+			RoadSectionShape subjectShape = shapeCache.GetShape(subject);
+			IEnumerable<RoadSectionShape> shapesToCheck = shapeCache.GetShapes(sectionsToCheck);
 
-			if (sections.Count == 0)
-			{
-				return null;
-			}
+			int indexOfSectionToCheckWithCollision = GetIndexOfShapeWithCollision(shapesToCheck, subjectShape);
 
-			IReadOnlyList<RoadSectionShape> shapes = shapeCache.GetShapes(sections).ToList();
-
-			// TODO use the commented out version. Other one is temp for debug
-			// IReadOnlyList<RoadSectionShape> shapesAligned = ShapeAligner.GetAligned(shapes).ToList();
-			IReadOnlyList<RoadSectionShape> shapesAligned = ShapeAligner.GetAligned(shapes[0].Start, shapes).ToList();
-
-			RoadSectionShape subjectShape = shapeCache.GetShape(request.Subject);
-			RoadSectionShape subjectShapeAligned = ShapeAligner.GetAligned(shapesAligned.Last().End, subjectShape);
-
-			int overlappingShapeIndex = GetIndexOfSectionWithCollision(shapesAligned, subjectShapeAligned);
-
-			if (overlappingShapeIndex == -1)
+			if (indexOfSectionToCheckWithCollision == -1)
 			{
 				return null;
 			}
 			else
 			{
-				return sections[overlappingShapeIndex];
+				return sectionsToCheck[indexOfSectionToCheckWithCollision];
 			}
+		}
+
+		/// <summary>
+		/// Returns -1 if subject does not collide with any.
+		/// </summary>
+		private int GetIndexOfShapeWithCollision(IEnumerable<RoadSectionShape> shapesToCheck, RoadSectionShape subject)
+		{
+			IReadOnlyList<RoadSectionShape> shapesAligned = ShapeAligner.GetAligned(shapesToCheck).ToList();
+			RoadSectionShape subjectShapeAligned = ShapeAligner.GetAligned(shapesAligned.Last().End, subject);
+			return GetIndexOfAlignedShapeWithCollision(shapesAligned, subjectShapeAligned);
 		}
 
 		/// <summary>
 		/// Returns -1 if no collision.
 		/// </summary>
-		private int GetIndexOfSectionWithCollision(IReadOnlyList<RoadSectionShape> shapesAligned, RoadSectionShape subjectShapeAligned)
+		private int GetIndexOfAlignedShapeWithCollision(IReadOnlyList<RoadSectionShape> shapesAligned, RoadSectionShape subjectShapeAligned)
 		{
 			if (debugDraw) subjectShapeAligned.DebugDraw(subjectColor);
 

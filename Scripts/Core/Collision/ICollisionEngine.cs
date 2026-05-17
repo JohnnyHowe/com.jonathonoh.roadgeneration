@@ -2,8 +2,15 @@ namespace JonathonOH.RoadGeneration.Collision
 {
 	public interface ICollisionEngine
 	{
-		public void Reset(CollisionCheckRequestNew request);
+		public enum SearchResult
+		{
+			SolutionFound,
+			Impossible,
+			SearchNotFinished
+		}
+
+		public void Reset(CollisionCheckRequest request);
 		public void Step();
-		public CollisionCheckResult? GetResult();
+		public SearchResult GetResult();
 	}
 }

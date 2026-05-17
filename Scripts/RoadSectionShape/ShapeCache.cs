@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 {
-	internal class ShapeCache
+	public class ShapeCache
 	{
 		private Dictionary<string, RoadSectionShape> cache;
 
@@ -33,10 +33,34 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 		{
 			string id = section.GetId();
 
-			// If id was not set for whatever reason.
-			if (id.Trim() == "")
+			if (!IsCachable(id))
 			{
 				return section.GetRoadSectionShape();
+			}
+
+			Add(id, section);
+			return cache[id];
+		}
+
+		public void Add(IEnumerable<IRoadSectionShapeCollisionCheckable> sections)
+		{
+			foreach (var section in sections)
+			{
+				Add(section);
+			}
+		}
+
+		public void Add(IRoadSectionShapeCollisionCheckable section)
+		{
+			Add(section.GetId(), section);
+		}
+
+		public void Add(string id, IRoadSectionShapeCollisionCheckable section)
+		{
+			// If id was not set for whatever reason just skip.
+			if (!IsCachable(id))
+			{
+				return;
 			}
 
 			if (!cache.ContainsKey(id))
@@ -44,8 +68,11 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 				cache[id] = section.GetRoadSectionShape();
 				// Add temp debug log here to ensure we're only getting the bits we need
 			}
+		}
 
-			return cache[id];
+		private bool IsCachable(string id)
+		{
+			return id.Trim() != "";
 		}
 	}
 }

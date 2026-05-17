@@ -102,21 +102,16 @@ namespace JonathonOH.RoadGeneration
 
 		private void TryPlaceNewSection()
 		{
-			if (!choiceEngine.IsSearchFinished())
+			if (!choiceEngine.IsSearchFinished() && allowSteppingUntilResultFound)
 			{
-				if (allowSteppingUntilResultFound)
-				{
-					choiceEngine.StepUntilChoiceFound();
-				}
-				else
-				{
-					// Search not finished AND not allowed to instant step until finished.
-					return;
-				}
+				choiceEngine.StepUntilChoiceFound();
 			}
 
-			ChoiceResult result = (ChoiceResult)choiceEngine.CurrentChoiceResult;
-			TryPlaceNewSection(result);
+			if (choiceEngine.IsSearchFinished())
+			{
+				ChoiceResult result = (ChoiceResult)choiceEngine.CurrentChoiceResult;
+				TryPlaceNewSection(result);
+			}
 		}
 
 		private void TryPlaceNewSection(ChoiceResult choiceResult)
@@ -131,14 +126,14 @@ namespace JonathonOH.RoadGeneration
 			}
 		}
 
-		private RoadSection TryPlaceNewSection(RoadSection chosenSectionPrototype)
+		private void TryPlaceNewSection(RoadSection chosenSectionPrototype)
 		{
 			if (roadSectionPool.GetAllAvailablePrototypes().Count() == 0)
 			{
 				// TODO should this add more to the pool?
 				// Or do we filter preference list by what's in the pool?
 				PoolEmpty.Invoke();
-				return null;
+				return;
 			}
 
 			int nextN = 0;
@@ -156,7 +151,7 @@ namespace JonathonOH.RoadGeneration
 			roadSectionPool.ActivateSection(roadSection);
 			ResetEngine();
 
-			return roadSection;
+			NewSectionPlacedValue.Invoke(roadSection);
 		}
 
 		private void ResetEngine()

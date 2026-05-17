@@ -3,10 +3,11 @@ using System.Linq;
 
 namespace JonathonOH.RoadGeneration.Collision
 {
-	public struct CollisionCheckRequestNew
+	public struct CollisionCheckRequest
 	{
 		public readonly RoadSection Subject { get; init; }
 		public readonly IReadOnlyList<RoadSection> AlreadyPlaced { get; init; }
+		public readonly IReadOnlyList<RoadSection> AllowedSections { get; init; }
 		public readonly int MaxCheckDepth { get; init; }
 
 		public override string ToString()
