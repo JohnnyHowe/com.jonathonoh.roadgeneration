@@ -1,19 +1,21 @@
 using UnityEngine;
 
-namespace JonathonOH.RoadGeneration
+namespace JonathonOH.Spatial
 {
+	/// <summary>
+	/// A Pose represents a position and rotation in space
+	/// https://en.wikipedia.org/wiki/Pose_(computer_vision)
+	/// </summary>
 	[System.Serializable]
-	public struct TransformData
+	public struct Pose
 	{
 		public Vector3 Position;
 		public Quaternion Rotation;
-		public Vector3 Scale;
 
-		public TransformData(Vector3 position, Quaternion rotation, Vector3 scale)
+		public Pose(Vector3 position, Quaternion rotation)
 		{
 			Position = position;
 			Rotation = rotation;
-			Scale = scale;
 		}
 
 		/// <summary>
@@ -21,18 +23,16 @@ namespace JonathonOH.RoadGeneration
 		/// </summary>
 		public Vector3 TransformPoint(Vector3 point)
 		{
-			point = new Vector3(point.x * Scale.x, point.y * Scale.y, point.z * Scale.z);
 			point = Rotation * point;
 			point += Position;
 			return point;
 		}
 
-		public TransformData TransformPoint(TransformData point)
+		public Pose TransformPoint(Pose point)
 		{
-			return new TransformData(
+			return new Pose(
 				TransformPoint(point.Position),
-				Rotation * point.Rotation,
-				Vector3.Scale(Scale, point.Scale)
+				Rotation * point.Rotation
 			);
 		}
 
@@ -41,42 +41,30 @@ namespace JonathonOH.RoadGeneration
 		/// </summary>
 		public Vector3 InverseTransformPoint(Vector3 point)
 		{
-			Matrix4x4 matrix = Matrix4x4.TRS(Position, Rotation, Scale);
+			Matrix4x4 matrix = Matrix4x4.TRS(Position, Rotation, Vector3.one);
 			Matrix4x4 inverse = matrix.inverse;
 			return inverse.MultiplyPoint3x4(point);
 		}
 
-		public TransformData InverseTransformPoint(TransformData point)
+		public Pose InverseTransformPoint(Pose point)
 		{
-			// TODO make work with scale
-			if (point.Scale != Vector3.one || Scale != Vector3.one)
-			{
-				Debug.LogWarning("TransformData.InverseTransformPoint does not work when scale is not one!");
-			}
-
-			Matrix4x4 matrix = Matrix4x4.TRS(Position, Rotation, Scale);
+			Matrix4x4 matrix = Matrix4x4.TRS(Position, Rotation, Vector3.one);
 			Matrix4x4 inverse = matrix.inverse;
 
-			return new TransformData(
+			return new Pose(
 				inverse.MultiplyPoint3x4(point.Position),
-				Quaternion.Inverse(Rotation) * point.Rotation,
-				new Vector3(point.Scale.x / Scale.x, point.Scale.y / Scale.y, point.Scale.z / Scale.z)
+				Quaternion.Inverse(Rotation) * point.Rotation
 			);
 		}
 
-		public bool Equals(TransformData other)
+		public static Pose FromTransform(Transform transform)
 		{
-			return Position == other.Position && Rotation == other.Rotation && Scale == other.Scale;
+			return new Pose(transform.position, transform.rotation);
 		}
 
-		public static TransformData FromTransform(Transform transform)
+		public static Pose Default()
 		{
-			return new TransformData(transform.position, transform.rotation, transform.lossyScale);
-		}
-
-		public static TransformData Default()
-		{
-			return new TransformData(Vector3.zero, Quaternion.identity, Vector3.one);
+			return new Pose(Vector3.zero, Quaternion.identity);
 		}
 
 		public void DebugDraw()

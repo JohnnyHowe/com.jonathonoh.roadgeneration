@@ -143,7 +143,7 @@ namespace JonathonOH.RoadGeneration
 
 			int nextN = 0;
 			RoadSection newestSection = GetNewestSection();
-			TransformData nextStartPosition = new TransformData(Vector3.zero, new Quaternion(0, 0, 0, 1), Vector3.one);
+			Pose nextStartPosition = new Pose(Vector3.zero, new Quaternion(0, 0, 0, 1), Vector3.one);
 			if (newestSection != null)
 			{
 				nextN = newestSection.N + 1;
