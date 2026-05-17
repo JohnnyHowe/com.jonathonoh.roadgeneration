@@ -63,7 +63,8 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 			Pose originalExitRelativeToOriginalEntry = Entry.InverseTransformPose(Exit);
 			Pose newExit = newEntry.TransformPose(originalExitRelativeToOriginalEntry);
 
-			ConvexHull newHull = HorizontalHull.InverseTransformBy(Entry);
+			ConvexHull hullRelativeToEntry = HorizontalHull.InverseTransformBy(Entry);
+			ConvexHull newHull = hullRelativeToEntry.TransformBy(newEntry);
 
 			return new RoadSectionShape
 			(
