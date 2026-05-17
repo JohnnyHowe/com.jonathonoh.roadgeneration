@@ -17,8 +17,8 @@ namespace JonathonOH.Spatial
 
 		private static void DrawArrow(Vector3 start, Vector3 direction, Color color)
 		{
-			Vector3 end = start + direction;
 			direction *= arrowLength;
+			Vector3 end = start + direction;
 
 			Debug.DrawRay(start, direction, color);
 
