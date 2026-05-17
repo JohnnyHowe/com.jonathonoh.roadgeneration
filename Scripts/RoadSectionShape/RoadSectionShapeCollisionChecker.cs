@@ -13,7 +13,8 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 		private const bool debugDraw = true;
 		private readonly Color collisionColor = Color.red;
 		private readonly Color subjectColor = Color.yellow;
-		private readonly Color defaultColor = Color.white;
+		private readonly Color checkedColor = Color.white;
+		private readonly Color uncheckedColor = Color.grey;
 
 		private ShapeCache shapeCache;
 
@@ -69,12 +70,20 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 				RoadSectionShape shapeToCheckAgainst = shapesAligned[i];
 				if (AreColliding(shapeToCheckAgainst, subjectShapeAligned))
 				{
-					if (debugDraw) shapesAligned[i].DebugDraw(collisionColor);
+					if (debugDraw)
+					{
+						shapesAligned[i].DebugDraw(collisionColor);
+						for (int j = i - 1; j >= 0; j--)
+						{
+							shapesAligned[j].DebugDraw(uncheckedColor);
+						}
+					}
+
 					return i;
 				}
 				else
 				{
-					if (debugDraw) shapesAligned[i].DebugDraw(defaultColor);
+					if (debugDraw) shapesAligned[i].DebugDraw(checkedColor);
 				}
 			}
 			return -1;
