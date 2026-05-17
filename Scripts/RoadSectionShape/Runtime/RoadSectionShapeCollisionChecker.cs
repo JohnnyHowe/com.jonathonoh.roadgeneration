@@ -37,13 +37,13 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 			RoadSectionShape subjectShape = shapeCache.GetShape(subject);
 			List<RoadSectionShape> shapesToCheck = shapeCache.GetShapes(sectionsToCheck).ToList();
 
-			TransformData start = ShapeAligner.DefaultStart;
+			Pose entry = Pose.identity;
 			if (DebugDrawEnabled && shapesToCheck.Count > 0)
 			{
-				start = shapesToCheck[0].Start;
+				entry = shapesToCheck[0].Entry;
 			}
 
-			int indexOfSectionToCheckWithCollision = GetIndexOfShapeWithCollision(shapesToCheck, subjectShape, start);
+			int indexOfSectionToCheckWithCollision = GetIndexOfShapeWithCollision(shapesToCheck, subjectShape, entry);
 
 			if (indexOfSectionToCheckWithCollision == -1)
 			{
@@ -55,10 +55,10 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 			}
 		}
 
-		private int GetIndexOfShapeWithCollision(IEnumerable<RoadSectionShape> shapesToCheck, RoadSectionShape subject, TransformData startAlignment)
+		private int GetIndexOfShapeWithCollision(IEnumerable<RoadSectionShape> shapesToCheck, RoadSectionShape subject, Pose startEntry)
 		{
-			IReadOnlyList<RoadSectionShape> shapesAligned = ShapeAligner.GetAligned(startAlignment, shapesToCheck).ToList();
-			RoadSectionShape subjectShapeAligned = ShapeAligner.GetAligned(shapesAligned.Last().End, subject);
+			IReadOnlyList<RoadSectionShape> shapesAligned = ShapeAligner.GetAligned(startEntry, shapesToCheck).ToList();
+			RoadSectionShape subjectShapeAligned = ShapeAligner.GetAligned(shapesAligned.Last().Exit, subject);
 			return GetIndexOfAlignedShapeWithCollision(shapesAligned, subjectShapeAligned);
 		}
 

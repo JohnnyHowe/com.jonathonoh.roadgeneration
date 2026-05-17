@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using JonathonOH.RoadGeneration.ConvexShape2D;
+using JonathonOH.RoadGeneration.Core;
 using JonathonOH.Spatial;
 using UnityEngine;
 
@@ -8,38 +10,52 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 	/// <summary>
 	/// Describes the shape of a road section
 	/// Contains logic for bounding areas, and start and end position alignment.
+	/// 
 	/// TODO make readonly
+	/// TODO make relative to entry -> entry IS identity Pose
 	/// </summary>
 	public class RoadSectionShape
 	{
-		public TransformData Start;
-		public TransformData End;
+		public Pose Entry;
+		public Pose Exit;
 		public List<Vector3> _boundaryVerticesRelativeToHandle;
 		private FloatRange _heightRange;
 		public ConvexHull _topologyGlobal;
 		private bool _infiniteHeight;
 
-		public void SetBoundaryFromMesh(Mesh mesh, TransformData meshGlobalTransform, TransformData handle, bool infiniteHeight = false)
+		#region Constructors
+
+		public static RoadSectionShape FromRoadSection(IRoadSection roadSection)
 		{
-			_infiniteHeight = infiniteHeight;
-			_boundaryVerticesRelativeToHandle = new List<Vector3>();
-			Start = handle;
-			foreach (Vector3 vertexLocalToMesh in mesh.vertices)
-			{
-				Vector3 vertexGlobal = meshGlobalTransform.TransformPoint(vertexLocalToMesh);
-				Vector3 vertexLocalToHandle = Start.InverseTransformPoint(vertexGlobal);
-				_boundaryVerticesRelativeToHandle.Add(vertexLocalToHandle);
-			}
-			RecalculateCollisionBoundaries();
+			throw new NotImplementedException();
 		}
 
-		public RoadSectionShape GetTranslatedCopy(TransformData newStart)
+		#endregion
+
+		// public void SetBoundaryFromMesh(Mesh mesh, TransformData meshGlobalTransform, TransformData handle, bool infiniteHeight = false)
+		// {
+		// 	_infiniteHeight = infiniteHeight;
+		// 	_boundaryVerticesRelativeToHandle = new List<Vector3>();
+		// 	Start = handle;
+		// 	foreach (Vector3 vertexLocalToMesh in mesh.vertices)
+		// 	{
+		// 		Vector3 vertexGlobal = meshGlobalTransform.TransformPoint(vertexLocalToMesh);
+		// 		Vector3 vertexLocalToHandle = Start.InverseTransformPoint(vertexGlobal);
+		// 		_boundaryVerticesRelativeToHandle.Add(vertexLocalToHandle);
+		// 	}
+		// 	RecalculateCollisionBoundaries();
+		// }
+
+		public RoadSectionShape GetTranslatedCopy(Pose newEntry)
 		{
 			RoadSectionShape newShape = new RoadSectionShape();
-			newShape.Start = newStart;
+
+			newShape.Entry = newEntry;
 			newShape._boundaryVerticesRelativeToHandle = _boundaryVerticesRelativeToHandle;
-			newShape.Start = newStart;
-			newShape.End = newStart.TransformPoint(Start.InverseTransformPoint(End));
+
+			Pose originalExitRelativeToOriginalEntry = Entry.InverseTransformPose(Exit);
+			newShape.Exit = newEntry.TransformPose(originalExitRelativeToOriginalEntry);
+
 			newShape._infiniteHeight = _infiniteHeight;
 
 			newShape.RecalculateCollisionBoundaries();
@@ -53,7 +69,7 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 			float _maxHeight = -Mathf.Infinity;
 			foreach (Vector3 vertex in _boundaryVerticesRelativeToHandle)
 			{
-				Vector3 globalVertex = Start.TransformPoint(vertex);
+				Vector3 globalVertex = Entry.TransformPoint(vertex);
 				_minHeight = Mathf.Min(globalVertex.y, _minHeight);
 				_maxHeight = Mathf.Max(globalVertex.y, _maxHeight);
 				topology.Add(new Vector2(globalVertex.x, globalVertex.z));
@@ -90,10 +106,10 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 		public void DebugDraw(Color color)
 		{
 #if UNITY_EDITOR
-			Start.DebugDraw();
-			End.DebugDraw();
+			Entry.DebugDraw();
+			Exit.DebugDraw();
 
-			Debug.DrawLine(Start.Position, End.Position, color);
+			Debug.DrawLine(Entry.position, Exit.position, color);
 
 			IEnumerable<Vector2> topology = _topologyGlobal.Vertices;
 			foreach (Vector2 vertex1 in topology)
