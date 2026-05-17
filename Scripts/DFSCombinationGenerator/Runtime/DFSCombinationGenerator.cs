@@ -9,7 +9,7 @@ namespace Other
     /// With the depth and number of trees, it will keep track of the branch index at every depth
     ///  and allow stepping through it ez pz
     /// </summary>
-    public class DFSCombinationGenerator : IDFSCombinationGenerator
+    public class DFSCombinationGenerator
     {
         public class OutOfCombinationsException : Exception { }
 

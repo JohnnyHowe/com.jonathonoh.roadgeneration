@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using JonathonOH.RoadGeneration.Core;
 using UnityEngine;
 
 namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
@@ -10,7 +11,7 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 	/// </summary>
 	public class RoadSectionShapeCollisionChecker
 	{
-		private const bool debugDraw = true;
+		public bool DebugDrawEnabled = true;
 		private readonly Color collisionColor = Color.red;
 		private readonly Color subjectColor = Color.yellow;
 		private readonly Color checkedColor = Color.white;
@@ -23,19 +24,25 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 			this.shapeCache = shapeCache;
 		}
 
-		public IRoadSectionShapeCollisionCheckable GetSectionLastCollidesWith(IReadOnlyList<IRoadSectionShapeCollisionCheckable> sections)
+		public IRoadSection GetSectionLastCollidesWith(IReadOnlyList<IRoadSection> sections)
 		{
-			IRoadSectionShapeCollisionCheckable last = sections.Last();
-			IReadOnlyList<IRoadSectionShapeCollisionCheckable> sectionsMinusLast = sections.Take(sections.Count - 1).ToList();
+			IRoadSection last = sections.Last();
+			IReadOnlyList<IRoadSection> sectionsMinusLast = sections.Take(sections.Count - 1).ToList();
 			return GetCollidingSectionOrNull(sectionsMinusLast, last);
 		}
 
-		public IRoadSectionShapeCollisionCheckable GetCollidingSectionOrNull(IReadOnlyList<IRoadSectionShapeCollisionCheckable> sectionsToCheck, IRoadSectionShapeCollisionCheckable subject)
+		public IRoadSection GetCollidingSectionOrNull(IReadOnlyList<IRoadSection> sectionsToCheck, IRoadSection subject)
 		{
 			RoadSectionShape subjectShape = shapeCache.GetShape(subject);
-			IEnumerable<RoadSectionShape> shapesToCheck = shapeCache.GetShapes(sectionsToCheck);
+			List<RoadSectionShape> shapesToCheck = shapeCache.GetShapes(sectionsToCheck).ToList();
 
-			int indexOfSectionToCheckWithCollision = GetIndexOfShapeWithCollision(shapesToCheck, subjectShape);
+			TransformData start = ShapeAligner.DefaultStart;
+			if (DebugDrawEnabled && shapesToCheck.Count > 0)
+			{
+				start = shapesToCheck[0].Start;
+			}
+
+			int indexOfSectionToCheckWithCollision = GetIndexOfShapeWithCollision(shapesToCheck, subjectShape, start);
 
 			if (indexOfSectionToCheckWithCollision == -1)
 			{
@@ -47,12 +54,9 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 			}
 		}
 
-		/// <summary>
-		/// Returns -1 if subject does not collide with any.
-		/// </summary>
-		private int GetIndexOfShapeWithCollision(IEnumerable<RoadSectionShape> shapesToCheck, RoadSectionShape subject)
+		private int GetIndexOfShapeWithCollision(IEnumerable<RoadSectionShape> shapesToCheck, RoadSectionShape subject, TransformData startAlignment)
 		{
-			IReadOnlyList<RoadSectionShape> shapesAligned = ShapeAligner.GetAligned(shapesToCheck).ToList();
+			IReadOnlyList<RoadSectionShape> shapesAligned = ShapeAligner.GetAligned(startAlignment, shapesToCheck).ToList();
 			RoadSectionShape subjectShapeAligned = ShapeAligner.GetAligned(shapesAligned.Last().End, subject);
 			return GetIndexOfAlignedShapeWithCollision(shapesAligned, subjectShapeAligned);
 		}
@@ -62,7 +66,7 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 			List<int> collisionCheckOrder = CollisionCheckOrderer.GetCollisionCheckOrder(shapesAligned.Count).ToList();
 			int indexOfShapeWithCollision = GetIndexOfAlignedShapeWithCollision(shapesAligned, subjectShapeAligned, collisionCheckOrder);
 
-			if (debugDraw)
+			if (DebugDrawEnabled)
 			{
 				subjectShapeAligned.DebugDraw(subjectColor);
 

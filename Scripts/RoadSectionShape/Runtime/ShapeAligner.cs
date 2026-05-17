@@ -9,7 +9,7 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 	/// </summary>
 	public static class ShapeAligner
 	{
-		private static readonly TransformData defaultStart = new TransformData(Vector3.zero, Quaternion.identity, Vector3.one);
+		public static readonly TransformData DefaultStart = new TransformData(Vector3.zero, Quaternion.identity, Vector3.one);
 
 		/// <summary>
 		/// Returns a new enumerable of all the shape parameters aligned in one chain.
@@ -29,7 +29,7 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 			{
 				return fixedShapes.Last().End;
 			}
-			return defaultStart;
+			return DefaultStart;
 		}
 
 		/// <summary>
@@ -37,7 +37,7 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 		/// </summary>
 		public static IEnumerable<RoadSectionShape> GetAligned(IEnumerable<RoadSectionShape> shapesToAlign)
 		{
-			return GetAligned(defaultStart, shapesToAlign);
+			return GetAligned(DefaultStart, shapesToAlign);
 		}
 	
 		/// <summary>

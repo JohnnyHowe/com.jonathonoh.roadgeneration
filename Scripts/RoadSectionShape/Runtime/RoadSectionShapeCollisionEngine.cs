@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using JonathonOH.RoadGeneration.Collision;
+using JonathonOH.RoadGeneration.Core;
 using Other;
-using UnityEngine;
 
 namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 {
@@ -90,9 +90,9 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 			return collidingSection == null;
 		}
 
-		private IEnumerable<RoadSection> GetCurrentChain()
+		private IEnumerable<IRoadSection> GetCurrentChain()
 		{
-			foreach (RoadSection section in request.AlreadyPlaced)
+			foreach (IRoadSection section in request.AlreadyPlaced)
 			{
 				yield return section;
 			}

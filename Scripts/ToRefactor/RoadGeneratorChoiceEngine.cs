@@ -1,5 +1,6 @@
 using JonathonOH.RoadGeneration.ChoiceEngine;
 using JonathonOH.RoadGeneration.Collision;
+using JonathonOH.RoadGeneration.Core;
 using System;
 
 namespace JonathonOH.RoadGeneration
@@ -15,7 +16,7 @@ namespace JonathonOH.RoadGeneration
 		private ICollisionEngine collisionEngine;
 
 		private int currentCandidateIndex = 0;
-		private RoadSection currentCandidate
+		private IRoadSection currentCandidate
 		{
 			get => CurrentChoiceRequest.SectionsInPreferenceOrder[currentCandidateIndex];
 		}

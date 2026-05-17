@@ -1,10 +1,10 @@
 {
-    "name": "RoadGenerationTests",
+    "name": "JonathonOH.TransformData.Tests",
     "rootNamespace": "",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "RoadGeneration"
+        "JonathonOH.TransformData"
     ],
     "includePlatforms": [
         "Editor"

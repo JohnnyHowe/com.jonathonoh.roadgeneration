@@ -1,12 +1,8 @@
 {
-    "name": "RoadGeneration",
+    "name": "JonathonOH.RoadGeneration.Core",
     "rootNamespace": "",
     "references": [
-        "GUID:fcec704cba43a604980796eb67ec628c",
-        "GUID:a48dc5a26d0e7c24bbccf0beaebc3606",
-        "GUID:42878ad46f3f76243b86ca6ed9fb00aa",
-        "GUID:82f027f27bd1fdf47b393076da5e8633",
-        "GUID:ca61de95721b26243bfea9409803ed60"
+        "GUID:42878ad46f3f76243b86ca6ed9fb00aa"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -12,7 +12,6 @@ namespace JonathonOH.RoadGeneration
 			Color color = Color.yellow;
 			Handles.color = color;
 			DrawWireMesh(roadSection._boundingMesh);
-			if (roadSection._localShapeReal != null) roadSection._localShapeReal.DebugDraw(color);
 		}
 
 		internal static void DrawWireMesh(MeshFilter meshFilter)

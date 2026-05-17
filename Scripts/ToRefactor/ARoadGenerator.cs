@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using JonathonOH.RoadGeneration.ChoiceEngine;
+using JonathonOH.RoadGeneration.Core;
 using JonathonOH.RoadGeneration.RoadSectionShapeCollision;
 using UnityEngine;
 using UnityEngine.Events;
@@ -126,8 +127,12 @@ namespace JonathonOH.RoadGeneration
 			}
 		}
 
-		private void TryPlaceNewSection(RoadSection chosenSectionPrototype)
+		private void TryPlaceNewSection(IRoadSection chosenSectionPrototypeI)
 		{
+			// TODO not this
+			// This is temporary!!!!
+			RoadSection chosenSectionPrototype = (RoadSection)chosenSectionPrototypeI;
+
 			if (roadSectionPool.GetAllAvailablePrototypes().Count() == 0)
 			{
 				// TODO should this add more to the pool?
@@ -142,7 +147,7 @@ namespace JonathonOH.RoadGeneration
 			if (newestSection != null)
 			{
 				nextN = newestSection.N + 1;
-				nextStartPosition = newestSection.EndPoint;
+				nextStartPosition = newestSection.Exit;
 			}
 
 			RoadSection roadSection = roadSectionPool.ClaimUninstantiatedSection(chosenSectionPrototype);
