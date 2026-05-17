@@ -1,12 +1,8 @@
 {
-    "name": "JonathonOH.RoadGeneration.RoadSectionShape",
+    "name": "JonathonOH.ConvexShapeExtruded",
     "rootNamespace": "",
     "references": [
-        "GUID:a48dc5a26d0e7c24bbccf0beaebc3606",
-        "GUID:42878ad46f3f76243b86ca6ed9fb00aa",
-        "GUID:ca61de95721b26243bfea9409803ed60",
-        "GUID:e82e2f3bd40f75744ba65e6033e3d811",
-        "GUID:ba7916aba8bcf3d4aa430c5c7f72501a"
+        "GUID:a48dc5a26d0e7c24bbccf0beaebc3606"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

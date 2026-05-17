@@ -1,6 +1,4 @@
-using System;
-using System.Collections.Generic;
-using JonathonOH.RoadGeneration.ConvexShape2D;
+using JonathonOH.ConvexShapeExtruded;
 using JonathonOH.RoadGeneration.Core;
 using JonathonOH.Spatial;
 using UnityEngine;
@@ -17,9 +15,7 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 	{
 		public readonly Pose Entry;
 		public readonly Pose Exit;
-		public readonly FloatRange VerticalRange;
-		public readonly ConvexHull HorizontalHull;
-		public readonly bool InfiniteHeight;
+		public readonly ConvexHullExtruded Hull;
 
 		#region Constructors
 
@@ -34,26 +30,14 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 
 		public static RoadSectionShape FromMesh(Pose entry, Pose exit, Mesh meshBoundaryRelativetoEntry)
 		{
-			ConvexHull horizontalHull = ConvexHullConstructors.FromMesh(meshBoundaryRelativetoEntry, Vector3.up);
-			return new RoadSectionShape(entry, exit, horizontalHull, null);
+			return new RoadSectionShape(entry, exit, ConvexHullExtruded.FromMesh(meshBoundaryRelativetoEntry));
 		}
 
-		public RoadSectionShape(Pose entry, Pose exit, ConvexHull hull, FloatRange? verticalRange)
+		public RoadSectionShape(Pose entry, Pose exit, ConvexHullExtruded hull)
 		{
 			Entry = entry;
 			Exit = exit;
-			HorizontalHull = hull;
-			InfiniteHeight = verticalRange == null;
-
-			if (verticalRange != null)
-			{
-				InfiniteHeight = false;
-				VerticalRange = (FloatRange)verticalRange;
-			}
-			else
-			{
-				InfiniteHeight = true;
-			}
+			Hull = hull;
 		}
 
 		#endregion
@@ -63,34 +47,20 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 			Pose originalExitRelativeToOriginalEntry = Entry.InverseTransformPose(Exit);
 			Pose newExit = newEntry.TransformPose(originalExitRelativeToOriginalEntry);
 
-			ConvexHull hullRelativeToEntry = HorizontalHull.InverseTransformBy(Entry);
-			ConvexHull newHull = hullRelativeToEntry.TransformBy(newEntry);
+			ConvexHullExtruded hullRelativeToEntry = Hull.InverseTransformBy(Entry);
+			ConvexHullExtruded newHull = hullRelativeToEntry.TransformBy(newEntry);
 
 			return new RoadSectionShape
 			(
 				newEntry,
 				newExit,
-				newHull,
-				InfiniteHeight ? null : VerticalRange
+				newHull
 			);
 		}
 
-		public bool DoesOverlapWith(RoadSectionShape other)
+		public bool OverlapsWith(RoadSectionShape other)
 		{
-			if (!OverlapsWithOnVerticalAxis(other))
-			{
-				return false;
-			}
-			return HorizontalHull.OverlapsWith(other.HorizontalHull);
-		}
-
-		private bool OverlapsWithOnVerticalAxis(RoadSectionShape other)
-		{
-			if (InfiniteHeight || other.InfiniteHeight)
-			{
-				return true;
-			}
-			return VerticalRange.OverlapsWith(other.VerticalRange);
+			return Hull.OverlapsWith(other.Hull);
 		}
 
 		#region Debug
@@ -105,19 +75,8 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 #if UNITY_EDITOR
 			Entry.DebugDraw();
 			Exit.DebugDraw();
-
 			Debug.DrawLine(Entry.position, Exit.position, color);
-
-			IEnumerable<Vector2> topology = HorizontalHull.Vertices;
-			foreach (Vector2 vertex1 in topology)
-			{
-				Debug.DrawLine(new Vector3(vertex1.x, VerticalRange.Min, vertex1.y), new Vector3(vertex1.x, VerticalRange.Max, vertex1.y), color);
-				foreach (Vector2 vertex2 in topology)
-				{
-					Debug.DrawLine(new Vector3(vertex1.x, VerticalRange.Min, vertex1.y), new Vector3(vertex2.x, VerticalRange.Min, vertex2.y), color);
-					Debug.DrawLine(new Vector3(vertex1.x, VerticalRange.Max, vertex1.y), new Vector3(vertex2.x, VerticalRange.Max, vertex2.y), color);
-				}
-			}
+			Hull.DebugDraw(color);
 #endif
 		}
 		#endregion

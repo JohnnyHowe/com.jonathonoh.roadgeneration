@@ -104,7 +104,7 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 
 		private bool AreColliding(RoadSectionShape shape1, RoadSectionShape shape2)
 		{
-			return shape1.DoesOverlapWith(shape2);
+			return shape1.OverlapsWith(shape2);
 		}
 	}
 }
