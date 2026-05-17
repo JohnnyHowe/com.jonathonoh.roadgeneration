@@ -3,23 +3,17 @@ using System.Linq;
 
 namespace JonathonOH.RoadGeneration.Collision
 {
-	public struct CollisionCheckRequest
+	public struct CollisionCheckRequestNew
 	{
 		public readonly RoadSection Subject { get; init; }
 		public readonly IReadOnlyList<RoadSection> AlreadyPlaced { get; init; }
-		public readonly IReadOnlyList<RoadSection> Candidates { get; init; }
-
-		public IReadOnlyList<RoadSection> ChainToCheckAgainst
-		{
-			get => AlreadyPlaced.Concat(Candidates).ToList();
-		}
+		public readonly int MaxCheckDepth { get; init; }
 
 		public override string ToString()
 		{
 			string contents = string.Join(", ", new string[]
 			{
 				$"AlreadyPlaced={{ {GetRoadSectionsDisplayString(AlreadyPlaced)} }}",
-				$"Candidates={{ {GetRoadSectionsDisplayString(Candidates)} }}",
 				$"Subject={Subject.gameObject.name}",
 			});
 			return $"CollisionCheckRequest<{contents}>";
@@ -33,8 +27,8 @@ namespace JonathonOH.RoadGeneration.Collision
 		public IEnumerable<RoadSection> GetFullChain()
 		{
 			foreach (RoadSection section in AlreadyPlaced) yield return section;
-			foreach (RoadSection section in Candidates) yield return section;
 			yield return Subject;
 		}
 	}
 }
+

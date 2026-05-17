@@ -1,47 +1,44 @@
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-using Other;
 using JonathonOH.RoadGeneration.ChoiceEngine;
 using JonathonOH.RoadGeneration.Collision;
+using System;
 
 namespace JonathonOH.RoadGeneration
 {
-	/// <summary>
-	/// Must call Reset() before anything else
-	/// </summary>
+	[Serializable]
 	public class RoadGeneratorChoiceEngine
 	{
-		public DFSCombinationGenerator combinationGenerator;
+		private const int MAX_ITERATIONS = int.MaxValue;
+
 		public ChoiceRequest CurrentChoiceRequest { get; private set; }
-		public ChoiceResult CurrentChoiceResult { get; private set; }
+		public ChoiceResult? CurrentChoiceResult { get; private set; } = null;
 
-		public bool IsSearching { get; private set; } = true;
+		private ICollisionEngine collisionEngine;
 
-		private const int MAX_ITERATIONS = 10000000;
-		private ICollisionChecker collisionChecker;
-
-		public RoadGeneratorChoiceEngine(ChoiceRequest choiceRequest, ICollisionChecker collisionChecker)
+		private int currentCandidateIndex = 0;
+		private RoadSection currentCandidate
 		{
-			CurrentChoiceRequest = choiceRequest;
-			combinationGenerator = new DFSCombinationGenerator(choiceRequest.SectionsInPreferenceOrder.Count, choiceRequest.MaxCheckDepth);
-			this.collisionChecker = collisionChecker;
-
-			CurrentChoiceResult = new ChoiceResult()
-			{
-				IsChoiceFound = false,
-				ChosenSection = null,
-				FailureReason = ChoiceResult.ChoiceFailureReason.SearchNotFinished
-			};
+			get => CurrentChoiceRequest.SectionsInPreferenceOrder[currentCandidateIndex];
 		}
 
-		public void StepUntilChoiceIsFound()
+		public RoadGeneratorChoiceEngine(ICollisionEngine collisionEngine)
+		{
+			this.collisionEngine = collisionEngine;
+		}
+
+		public void Reset(ChoiceRequest choiceRequest)
+		{
+			CurrentChoiceRequest = choiceRequest;
+			CurrentChoiceResult = null;
+			currentCandidateIndex = 0;
+		}
+
+		public void StepUntilChoiceFound()
 		{
 			for (int i = 0; i < MAX_ITERATIONS; i++)
 			{
-				if (!IsSearching)
+				if (IsSearchFinished())
 				{
-					break;
+					return;
 				}
 				Step();
 			}
@@ -49,84 +46,82 @@ namespace JonathonOH.RoadGeneration
 
 		public void Step()
 		{
-			if (!IsSearching)
+			if (!IsSearching())
 			{
 				return;
 			}
 
-			RunCollisionCheckAndStepCombinationGenerator();
-			CheckCombinationTermination();
+			collisionEngine.Step();
+
+			CollisionCheckResult? result = collisionEngine.GetResult();
+			if (result != null)
+			{
+				ProcessCollisionCheckResult((CollisionCheckResult)result);
+			}
 		}
 
-		private void CheckCombinationTermination()
+		private void ProcessCollisionCheckResult(CollisionCheckResult result)
 		{
-			if (combinationGenerator.HasFoundSolution())
+			if (result.HasCollision)
 			{
-				CurrentChoiceResult = new ChoiceResult()
-				{
-					IsChoiceFound = true,
-					ChosenSection = CurrentChoiceRequest.SectionsInPreferenceOrder[combinationGenerator.GetState()[0]],
-					FailureReason = ChoiceResult.ChoiceFailureReason.NoFailure
-				};
-				IsSearching = false;
+				ProcessCollisionCheckResultWithCollision();
 			}
-			else if (combinationGenerator.IsImpossible())
+			else
 			{
+				ProcessCollisionCheckResultWithoutCollision(result);
+			}
+		}
+
+		private void ProcessCollisionCheckResultWithCollision()
+		{
+			if (currentCandidateIndex < CurrentChoiceRequest.SectionsInPreferenceOrder.Count)
+			{
+				GoToNextCandidate();
+			}
+			else
+			{
+				// No more! Impossible search!
 				CurrentChoiceResult = new ChoiceResult()
 				{
 					IsChoiceFound = false,
 					ChosenSection = null,
 					FailureReason = ChoiceResult.ChoiceFailureReason.NoChoiceFound
 				};
-				IsSearching = false;
-			}
-		}
-
-		private void RunCollisionCheckAndStepCombinationGenerator()
-		{
-			CollisionCheckResult collisionCheckResult = GetCollisionResultForCurrentCandidates();
-			if (collisionCheckResult.HasCollision)
-			{
-				combinationGenerator.StepInvalid();
-			}
-			else
-			{
-				combinationGenerator.StepValid();
 			}
 		}
 
 		/// <summary>
-		/// Null if no collision.
+		/// Assumes there is another candidate.
 		/// </summary>
-		private CollisionCheckResult GetCollisionResultForCurrentCandidates()
+		private void GoToNextCandidate()
 		{
-			return collisionChecker.CheckOneAgainstMany(CreateCollisionCheckRequest());
+			currentCandidateIndex++;
+
+			CollisionCheckRequestNew request = CreateCollisionCheckRequestForCurrentCandidate();
+			collisionEngine.Reset(request);
 		}
 
-		private CollisionCheckRequest CreateCollisionCheckRequest()
+		private CollisionCheckRequestNew CreateCollisionCheckRequestForCurrentCandidate()
 		{
-			List<RoadSection> allCandidates = GetCandidateRoadSections();
-
-			IEnumerable<RoadSection> previousCandidates = allCandidates.Take(allCandidates.Count - 1);
-			RoadSection currentCandidate = allCandidates.Last();
-
-			return new CollisionCheckRequest()
+			return new CollisionCheckRequestNew()
 			{
 				Subject = currentCandidate,
 				AlreadyPlaced = CurrentChoiceRequest.CurrentSectionsInWorld,
-				Candidates = previousCandidates.ToList()
+				MaxCheckDepth = CurrentChoiceRequest.MaxCheckDepth
 			};
 		}
 
-		private List<RoadSection> GetCandidateRoadSections()
+		private void ProcessCollisionCheckResultWithoutCollision(CollisionCheckResult result)
 		{
-			List<RoadSection> candidates = new List<RoadSection>();
-			foreach (int candidateChoiceIndex in combinationGenerator.GetState())
+			CurrentChoiceResult = new ChoiceResult()
 			{
-				if (candidateChoiceIndex == -1) break;
-				candidates.Add(CurrentChoiceRequest.SectionsInPreferenceOrder[candidateChoiceIndex]);
-			}
-			return candidates;
+				IsChoiceFound = true,
+				ChosenSection = result.Request.Subject,
+				FailureReason = ChoiceResult.ChoiceFailureReason.NoFailure
+			};
 		}
+
+		public bool IsSearchFinished() => !IsSearching();
+		public bool IsSearching() => CurrentChoiceResult != null;
 	}
 }

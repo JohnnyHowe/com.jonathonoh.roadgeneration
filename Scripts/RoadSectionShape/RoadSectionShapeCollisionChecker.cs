@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using JonathonOH.RoadGeneration.Collision;
@@ -21,14 +22,15 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 
 		public CollisionCheckResult CheckOneAgainstMany(CollisionCheckRequest request)
 		{
-			RoadSection collidingSection = GetCollidingSection(request);
+			throw new NotImplementedException();
+			// RoadSection collidingSection = GetCollidingSection(request);
 
-			return new CollisionCheckResult()
-			{
-				Request = request,
-				HasCollision = collidingSection != null,
-				CollidesWith = collidingSection
-			};
+			// return new CollisionCheckResult()
+			// {
+			// 	Request = request,
+			// 	HasCollision = collidingSection != null,
+			// 	CollidesWith = collidingSection
+			// };
 		}
 
 		/// <summary>
@@ -44,6 +46,8 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 			}
 
 			IReadOnlyList<RoadSectionShape> shapes = shapeCache.GetShapes(sections).ToList();
+
+			// TODO use the commented out version. Other one is temp for debug
 			// IReadOnlyList<RoadSectionShape> shapesAligned = ShapeAligner.GetAligned(shapes).ToList();
 			IReadOnlyList<RoadSectionShape> shapesAligned = ShapeAligner.GetAligned(shapes[0].Start, shapes).ToList();
 

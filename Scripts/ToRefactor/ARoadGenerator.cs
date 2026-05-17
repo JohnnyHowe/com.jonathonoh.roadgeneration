@@ -22,7 +22,7 @@ namespace JonathonOH.RoadGeneration
 		[FormerlySerializedAs("_roadSectionContainer")]
 		[SerializeField] public Transform roadSectionContainer;
 		[SerializeField] protected RoadSectionPool roadSectionPool = new RoadSectionPool();
-		[SerializeField] private bool allowSteppingUntilChoiceFound = true;
+		[SerializeField] private bool allowSteppingUntilResultFound = true;
 
 		private RoadGeneratorChoiceEngine choiceEngine;
 		private List<RoadSection> presetSections;
@@ -33,6 +33,7 @@ namespace JonathonOH.RoadGeneration
 
 		protected void Awake()
 		{
+			choiceEngine = new RoadGeneratorChoiceEngine(new RoadSectionShapeCollisionEngine());
 			NewSectionPlacedValue.AddListener((roadSection) => NewSectionPlaced.Invoke());
 			roadSectionPool.Reset(_roadSectionChoices, roadSectionContainer);
 			PopulateCurrentSectionsFromWorld();
@@ -75,7 +76,7 @@ namespace JonathonOH.RoadGeneration
 		{
 			for (int i = 0; i < Mathf.Max(1, stepsPerFrame); i++)
 			{
-				if (!choiceEngine.IsSearching)
+				if (!choiceEngine.IsSearching())
 				{
 					break;
 				}
@@ -101,30 +102,44 @@ namespace JonathonOH.RoadGeneration
 
 		private void TryPlaceNewSection()
 		{
-			if (choiceEngine.IsSearching && !allowSteppingUntilChoiceFound) return;
-			choiceEngine.StepUntilChoiceIsFound();
-
-			var result = choiceEngine.CurrentChoiceResult;
-			if (!result.IsChoiceFound)
+			if (!choiceEngine.IsSearchFinished())
 			{
-				NoChoiceFound.Invoke();
-				return;
+				if (allowSteppingUntilResultFound)
+				{
+					choiceEngine.StepUntilChoiceFound();
+				}
+				else
+				{
+					// Search not finished AND not allowed to instant step until finished.
+					return;
+				}
 			}
 
-			RoadSection newSection = TryPlaceNewSection(result.ChosenSection);
-			if (newSection is null)
+			ChoiceResult result = (ChoiceResult)choiceEngine.CurrentChoiceResult;
+			TryPlaceNewSection(result);
+		}
+
+		private void TryPlaceNewSection(ChoiceResult choiceResult)
+		{
+			if (!choiceResult.IsChoiceFound)
 			{
-				PoolEmpty.Invoke();
+				NoChoiceFound.Invoke();
 			}
 			else
 			{
-				NewSectionPlacedValue.Invoke(newSection);
+				TryPlaceNewSection(choiceResult.ChosenSection);
 			}
 		}
 
-		private RoadSection TryPlaceNewSection(RoadSection prototype)
+		private RoadSection TryPlaceNewSection(RoadSection chosenSectionPrototype)
 		{
-			if (roadSectionPool.GetAllAvailablePrototypes().Count() == 0) return null;
+			if (roadSectionPool.GetAllAvailablePrototypes().Count() == 0)
+			{
+				// TODO should this add more to the pool?
+				// Or do we filter preference list by what's in the pool?
+				PoolEmpty.Invoke();
+				return null;
+			}
 
 			int nextN = 0;
 			RoadSection newestSection = GetNewestSection();
@@ -135,7 +150,7 @@ namespace JonathonOH.RoadGeneration
 				nextStartPosition = newestSection.EndPoint;
 			}
 
-			RoadSection roadSection = roadSectionPool.ClaimUninstantiatedSection(prototype);
+			RoadSection roadSection = roadSectionPool.ClaimUninstantiatedSection(chosenSectionPrototype);
 			roadSection.N = nextN;
 			roadSection.AlignStart(nextStartPosition);
 			roadSectionPool.ActivateSection(roadSection);
@@ -161,7 +176,7 @@ namespace JonathonOH.RoadGeneration
 			}
 			else
 			{
-				choiceEngine = new RoadGeneratorChoiceEngine(choiceRequest, new RoadSectionShapeCollisionChecker());
+				choiceEngine.Reset(choiceRequest);
 			}
 		}
 

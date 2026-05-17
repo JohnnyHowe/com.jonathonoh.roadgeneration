@@ -4,7 +4,6 @@ namespace JonathonOH.RoadGeneration.ChoiceEngine
 	{
 		public enum ChoiceFailureReason
 		{
-			SearchNotFinished,
 			NoChoiceFound,
 			NoFailure
 		}
