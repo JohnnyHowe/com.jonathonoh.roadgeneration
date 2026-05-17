@@ -12,70 +12,66 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 	/// Contains logic for bounding areas, and start and end position alignment.
 	/// 
 	/// TODO make readonly
-	/// TODO make relative to entry -> entry IS identity Pose
 	/// </summary>
 	public class RoadSectionShape
 	{
-		public Pose Entry;
-		public Pose Exit;
-		public List<Vector3> _boundaryVerticesRelativeToHandle;
-		private FloatRange _heightRange;
-		public ConvexHull _topologyGlobal;
-		private bool _infiniteHeight;
+		public readonly Pose Entry;
+		public readonly Pose Exit;
+		public readonly FloatRange VerticalRange;
+		public readonly ConvexHull HorizontalHull;
+		public readonly bool InfiniteHeight;
 
 		#region Constructors
 
 		public static RoadSectionShape FromRoadSection(IRoadSection roadSection)
 		{
-			throw new NotImplementedException();
+			return FromMesh(
+				roadSection.Entry,
+				roadSection.Exit,
+				roadSection.GetBoundaryInEntrySpace()
+			);
+		}
+
+		public static RoadSectionShape FromMesh(Pose entry, Pose exit, Mesh meshBoundaryRelativetoEntry)
+		{
+			ConvexHull horizontalHull = ConvexHullConstructors.FromMesh(meshBoundaryRelativetoEntry, Vector3.up);
+			return new RoadSectionShape(entry, exit, horizontalHull, null);
+		}
+
+		public RoadSectionShape(Pose entry, Pose exit, ConvexHull hull, FloatRange? verticalRange)
+		{
+			Entry = entry;
+			Exit = exit;
+			HorizontalHull = hull;
+			InfiniteHeight = verticalRange == null;
+
+			if (verticalRange != null)
+			{
+				InfiniteHeight = false;
+				VerticalRange = (FloatRange)verticalRange;
+			}
+			else
+			{
+				InfiniteHeight = true;
+			}
 		}
 
 		#endregion
 
-		// public void SetBoundaryFromMesh(Mesh mesh, TransformData meshGlobalTransform, TransformData handle, bool infiniteHeight = false)
-		// {
-		// 	_infiniteHeight = infiniteHeight;
-		// 	_boundaryVerticesRelativeToHandle = new List<Vector3>();
-		// 	Start = handle;
-		// 	foreach (Vector3 vertexLocalToMesh in mesh.vertices)
-		// 	{
-		// 		Vector3 vertexGlobal = meshGlobalTransform.TransformPoint(vertexLocalToMesh);
-		// 		Vector3 vertexLocalToHandle = Start.InverseTransformPoint(vertexGlobal);
-		// 		_boundaryVerticesRelativeToHandle.Add(vertexLocalToHandle);
-		// 	}
-		// 	RecalculateCollisionBoundaries();
-		// }
-
 		public RoadSectionShape GetTranslatedCopy(Pose newEntry)
 		{
-			RoadSectionShape newShape = new RoadSectionShape();
-
-			newShape.Entry = newEntry;
-			newShape._boundaryVerticesRelativeToHandle = _boundaryVerticesRelativeToHandle;
-
 			Pose originalExitRelativeToOriginalEntry = Entry.InverseTransformPose(Exit);
-			newShape.Exit = newEntry.TransformPose(originalExitRelativeToOriginalEntry);
+			Pose newExit = newEntry.TransformPose(originalExitRelativeToOriginalEntry);
 
-			newShape._infiniteHeight = _infiniteHeight;
+			ConvexHull newHull = HorizontalHull.InverseTransformBy(Entry);
 
-			newShape.RecalculateCollisionBoundaries();
-			return newShape;
-		}
-
-		public void RecalculateCollisionBoundaries()
-		{
-			List<Vector2> topology = new List<Vector2>();
-			float _minHeight = Mathf.Infinity;
-			float _maxHeight = -Mathf.Infinity;
-			foreach (Vector3 vertex in _boundaryVerticesRelativeToHandle)
-			{
-				Vector3 globalVertex = Entry.TransformPoint(vertex);
-				_minHeight = Mathf.Min(globalVertex.y, _minHeight);
-				_maxHeight = Mathf.Max(globalVertex.y, _maxHeight);
-				topology.Add(new Vector2(globalVertex.x, globalVertex.z));
-			}
-			_topologyGlobal = new ConvexHull(topology);
-			_heightRange = new FloatRange(_minHeight, _maxHeight);
+			return new RoadSectionShape
+			(
+				newEntry,
+				newExit,
+				newHull,
+				InfiniteHeight ? null : VerticalRange
+			);
 		}
 
 		public bool DoesOverlapWith(RoadSectionShape other)
@@ -84,16 +80,16 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 			{
 				return false;
 			}
-			return _topologyGlobal.OverlapsWith(other._topologyGlobal);
+			return HorizontalHull.OverlapsWith(other.HorizontalHull);
 		}
 
 		private bool OverlapsWithOnVerticalAxis(RoadSectionShape other)
 		{
-			if (_infiniteHeight || other._infiniteHeight)
+			if (InfiniteHeight || other.InfiniteHeight)
 			{
 				return true;
 			}
-			return _heightRange.OverlapsWith(other._heightRange);
+			return VerticalRange.OverlapsWith(other.VerticalRange);
 		}
 
 		#region Debug
@@ -111,14 +107,14 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 
 			Debug.DrawLine(Entry.position, Exit.position, color);
 
-			IEnumerable<Vector2> topology = _topologyGlobal.Vertices;
+			IEnumerable<Vector2> topology = HorizontalHull.Vertices;
 			foreach (Vector2 vertex1 in topology)
 			{
-				Debug.DrawLine(new Vector3(vertex1.x, _heightRange.Min, vertex1.y), new Vector3(vertex1.x, _heightRange.Max, vertex1.y), color);
+				Debug.DrawLine(new Vector3(vertex1.x, VerticalRange.Min, vertex1.y), new Vector3(vertex1.x, VerticalRange.Max, vertex1.y), color);
 				foreach (Vector2 vertex2 in topology)
 				{
-					Debug.DrawLine(new Vector3(vertex1.x, _heightRange.Min, vertex1.y), new Vector3(vertex2.x, _heightRange.Min, vertex2.y), color);
-					Debug.DrawLine(new Vector3(vertex1.x, _heightRange.Max, vertex1.y), new Vector3(vertex2.x, _heightRange.Max, vertex2.y), color);
+					Debug.DrawLine(new Vector3(vertex1.x, VerticalRange.Min, vertex1.y), new Vector3(vertex2.x, VerticalRange.Min, vertex2.y), color);
+					Debug.DrawLine(new Vector3(vertex1.x, VerticalRange.Max, vertex1.y), new Vector3(vertex2.x, VerticalRange.Max, vertex2.y), color);
 				}
 			}
 #endif

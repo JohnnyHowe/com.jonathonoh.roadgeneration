@@ -1,4 +1,5 @@
 using System;
+using JonathonOH.RoadGeneration.ConvexShape2D;
 using JonathonOH.RoadGeneration.Core;
 using JonathonOH.Spatial;
 using Other;

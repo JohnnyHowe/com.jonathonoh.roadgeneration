@@ -79,7 +79,7 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 
 		private RoadSectionShape GetSectionShape(IRoadSection roadSection)
 		{
-			throw new NotImplementedException();
+			return RoadSectionShape.FromRoadSection(roadSection);
 		}
 	}
 }
