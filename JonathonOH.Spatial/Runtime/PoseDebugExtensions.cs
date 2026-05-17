@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace JonathonOH.Spatial
 {
-	public static class PoseExtensions
+	public static class PoseDebugExtensions
 	{
 		public static void DebugDraw(this Pose pose)
 		{
