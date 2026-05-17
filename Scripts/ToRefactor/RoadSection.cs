@@ -1,3 +1,4 @@
+using System;
 using JonathonOH.RoadGeneration.Core;
 using JonathonOH.Spatial;
 using Other;
@@ -30,13 +31,13 @@ namespace JonathonOH.RoadGeneration
 		[SerializeField] private bool _infiniteHeight = false;
 		[SerializeField] public bool autoFlip = true;
 
-		public TransformData Entry
+		public Pose Entry
 		{
-			get => TransformData.FromTransform(entry);
+			get => PoseContructors.FromTransform(entry);
 		}
-		public TransformData Exit
+		public Pose Exit
 		{
-			get => TransformData.FromTransform(exit);
+			get => PoseContructors.FromTransform(exit);
 		}
 
 		public bool IsFlipped
@@ -106,8 +107,7 @@ namespace JonathonOH.RoadGeneration
 			}
 
 			Mesh mesh = Instantiate(_boundingMesh.sharedMesh);
-			TransformData entryTransform = Entry;
-			Matrix4x4 entryWorldToLocal = Matrix4x4.TRS(entryTransform.Position, entryTransform.Rotation, Vector3.one).inverse;
+			Matrix4x4 entryWorldToLocal = Matrix4x4.TRS(Entry.position, Entry.rotation, Vector3.one).inverse;
 			Matrix4x4 boundingMeshLocalToEntry = entryWorldToLocal * _boundingMesh.transform.localToWorldMatrix;
 			Vector3[] vertices = mesh.vertices;
 
@@ -121,6 +121,20 @@ namespace JonathonOH.RoadGeneration
 			return mesh;
 		}
 
+		public void AlignStart(Pose newStart)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void AlignEnd(Pose newEnd)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// TODO kill this method off.
+		/// Only Pose version should be used
+		/// </summary>
 		public void AlignStart(TransformData newStartPoint)
 		{
 			TransformData currentStart = TransformData.FromTransform(entry);
@@ -131,6 +145,10 @@ namespace JonathonOH.RoadGeneration
 			// ResetShape();
 		}
 
+		/// <summary>
+		/// TODO kill this method off.
+		/// Only Pose version should be used
+		/// </summary>
 		public void AlignEnd(TransformData newEndPoint)
 		{
 			TransformData currentEnd = TransformData.FromTransform(exit);

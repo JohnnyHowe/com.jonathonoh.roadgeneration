@@ -144,16 +144,16 @@ namespace JonathonOH.RoadGeneration
 
 			int nextN = 0;
 			RoadSection newestSection = GetNewestSection();
-			TransformData nextStartPosition = new TransformData(Vector3.zero, new Quaternion(0, 0, 0, 1), Vector3.one);
+			Pose nextStart = Pose.identity;
 			if (newestSection != null)
 			{
 				nextN = newestSection.N + 1;
-				nextStartPosition = newestSection.Exit;
+				nextStart = newestSection.Exit;
 			}
 
 			RoadSection roadSection = roadSectionPool.ClaimUninstantiatedSection(chosenSectionPrototype);
 			roadSection.N = nextN;
-			roadSection.AlignStart(nextStartPosition);
+			roadSection.AlignStart(nextStart);
 			roadSectionPool.ActivateSection(roadSection);
 			ResetEngine();
 
