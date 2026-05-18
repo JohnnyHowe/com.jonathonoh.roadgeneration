@@ -1,6 +1,4 @@
-using JonathonOH.RoadGeneration.Core;
-
-namespace JonathonOH.RoadGeneration.ChoiceEngine
+namespace JonathonOH.RoadGeneration
 {
 	public readonly struct ChoiceResult
 	{

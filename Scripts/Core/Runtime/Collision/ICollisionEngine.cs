@@ -1,4 +1,4 @@
-namespace JonathonOH.RoadGeneration.Collision
+namespace JonathonOH.RoadGeneration
 {
 	public interface ICollisionEngine
 	{

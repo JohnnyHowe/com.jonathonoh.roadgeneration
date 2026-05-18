@@ -1,0 +1,16 @@
+{
+    "name": "JonathonOH.RoadGeneration.ChainGenerators",
+    "rootNamespace": "",
+    "references": [
+		"JonathonOH.RoadGeneration.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

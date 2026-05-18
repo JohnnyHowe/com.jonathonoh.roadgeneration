@@ -1,9 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using JonathonOH.RoadGeneration.ChoiceEngine;
-using JonathonOH.RoadGeneration.Core;
 using JonathonOH.RoadGeneration.RoadSectionShapeCollision;
-using JonathonOH.Spatial;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
@@ -30,7 +27,7 @@ namespace JonathonOH.RoadGeneration
 		private List<RoadSection> presetSections;
 
 		protected abstract bool ShouldPlaceNewSection();
-		protected abstract List<RoadSection> GetSectionsInPreferenceOrder(List<RoadSection> sectionPrototypes);
+		protected abstract List<IRoadSection> GetChainGenerator(List<IRoadSection> sectionPrototypes);
 		protected abstract bool ShouldRemoveLastSection();
 
 		protected void Awake()
