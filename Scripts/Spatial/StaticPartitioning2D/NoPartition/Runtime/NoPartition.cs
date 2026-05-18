@@ -1,28 +1,35 @@
-using System;
 using System.Collections.Generic;
 
 namespace JonathonOH.Spatial.StaticPartitioning2D
 {
 	public class NoPartition: IPartition
 	{
-		public void SetAllObjects(IEnumerable<IPartitionable> objects)
+		private HashSet<IPartitionable> objects = new HashSet<IPartitionable>();
+
+		public void SetAllObjects(IEnumerable<IPartitionable> newObjects)
 		{
-			throw new NotImplementedException();
+			objects = new HashSet<IPartitionable>(newObjects);
 		}
 
 		public void Add(IPartitionable partitionable)
 		{
-			throw new NotImplementedException();
+			objects.Add(partitionable);
 		}
 
 		public void Remove(IPartitionable partitionable)
 		{
-			throw new NotImplementedException();
+			objects.Remove(partitionable);
 		}
 
-		public IPartitionable GetFirstObjectWithOverlap(IPartitionable other)
+		public IEnumerable<IPartitionable> GetObjectsOverlapping(IPartitionable other)
 		{
-			throw new NotImplementedException();
+			foreach (IPartitionable obj in objects)
+			{
+				if (other.Overlaps(obj))
+				{
+					yield return obj;
+				}
+			}
 		}
 	}
 }

@@ -7,6 +7,6 @@ namespace JonathonOH.Spatial.StaticPartitioning2D
 		public void SetAllObjects(IEnumerable<IPartitionable> objects);
 		public void Add(IPartitionable partitionable);
 		public void Remove(IPartitionable partitionable);
-		public IPartitionable GetFirstObjectWithOverlap(IPartitionable other);
+		public IEnumerable<IPartitionable> GetObjectsOverlapping(IPartitionable other);
 	}
 }

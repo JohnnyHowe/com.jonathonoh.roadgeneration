@@ -20,7 +20,7 @@ namespace JonathonOH.Spatial.StaticPartitioning2D
 			throw new NotImplementedException();
 		}
 
-		public IPartitionable GetFirstObjectWithOverlap(IPartitionable other)
+		public IEnumerable<IPartitionable> GetObjectsOverlapping(IPartitionable other)
 		{
 			throw new NotImplementedException();
 		}
