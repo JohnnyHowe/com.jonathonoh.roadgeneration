@@ -2,14 +2,14 @@ using System;
 using System.Linq;
 using UnityEngine;
 
-namespace Other
+namespace JonathonOH.DFSChainGenerator
 {
     /// <summary>
     /// The essence of DFS traversal for a fixed number of branches at every node.
     /// With the depth and number of trees, it will keep track of the branch index at every depth
     ///  and allow stepping through it ez pz
     /// </summary>
-    public class DFSCombinationGenerator
+    public class Generator
     {
         public class OutOfCombinationsException : Exception { }
 
@@ -20,7 +20,7 @@ namespace Other
         private bool _atSolution;
         private bool _exhaustedSearch;
 
-        public DFSCombinationGenerator(int branches, int depth)
+        public Generator(int branches, int depth)
         {
             if (branches < 1) throw new ArgumentOutOfRangeException("Cannot have less than 1 branches");
             if (depth < 1) throw new ArgumentOutOfRangeException("Cannot have less than one depth");
@@ -29,7 +29,8 @@ namespace Other
             _nBranches = branches;
             _atSolution = false;
 
-            SetState(Enumerable.Range(0, depth).Select(_ => -1).ToArray()); // init to { -1, -1, ...}
+			Reset();
+
             _state[0] = 0;
             _exhaustedSearch = false;
         }
@@ -41,8 +42,17 @@ namespace Other
 
         public void SetState(int[] newState)
         {
-            _state = newState;
+			Reset();
+			for (int i = 0; i < Mathf.Max(_state.Length, newState.Length); i++)
+			{
+				_state[i] = newState[i];
+			}
         }
+
+		public void Reset()
+		{
+            SetState(Enumerable.Range(0, _maxDepth).Select(_ => -1).ToArray()); // init to { -1, -1, ...}
+		}
 
         public void StepInvalid()
         {
@@ -78,7 +88,6 @@ namespace Other
                 if (!_CanBacktrack())
                 {
                     _exhaustedSearch = true;
-					Debug.Log("search exhausted!");
 					return;
                 }
 

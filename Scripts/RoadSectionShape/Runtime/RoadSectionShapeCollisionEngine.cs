@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using JonathonOH.RoadGeneration.Collision;
-using JonathonOH.RoadGeneration.Core;
-using Other;
+using JonathonOH.DFSChainGenerator;
 
 namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 {
@@ -15,7 +13,7 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 		private CollisionCheckRequest? realRequest = null;
 		private CollisionCheckRequest request => (CollisionCheckRequest)realRequest;
 
-		private DFSCombinationGenerator combinationGenerator;
+		private Generator combinationGenerator;
 
 		private ICollisionEngine.SearchResult result = ICollisionEngine.SearchResult.SearchNotFinished;
 		private bool hasCheckedSubject = false;
@@ -30,7 +28,7 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 		{
 			realRequest = request;
 			hasCheckedSubject = false;
-			combinationGenerator = new DFSCombinationGenerator(request.AllowedSections.Count - 1, request.MaxCheckDepth);
+			combinationGenerator = new Generator(request.AllowedSections.Count - 1, request.MaxCheckDepth);
 			result = ICollisionEngine.SearchResult.SearchNotFinished;
 		}
 

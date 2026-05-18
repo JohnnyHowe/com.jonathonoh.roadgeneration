@@ -1,5 +1,5 @@
 {
-    "name": "JonathonOH.RoadGeneration.ChainGenerators",
+    "name": "JonathonOH.BacktrackableEnumerator",
     "rootNamespace": "",
     "references": [
         "JonathonOH.RoadGeneration.Core",

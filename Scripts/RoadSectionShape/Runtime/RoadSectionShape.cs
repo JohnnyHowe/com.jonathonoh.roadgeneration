@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using JonathonOH.ConvexShapeExtruded;
-using JonathonOH.RoadGeneration.Core;
 using JonathonOH.Spatial;
 using UnityEngine;
 
@@ -9,7 +8,6 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 	/// <summary>
 	/// Describes the shape of a road section
 	/// Contains logic for bounding areas, and start and end position alignment.
-	/// 
 	/// TODO make readonly
 	/// </summary>
 	public class RoadSectionShape

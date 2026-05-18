@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using JonathonOH.RoadGeneration.Core;
+using JonathonOH.RoadGeneration;
 using UnityEngine;
 
 namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision

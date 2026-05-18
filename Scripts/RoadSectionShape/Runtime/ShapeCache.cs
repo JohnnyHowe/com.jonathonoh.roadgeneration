@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using JonathonOH.RoadGeneration.Core;
 
 namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 {
