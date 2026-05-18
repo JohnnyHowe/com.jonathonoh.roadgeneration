@@ -1,0 +1,51 @@
+using NUnit.Framework;
+using UnityEngine;
+
+namespace JonathonOH.Geometry.Tests.ConvexHullUtilityTests
+{
+	/// <summary>
+	/// Verifies tangent generation for representative clockwise hull shapes.
+	/// </summary>
+	internal class GetTangentsFromHullCanonicalShapeTests
+	{
+		[Test]
+		public void Triangle_ReturnsOneTangentPerEdgeIncludingClosingEdge()
+		{
+			Vector2[] hullClockwise =
+			{
+				new Vector2(0f, 1f),
+				new Vector2(1f, 0f),
+				new Vector2(-1f, 0f)
+			};
+
+			Vector2[] result = ConvexHullUtility.GetTangentsFromHull(hullClockwise).ToArray();
+
+			Assert.That(result, Is.EqualTo(new[]
+			{
+				new Vector2(1f, -1f).normalized,
+				new Vector2(-2f, 0f).normalized,
+				new Vector2(1f, 1f).normalized
+			}).Using(TangentComparer.Instance));
+		}
+
+		[Test]
+		public void Rectangle_ReturnsUniqueTangentsInHullOrder()
+		{
+			Vector2[] hullClockwise =
+			{
+				new Vector2(0f, 1f),
+				new Vector2(2f, 1f),
+				new Vector2(2f, 0f),
+				new Vector2(0f, 0f)
+			};
+
+			Vector2[] result = ConvexHullUtility.GetTangentsFromHull(hullClockwise).ToArray();
+
+			Assert.That(result, Is.EqualTo(new[]
+			{
+				Vector2.right,
+				Vector2.down
+			}).Using(TangentComparer.Instance));
+		}
+	}
+}

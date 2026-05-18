@@ -1,0 +1,16 @@
+{
+    "name": "JonathonOH.Geometry.ConvexPolygon",
+    "rootNamespace": "",
+    "references": [
+        "GUID:80110c86b25e59b40b777151ef16b483"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

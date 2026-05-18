@@ -1,0 +1,25 @@
+{
+    "name": "JonathonOH.Geometry.ConvexPolygon.Tests",
+    "rootNamespace": "JonathonOH.RoadGeneration.ConvexShape2D.Tests",
+    "references": [
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "JonathonOH.Geometry.ConvexPolygon",
+        "JonathonOH.Geometry.FloatRange"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

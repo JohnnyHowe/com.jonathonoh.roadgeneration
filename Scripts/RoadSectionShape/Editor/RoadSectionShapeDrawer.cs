@@ -1,4 +1,4 @@
-using JonathonOH.RoadGeneration.ConvexShape2D;
+using JonathonOH.Geometry;
 using JonathonOH.RoadGeneration.Core;
 using UnityEditor;
 using UnityEngine;
