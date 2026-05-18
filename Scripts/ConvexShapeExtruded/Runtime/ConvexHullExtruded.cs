@@ -9,7 +9,7 @@ namespace JonathonOH.ConvexShapeExtruded
 	{
 		public readonly ConvexHull HorizontalHull;
 		public readonly FloatRange VerticalRange;
-
+		
 		public ConvexHullExtruded(ConvexHull horizontalHull, FloatRange verticalRange)
 		{
 			HorizontalHull = horizontalHull;
@@ -56,11 +56,6 @@ namespace JonathonOH.ConvexShapeExtruded
 		public bool OverlapsWith(ConvexHullExtruded other)
 		{
 			throw new NotImplementedException();
-		}
-
-		public void DebugDraw(Color color)
-		{
-
 		}
 	}
 }
