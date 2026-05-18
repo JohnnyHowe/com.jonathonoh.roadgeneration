@@ -10,6 +10,7 @@ namespace JonathonOH.Geometry
 		public readonly IReadOnlyList<Vector2> Vertices;
 		public readonly IReadOnlyList<Vector2> Tangents;
 		public readonly IReadOnlyList<Vector2> Normals;
+		public readonly Rect BoundingRect;
 
 		public ConvexPolygon(IEnumerable<Vector2> allVertices)
 		{
@@ -22,12 +23,22 @@ namespace JonathonOH.Geometry
 
 			Tangents = ConvexHullUtility.GetTangentsFromHull(Vertices).ToList();
 			Normals = ConvexHullUtility.GetNormalsFromTangents(Tangents).ToList();
+			BoundingRect = BoundingRectCalculator.FromVertices(Vertices);
 		}
 
 		/// <summary>
 		/// Returns true when this hull overlaps another hull, including when they only touch at a boundary.
 		/// </summary>
 		public bool OverlapsWith(ConvexPolygon other)
+		{
+			if (!BoundingRect.Overlaps(other.BoundingRect))
+			{
+				return false;
+			}
+			return OverlapsWithUsingSAT(other);
+		}
+
+		private bool OverlapsWithUsingSAT(ConvexPolygon other)
 		{
 			IEnumerable<Vector2> allNormals = Normals.Concat(other.Normals).Distinct(TangentComparer.Instance);
 			foreach (Vector2 axis in allNormals)
@@ -68,6 +79,6 @@ namespace JonathonOH.Geometry
 			}
 
 			return Rect.MinMaxRect(min.x, min.y, max.x, max.y);
-		}	
+		}
 	}
 }
