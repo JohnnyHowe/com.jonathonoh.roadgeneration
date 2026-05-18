@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 
-namespace JonathonOH.Spatial.Partitioning2D
+namespace JonathonOH.Spatial.StaticPartitioning2D
 {
-	public class StaticBSP
+	public class BSP: IPartition
 	{
 		public void SetAllObjects(IEnumerable<IPartitionable> objects)
 		{

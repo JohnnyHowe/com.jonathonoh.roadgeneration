@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace JonathonOH.Spatial.Partitioning2D
+namespace JonathonOH.Spatial.StaticPartitioning2D
 {
 	public interface IPartitionable
 	{

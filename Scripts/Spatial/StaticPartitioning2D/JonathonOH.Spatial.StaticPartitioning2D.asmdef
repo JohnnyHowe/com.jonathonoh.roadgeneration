@@ -1,9 +1,7 @@
 {
-    "name": "JonathonOH.Spatial.StaticBinarySpatialPartition2D",
+    "name": "JonathonOH.Spatial.StaticPartitioning2D",
     "rootNamespace": "",
-    "references": [
-        "GUID:9163786da09ad0441af0a401d0fba45a"
-    ],
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

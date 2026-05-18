@@ -1,7 +1,9 @@
 {
-    "name": "JonathonOH.Spatial.Partitioning2D",
+    "name": "JonathonOH.Spatial.StaticPartitioning2D.BSP",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:9163786da09ad0441af0a401d0fba45a"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
