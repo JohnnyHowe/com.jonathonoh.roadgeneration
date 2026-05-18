@@ -37,9 +37,9 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 			List<RoadSectionShape> shapesToCheck = shapeCache.GetShapes(sectionsToCheck).ToList();
 
 			Pose entry = Pose.identity;
-			if (DebugDrawEnabled && shapesToCheck.Count > 0)
+			if (DebugDrawEnabled && sectionsToCheck.Count > 0)
 			{
-				entry = shapesToCheck[0].Entry;
+				entry = sectionsToCheck[0].Entry;
 			}
 
 			int indexOfSectionToCheckWithCollision = GetIndexOfShapeWithCollision(shapesToCheck, subjectShape, entry);
