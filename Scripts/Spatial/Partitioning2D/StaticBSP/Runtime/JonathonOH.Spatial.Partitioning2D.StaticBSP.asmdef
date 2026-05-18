@@ -1,0 +1,16 @@
+{
+    "name": "JonathonOH.Spatial.StaticBinarySpatialPartition2D",
+    "rootNamespace": "",
+    "references": [
+        "GUID:9163786da09ad0441af0a401d0fba45a"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
