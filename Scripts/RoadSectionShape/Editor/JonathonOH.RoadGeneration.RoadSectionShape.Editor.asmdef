@@ -1,0 +1,21 @@
+{
+    "name": "JonathonOH.RoadGeneration.RoadSectionShape.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:82f027f27bd1fdf47b393076da5e8633",
+        "GUID:ca61de95721b26243bfea9409803ed60",
+        "GUID:a48dc5a26d0e7c24bbccf0beaebc3606",
+        "GUID:ba7916aba8bcf3d4aa430c5c7f72501a"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
