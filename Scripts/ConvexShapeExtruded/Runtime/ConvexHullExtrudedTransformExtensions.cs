@@ -5,7 +5,7 @@ namespace JonathonOH.ConvexShapeExtruded
 {
 	public static class ConvexHullExtrudedTransformExtensions
 	{
-		private const float almostZero = 0.0001f;
+		private const float almostZero = 0.001f;
 
 		public static ConvexHullExtruded TransformBy(this ConvexHullExtruded target, Pose pose)
 		{
