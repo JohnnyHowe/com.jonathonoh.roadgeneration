@@ -36,8 +36,12 @@ namespace JonathonOH.ConvexShapeExtruded
 		{
 			if (target.VerticalRange.Max != Mathf.Infinity && target.VerticalRange.Min != -Mathf.Infinity)
 			{
-				// Draw solid connecting lines
 				DrawVerticalLines(target, target.VerticalRange.Min, target.VerticalRange.Max, color);
+			}
+			else if (target.VerticalRange.Max == Mathf.Infinity && target.VerticalRange.Min == -Mathf.Infinity)
+			{
+				DrawVerticalLines(target, 0, -Mathf.Infinity, color);
+				DrawVerticalLines(target, 0, Mathf.Infinity, color);
 			}
 			else if (target.VerticalRange.Min == -Mathf.Infinity)
 			{
