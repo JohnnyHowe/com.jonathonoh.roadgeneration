@@ -159,23 +159,23 @@ namespace JonathonOH.RoadGeneration
 
 		private void ResetEngine()
 		{
-			List<RoadSection> choices = GetSectionsInPreferenceOrder(roadSectionPool.GetAllAvailablePrototypes().ToList());
+			// List<RoadSection> choices = GetSectionsInPreferenceOrder(roadSectionPool.GetAllAvailablePrototypes().ToList());
 
-			ChoiceRequest choiceRequest = new ChoiceRequest()
-			{
-				CurrentSectionsInWorld = GetAllCurrentSections().ToList(),
-				SectionsInPreferenceOrder = choices,
-				MaxCheckDepth = _choiceEngineCheckDepth
-			};
+			// ChoiceRequest choiceRequest = new ChoiceRequest()
+			// {
+			// 	CurrentSectionsInWorld = GetAllCurrentSections().ToList(),
+			// 	SectionsInPreferenceOrder = choices,
+			// 	MaxCheckDepth = _choiceEngineCheckDepth
+			// };
 
-			if (choices.Count == 0)
-			{
-				PoolEmpty.Invoke();
-			}
-			else
-			{
-				choiceEngine.Reset(choiceRequest);
-			}
+			// if (choices.Count == 0)
+			// {
+			// 	PoolEmpty.Invoke();
+			// }
+			// else
+			// {
+			// 	choiceEngine.Reset(choiceRequest);
+			// }
 		}
 
 		public RoadSection GetNewestSection()

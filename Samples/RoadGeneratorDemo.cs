@@ -49,7 +49,7 @@ public class RoadGeneratorDemo : ARoadGenerator
         Debug.Log("Pool is empty!");
     }
 
-    protected override List<RoadSection> GetSectionsInPreferenceOrder(List<RoadSection> sectionPrototypes)
+    protected List<RoadSection> GetSectionsInPreferenceOrder(List<RoadSection> sectionPrototypes)
     {
         List<RoadSection> shuffled = new List<RoadSection>(sectionPrototypes);
         Shuffle(shuffled);
@@ -69,4 +69,9 @@ public class RoadGeneratorDemo : ARoadGenerator
             list[n] = value;
         }
     }
+
+	protected override List<IRoadSection> GetChainGenerator(List<IRoadSection> sectionPrototypes)
+	{
+		throw new System.NotImplementedException();
+	}
 }

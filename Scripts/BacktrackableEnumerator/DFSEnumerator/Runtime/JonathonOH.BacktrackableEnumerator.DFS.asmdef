@@ -1,10 +1,9 @@
 {
-    "name": "RoadGenerationDemo",
+    "name": "JonathonOH.BacktrackableEnumerator.DFS",
     "rootNamespace": "",
     "references": [
-        "GUID:fcec704cba43a604980796eb67ec628c",
-        "GUID:2886d0abf4c39b8419b0da6d19c6ab90",
-        "GUID:ca61de95721b26243bfea9409803ed60"
+        "JonathonOH.RoadGeneration.Core",
+        "JonathonOH.BacktrackableEnumerator"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
