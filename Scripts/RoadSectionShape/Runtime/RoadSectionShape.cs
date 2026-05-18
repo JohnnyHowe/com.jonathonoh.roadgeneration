@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using JonathonOH.ConvexShapeExtruded;
 using JonathonOH.RoadGeneration.Core;
 using JonathonOH.Spatial;
@@ -21,17 +22,17 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 
 		public static RoadSectionShape FromRoadSection(IRoadSection roadSection)
 		{
-			return FromMesh(
+			return FromBoundaryPoints(
 				roadSection.Entry,
 				roadSection.Exit,
-				roadSection.GetBoundaryInEntrySpace(),
+				roadSection.GetBoundaryPoints(),
 				roadSection.IsBoundaryInfiniteHeight
 			);
 		}
 
-		public static RoadSectionShape FromMesh(Pose entry, Pose exit, Mesh meshBoundaryRelativetoEntry, bool infiniteHeight)
+		public static RoadSectionShape FromBoundaryPoints(Pose entry, Pose exit, IEnumerable<Vector3> boundaryPoints, bool infiniteHeight)
 		{
-			return new RoadSectionShape(entry, exit, ConvexHullExtruded.FromMesh(meshBoundaryRelativetoEntry, infiniteHeight));
+			return new RoadSectionShape(entry, exit, ConvexHullExtruded.FromVertices(boundaryPoints, infiniteHeight));
 		}
 
 		public RoadSectionShape(Pose entry, Pose exit, ConvexHullExtruded hull)
