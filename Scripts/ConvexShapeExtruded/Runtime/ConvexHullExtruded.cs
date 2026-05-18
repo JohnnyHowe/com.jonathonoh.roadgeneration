@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using JonathonOH.RoadGeneration.ConvexShape2D;
 using UnityEngine;
@@ -40,30 +39,6 @@ namespace JonathonOH.ConvexShapeExtruded
 
 			FloatRange verticalRange = new FloatRange(minVerticalPosition, maxVerticalPosition);
 			ConvexHull horizontalHull = new ConvexHull(horizontalVertices);
-			return new ConvexHullExtruded(horizontalHull, verticalRange);
-		}
-
-		public ConvexHullExtruded TransformBy(Pose pose)
-		{
-			if (!Mathf.Approximately(pose.rotation.eulerAngles.x, 0) || !Mathf.Approximately(pose.rotation.eulerAngles.z, 0))
-			{
-				Debug.Log("Rotating on x or z axis not supported!");
-			}
-
-			ConvexHull horizontalHull = HorizontalHull.TransformBy(pose);
-			FloatRange verticalRange = new FloatRange(VerticalRange.Min + pose.position.y, VerticalRange.Max + pose.position.y);
-			return new ConvexHullExtruded(horizontalHull, verticalRange);
-		}
-
-		public ConvexHullExtruded InverseTransformBy(Pose pose)
-		{
-			if (!Mathf.Approximately(pose.rotation.eulerAngles.x, 0) || !Mathf.Approximately(pose.rotation.eulerAngles.z, 0))
-			{
-				Debug.Log("Rotating on x or z axis not supported!");
-			}
-
-			ConvexHull horizontalHull = HorizontalHull.InverseTransformBy(pose);
-			FloatRange verticalRange = new FloatRange(VerticalRange.Min - pose.position.y, VerticalRange.Max - pose.position.y);
 			return new ConvexHullExtruded(horizontalHull, verticalRange);
 		}
 
