@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using UnityEngine;
 
-namespace JonathonOH.Spatial.Tests.TransformationConsistencyTests
+namespace JonathonOH.Spatial.Tests.PoseExtensionTests
 {
 	public static class TransformationConsistencyTests
 	{

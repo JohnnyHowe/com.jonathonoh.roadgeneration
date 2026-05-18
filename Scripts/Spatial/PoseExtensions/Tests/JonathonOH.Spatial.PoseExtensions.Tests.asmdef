@@ -1,9 +1,10 @@
 {
-    "name": "JonathonOH.Spatial.Tests",
+    "name": "JonathonOH.Spatial.PoseExtensions.Tests",
+    "rootNamespace": "",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "JonathonOH.Spatial"
+        "JonathonOH.Spatial.PoseExtensions"
     ],
     "includePlatforms": [
         "Editor"
