@@ -68,20 +68,6 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D
 			}
 
 			return Rect.MinMaxRect(min.x, min.y, max.x, max.y);
-		}
-
-		#region Debug
-
-		public void DebugDraw(Color color)
-		{
-			DebugDraw(color, 0);
-		}
-
-		public void DebugDraw(Color color, float y)
-		{
-			throw new NotImplementedException();
-		}
-
-		#endregion
+		}	
 	}
 }

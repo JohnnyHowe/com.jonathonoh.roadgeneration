@@ -24,13 +24,14 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 			return FromMesh(
 				roadSection.Entry,
 				roadSection.Exit,
-				roadSection.GetBoundaryInEntrySpace()
+				roadSection.GetBoundaryInEntrySpace(),
+				roadSection.IsBoundaryInfiniteHeight
 			);
 		}
 
-		public static RoadSectionShape FromMesh(Pose entry, Pose exit, Mesh meshBoundaryRelativetoEntry)
+		public static RoadSectionShape FromMesh(Pose entry, Pose exit, Mesh meshBoundaryRelativetoEntry, bool infiniteHeight)
 		{
-			return new RoadSectionShape(entry, exit, ConvexHullExtruded.FromMesh(meshBoundaryRelativetoEntry));
+			return new RoadSectionShape(entry, exit, ConvexHullExtruded.FromMesh(meshBoundaryRelativetoEntry, infiniteHeight));
 		}
 
 		public RoadSectionShape(Pose entry, Pose exit, ConvexHullExtruded hull)
