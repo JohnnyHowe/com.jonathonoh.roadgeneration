@@ -29,7 +29,7 @@ namespace JonathonOH.ConvexShapeExtruded
 
 			foreach (Vector3 vertex in vertices)
 			{
-				horizontalVertices.Add(new Vector2(vertex.x, vertex.y));
+				horizontalVertices.Add(new Vector2(vertex.x, vertex.z));
 				if (!infiniteHeight)
 				{
 					maxVerticalPosition = Mathf.Max(maxVerticalPosition, vertex.y);
