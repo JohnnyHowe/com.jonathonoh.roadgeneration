@@ -10,6 +10,10 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision.Editor
 		[DrawGizmo(GizmoType.NonSelected | GizmoType.Selected)]
 		static void Draw(IRoadSection roadSection, GizmoType gizmoType)
 		{
+			if (Application.isPlaying)
+			{
+				return;
+			}
 			RoadSectionShape shape = RoadSectionShape.FromRoadSection(roadSection);
 			ConvexHullDebugExtension.GizmosDraw(shape.Hull.HorizontalHull, Color.red, 0);
 		}

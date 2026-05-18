@@ -11,7 +11,6 @@ namespace JonathonOH.RoadGeneration.ConvexShape2D
 
 		public static void DebugDraw(this ConvexHull target, Color color, float y)
 		{
-			Debug.Log("Drawing hull");
 			for (int i = 0; i < target.Vertices.Count; i++)
 			{
 				int i2 = (i + 1) % target.Vertices.Count;
