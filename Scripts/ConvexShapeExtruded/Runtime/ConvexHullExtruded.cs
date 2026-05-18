@@ -45,22 +45,26 @@ namespace JonathonOH.ConvexShapeExtruded
 
 		public ConvexHullExtruded TransformBy(Pose pose)
 		{
-			if (pose.rotation.eulerAngles.x != 0 || pose.rotation.eulerAngles.z != 0)
+			if (!Mathf.Approximately(pose.rotation.eulerAngles.x, 0) || !Mathf.Approximately(pose.rotation.eulerAngles.z, 0))
 			{
-				throw new NotSupportedException("Rotating on x or z axis not supported!");
+				Debug.Log("Rotating on x or z axis not supported!");
 			}
 
-			throw new NotImplementedException();
+			ConvexHull horizontalHull = HorizontalHull.TransformBy(pose);
+			FloatRange verticalRange = new FloatRange(VerticalRange.Min + pose.position.y, VerticalRange.Max + pose.position.y);
+			return new ConvexHullExtruded(horizontalHull, verticalRange);
 		}
 
 		public ConvexHullExtruded InverseTransformBy(Pose pose)
 		{
-			if (pose.rotation.eulerAngles.x != 0 || pose.rotation.eulerAngles.z != 0)
+			if (!Mathf.Approximately(pose.rotation.eulerAngles.x, 0) || !Mathf.Approximately(pose.rotation.eulerAngles.z, 0))
 			{
-				throw new NotSupportedException("Rotating on x or z axis not supported!");
+				Debug.Log("Rotating on x or z axis not supported!");
 			}
 
-			throw new NotImplementedException();
+			ConvexHull horizontalHull = HorizontalHull.InverseTransformBy(pose);
+			FloatRange verticalRange = new FloatRange(VerticalRange.Min - pose.position.y, VerticalRange.Max - pose.position.y);
+			return new ConvexHullExtruded(horizontalHull, verticalRange);
 		}
 
 		public bool OverlapsWith(ConvexHullExtruded other)
