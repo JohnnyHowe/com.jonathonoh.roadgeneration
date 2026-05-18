@@ -9,7 +9,7 @@ namespace JonathonOH.ConvexShapeExtruded
 	{
 		public readonly ConvexHull HorizontalHull;
 		public readonly FloatRange VerticalRange;
-		
+
 		public ConvexHullExtruded(ConvexHull horizontalHull, FloatRange verticalRange)
 		{
 			HorizontalHull = horizontalHull;
@@ -45,17 +45,31 @@ namespace JonathonOH.ConvexShapeExtruded
 
 		public ConvexHullExtruded TransformBy(Pose pose)
 		{
+			if (pose.rotation.eulerAngles.x != 0 || pose.rotation.eulerAngles.z != 0)
+			{
+				throw new NotSupportedException("Rotating on x or z axis not supported!");
+			}
+
 			throw new NotImplementedException();
 		}
 
 		public ConvexHullExtruded InverseTransformBy(Pose pose)
 		{
+			if (pose.rotation.eulerAngles.x != 0 || pose.rotation.eulerAngles.z != 0)
+			{
+				throw new NotSupportedException("Rotating on x or z axis not supported!");
+			}
+
 			throw new NotImplementedException();
 		}
 
 		public bool OverlapsWith(ConvexHullExtruded other)
 		{
-			throw new NotImplementedException();
+			if (!VerticalRange.OverlapsWith(other.VerticalRange))
+			{
+				return false;
+			}
+			return HorizontalHull.OverlapsWith(other.HorizontalHull);
 		}
 	}
 }
