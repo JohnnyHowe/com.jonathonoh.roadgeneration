@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace JonathonOH.BacktrackableEnumerator
 {
@@ -8,40 +9,104 @@ namespace JonathonOH.BacktrackableEnumerator
 		public delegate IEnumerable<T> GetNextOptions(IReadOnlyList<T> current);
 		private GetNextOptions getNextOptions;
 
-		private Stack<IReadOnlyList<T>> stack;
-		private Stack<int> stackState;
+		private List<IReadOnlyList<T>> stack;
+		private List<int> stackCursor;
 
-		public IReadOnlyList<T> Current => throw new System.NotImplementedException();
+		private int currentStackDepthIndex => stackCursor.Count - 1;
+		private int currentStackItemCursorIndex
+		{
+			get => stackCursor[currentStackDepthIndex];
+			set { stackCursor[currentStackDepthIndex] = value; }
+		}
 
+		public IReadOnlyList<T> Current => GetCurrent().ToList();
 		object IEnumerator.Current => Current;
 
 		public DFSEnumerator(GetNextOptions getNextOptions)
 		{
 			this.getNextOptions = getNextOptions;
-			stack = new Stack<IReadOnlyList<T>>();
-
-			stackState = new Stack<int>();
-			stackState.Push(0);
-		}
-
-		public void Backtrack()
-		{
-			throw new System.NotImplementedException();
-		}
-
-		public bool MoveNext()
-		{
-			throw new System.NotImplementedException();
+			Reset();
 		}
 
 		public void Reset()
 		{
-			throw new System.NotImplementedException();
+			stackCursor = new List<int>();
+			stack = new List<IReadOnlyList<T>>();
 		}
 
-		public void Dispose()
+		public bool Backtrack()
 		{
-			throw new System.NotImplementedException();
+			return MoveBack();
 		}
+
+		public bool MoveNext()
+		{
+			if (MoveDeeper())
+			{
+				return true;
+			}
+			if (MoveSideways())
+			{
+				return true;
+			}
+			if (MoveBack())
+			{
+				return true;
+			}
+			return false;
+		}
+
+		private bool MoveDeeper()
+		{
+			IEnumerable<T> nextOptions = getNextOptions.Invoke(Current);
+			List<T> nextOptionsList = nextOptions.ToList();
+
+			if (nextOptionsList.Count == 0)
+			{
+				return false;
+			}
+
+			stack.Add(nextOptionsList);
+			stackCursor.Add(0);
+			return true;
+		}
+
+		private bool MoveSideways()
+		{
+			IReadOnlyList<T> currentOptions = stack[currentStackDepthIndex];
+			if (currentStackItemCursorIndex + 1 >= currentOptions.Count)
+			{
+				return false;
+			}
+			currentStackItemCursorIndex++;
+			return true;
+		}
+
+		private bool MoveBack()
+		{
+			while (stack.Count > 1)
+			{
+				stack.RemoveAt(currentStackDepthIndex);
+				stackCursor.RemoveAt(currentStackDepthIndex);
+
+				if (MoveSideways())
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		private IEnumerable<T> GetCurrent()
+		{
+			for (int i = 0; i < stackCursor.Count; i++)
+			{
+				int indexInState = stackCursor[i];
+				IReadOnlyList<T> stackEntry = stack[i];
+				yield return stackEntry[indexInState];
+			}
+		}
+
+		public void Dispose() { }
 	}
 }

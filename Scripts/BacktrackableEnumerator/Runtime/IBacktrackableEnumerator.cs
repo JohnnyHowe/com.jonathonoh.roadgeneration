@@ -4,6 +4,6 @@ namespace JonathonOH.BacktrackableEnumerator
 {
 	public interface IBacktrackableEnumerator<T>: IEnumerator<T>
 	{
-		public void Backtrack();
+		public bool Backtrack();
 	}
 }

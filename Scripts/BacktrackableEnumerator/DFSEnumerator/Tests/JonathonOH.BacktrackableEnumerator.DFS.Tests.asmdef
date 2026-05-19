@@ -1,9 +1,11 @@
 {
     "name": "JonathonOH.BacktrackableEnumerator.DFS.Tests",
+    "rootNamespace": "",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-		"JonathonOH.BacktrackableEnumerator.DFS"
+        "JonathonOH.BacktrackableEnumerator.DFS",
+        "JonathonOH.BacktrackableEnumerator"
     ],
     "includePlatforms": [
         "Editor"
