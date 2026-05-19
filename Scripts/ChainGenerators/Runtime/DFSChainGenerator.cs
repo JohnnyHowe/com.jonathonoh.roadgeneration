@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using JonathonOH.DFSChainGenerator;
 
 namespace JonathonOH.RoadGeneration.ChainGenerators
 {
@@ -9,86 +7,64 @@ namespace JonathonOH.RoadGeneration.ChainGenerators
 	{
 		private IReadOnlyList<IRoadSection> alreadyPlaced;
 		private IReadOnlyList<IRoadSection> choicesInPreferenceOrder;
-		private int checkDepth;
-
-		private Generator combinationGenerator;
 
 		public Chain Current => GetCurrentChain();
-		object IEnumerator.Current => Current;
+		private IEnumerable<IRoadSection> Candidates => GetCurrentCandidates();
 
-		/// <summary>
-		/// Store the complete set of road sections that the DFS search can choose from when building chains.
-		/// </summary>
-		public DFSChainGenerator(
-			IReadOnlyList<IRoadSection> alreadyPlaced,
-			IReadOnlyList<IRoadSection> choicesInPreferenceOrder,
-			int checkDepth
-		)
+		private List<int> searchStackCursor = new List<int>();
+
+		public DFSChainGenerator(IReadOnlyList<IRoadSection> alreadyPlaced, IReadOnlyList<IRoadSection> choicesInPreferenceOrder)
 		{
 			this.alreadyPlaced = alreadyPlaced;
 			this.choicesInPreferenceOrder = choicesInPreferenceOrder;
-			this.checkDepth = checkDepth;
-
-			combinationGenerator = new Generator(choicesInPreferenceOrder.Count, checkDepth);
 		}
 
 		private Chain GetCurrentChain()
 		{
+			var candidatesList = Candidates.ToList();
 			return new Chain()
 			{
 				AlreadyPlaced = alreadyPlaced,
-				Candidates = GetCurrentCandidates().ToList(),
-				// IsCandidatesAtTargetLength
+				Candidates = candidatesList,
 			};
 		}
 
 		private IEnumerable<IRoadSection> GetCurrentCandidates()
 		{
-			foreach (int index in combinationGenerator.GetState())
+			for (int stackIndex = 0; stackIndex < searchStackCursor.Count; stackIndex++)
 			{
-				if (index == -1)
-				{
-					yield break;
-				}
-
-				yield return choicesInPreferenceOrder[index];
+				int cursor = searchStackCursor[stackIndex];
+				yield return choicesInPreferenceOrder[cursor];
 			}
 		}
 
-		/// <summary>
-		/// Release any search state owned by this generator when enumeration is finished.
-		/// </summary>
-		public void Dispose()
+		public void Extend()
 		{
-			combinationGenerator.Reset();
+			searchStackCursor.Add(0);
 		}
 
-		/// <summary>
-		/// Advance the DFS search to the next valid chain permutation and make it available through
-		/// <see cref="Current"/>. Return false when no more valid chains can be produced.
-		/// </summary>
-		public bool MoveNext()
+		public bool Next()
 		{
-			// combinationGenerator.StepValid();
-			throw new System.NotImplementedException();
+			int currentDepth = searchStackCursor.Count - 1;
+			searchStackCursor[currentDepth] += 1;
+
+			if (searchStackCursor[currentDepth] < choicesInPreferenceOrder.Count)
+			{
+				return true;
+			}
+			else
+			{
+				return Backtrack();
+			}
 		}
 
-		/// <summary>
-		/// Advance the DFS search to the next invalid or rejected chain state so callers can inspect
-		/// why a branch failed. Return false when there are no more invalid states to report.
-		/// </summary>
-		public bool MoveNextInvalid()
+		private bool Backtrack()
 		{
-			throw new System.NotImplementedException();
-		}
-
-		/// <summary>
-		/// Rewind the DFS generator to its initial state so enumeration can start again from the full
-		/// set of available sections.
-		/// </summary>
-		public void Reset()
-		{
-			throw new System.NotImplementedException();
+			if (searchStackCursor.Count <= 1)
+			{
+				return false;
+			}
+			return Next();
 		}
 	}
 }

@@ -4,7 +4,6 @@ namespace JonathonOH.RoadGeneration
 {
 	public struct Chain
 	{
-		public readonly bool IsCandidatesAtTargetLength { get; init; }
 		public readonly IReadOnlyList<IRoadSection> AlreadyPlaced { get; init; }
 		public readonly IReadOnlyList<IRoadSection> Candidates { get; init; }
 
