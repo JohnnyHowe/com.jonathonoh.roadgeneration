@@ -157,25 +157,16 @@ namespace JonathonOH.RoadGeneration
 			NewSectionPlacedValue.Invoke(roadSection);
 		}
 
+		public abstract IChainGenerator GetChainGenerator();
+
 		private void ResetEngine()
 		{
-			// List<RoadSection> choices = GetSectionsInPreferenceOrder(roadSectionPool.GetAllAvailablePrototypes().ToList());
-
-			// ChoiceRequest choiceRequest = new ChoiceRequest()
-			// {
-			// 	CurrentSectionsInWorld = GetAllCurrentSections().ToList(),
-			// 	SectionsInPreferenceOrder = choices,
-			// 	MaxCheckDepth = _choiceEngineCheckDepth
-			// };
-
-			// if (choices.Count == 0)
-			// {
-			// 	PoolEmpty.Invoke();
-			// }
-			// else
-			// {
-			// 	choiceEngine.Reset(choiceRequest);
-			// }
+			ChoiceRequest choiceRequest = new ChoiceRequest()
+			{
+				ChainGenerator = GetChainGenerator(),
+				MaxCheckDepth = _choiceEngineCheckDepth
+			};
+			choiceEngine.Reset(choiceRequest);
 		}
 
 		public RoadSection GetNewestSection()
