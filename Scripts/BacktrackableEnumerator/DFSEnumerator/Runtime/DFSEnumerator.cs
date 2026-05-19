@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,10 @@ namespace JonathonOH.BacktrackableEnumerator
 
 		public DFSEnumerator(GetNextOptions getNextOptions)
 		{
+			if (getNextOptions == null)
+			{
+				throw new ArgumentNullException();
+			}
 			this.getNextOptions = getNextOptions;
 			Reset();
 		}
@@ -59,6 +64,12 @@ namespace JonathonOH.BacktrackableEnumerator
 		private bool MoveDeeper()
 		{
 			IEnumerable<T> nextOptions = getNextOptions.Invoke(Current);
+
+			if (nextOptions == null)
+			{
+				throw new ArgumentNullException();
+			}
+
 			List<T> nextOptionsList = nextOptions.ToList();
 
 			if (nextOptionsList.Count == 0)
@@ -73,11 +84,18 @@ namespace JonathonOH.BacktrackableEnumerator
 
 		private bool MoveSideways()
 		{
+			if (stack.Count == 0)
+			{
+				return false;
+			}
+
 			IReadOnlyList<T> currentOptions = stack[currentStackDepthIndex];
+
 			if (currentStackItemCursorIndex + 1 >= currentOptions.Count)
 			{
 				return false;
 			}
+			
 			currentStackItemCursorIndex++;
 			return true;
 		}
