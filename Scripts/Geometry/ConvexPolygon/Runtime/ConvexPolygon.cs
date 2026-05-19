@@ -31,11 +31,21 @@ namespace JonathonOH.Geometry
 		/// </summary>
 		public bool OverlapsWith(ConvexPolygon other)
 		{
-			if (!BoundingRect.Overlaps(other.BoundingRect))
+			if (!OverlapsWithBoundaries(other.BoundingRect))
 			{
 				return false;
 			}
 			return OverlapsWithUsingSAT(other);
+		}
+
+		private bool OverlapsWithBoundaries(Rect other)
+		{
+			return (
+				BoundingRect.xMin <= other.xMax &&
+				BoundingRect.xMax >= other.xMin &&
+				BoundingRect.yMin <= other.yMax &&
+				BoundingRect.yMax >= other.yMin
+			);
 		}
 
 		private bool OverlapsWithUsingSAT(ConvexPolygon other)
