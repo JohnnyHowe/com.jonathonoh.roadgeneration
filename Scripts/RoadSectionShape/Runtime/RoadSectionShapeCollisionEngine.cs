@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using JonathonOH.RoadGeneration.Core;
 using Other;
+using UnityEngine.PlayerLoop;
 
 namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 {
@@ -22,10 +23,14 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 		private ICollisionEngine.SearchResult result = ICollisionEngine.SearchResult.SearchNotFinished;
 		private bool hasCheckedSubject = false;
 
+		private ShapeSimplicityHeuristic shapeSimplicityHeuristic;
+		private IReadOnlyList<IRoadSection> orderedAllowedSections;
+
 		public RoadSectionShapeCollisionEngine()
 		{
 			shapeCache = new ShapeCache();
 			collisionChecker = new RoadSectionShapeCollisionChecker(shapeCache);
+			shapeSimplicityHeuristic = new ShapeSimplicityHeuristic(shapeCache);
 		}
 
 		public void Reset(CollisionCheckRequest request)
@@ -34,6 +39,8 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 			hasCheckedSubject = false;
 			combinationGenerator = new DFSCombinationGenerator(request.AllowedSections.Count - 1, request.MaxCheckDepth);
 			result = ICollisionEngine.SearchResult.SearchNotFinished;
+
+			orderedAllowedSections = shapeSimplicityHeuristic.GetOrdered(request.AllowedSections).ToList();
 		}
 
 		private bool DoesSubjectCollideWithAlreadyPlacedSections()
@@ -105,7 +112,7 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 			{
 				if (allowedSectionIndex != -1)
 				{
-					yield return request.AllowedSections[allowedSectionIndex];
+					yield return orderedAllowedSections[allowedSectionIndex];
 				}
 			}
 		}
