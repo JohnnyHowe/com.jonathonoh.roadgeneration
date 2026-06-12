@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using System.Linq;
-using JonathonOH.RoadGeneration.Core;
 
-namespace JonathonOH.RoadGeneration.Collision
+namespace JonathonOH.RoadGeneration.Core
 {
 	public struct CollisionCheckRequest
 	{
