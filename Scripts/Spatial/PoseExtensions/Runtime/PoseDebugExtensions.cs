@@ -15,6 +15,13 @@ namespace JonathonOH.Spatial
 			DrawArrow(pose.position, pose.up, Color.green);
 		}
 
+		public static void GizmosDraw(this Pose pose)
+		{
+			DrawGizmosArrow(pose.position, pose.forward, Color.blue);
+			DrawGizmosArrow(pose.position, pose.right, Color.red);
+			DrawGizmosArrow(pose.position, pose.up, Color.green);
+		}
+
 		private static void DrawArrow(Vector3 start, Vector3 direction, Color color)
 		{
 			direction *= arrowLength;
@@ -26,6 +33,20 @@ namespace JonathonOH.Spatial
 			Vector3 leftArrowHeadLine = Quaternion.LookRotation(direction) * Quaternion.Euler(0, 180 - arrowHeadAngle, 0) * new Vector3(0, 0, 1);
 			Debug.DrawRay(end, rightArrowHeadLine * arrowHeadLength, color);
 			Debug.DrawRay(end, leftArrowHeadLine * arrowHeadLength, color);
+		}
+
+		private static void DrawGizmosArrow(Vector3 start, Vector3 direction, Color color)
+		{
+			direction *= arrowLength;
+			Vector3 end = start + direction;
+
+			Gizmos.color = color;
+			Gizmos.DrawRay(start, direction);
+
+			Vector3 rightArrowHeadLine = Quaternion.LookRotation(direction) * Quaternion.Euler(0, 180 + arrowHeadAngle, 0) * new Vector3(0, 0, 1);
+			Vector3 leftArrowHeadLine = Quaternion.LookRotation(direction) * Quaternion.Euler(0, 180 - arrowHeadAngle, 0) * new Vector3(0, 0, 1);
+			Gizmos.DrawRay(end, rightArrowHeadLine * arrowHeadLength);
+			Gizmos.DrawRay(end, leftArrowHeadLine * arrowHeadLength);
 		}
 	}
 }

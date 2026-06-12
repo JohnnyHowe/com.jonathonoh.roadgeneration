@@ -1,5 +1,6 @@
 using JonathonOH.Geometry;
 using JonathonOH.RoadGeneration.Core;
+using JonathonOH.Spatial;
 using UnityEditor;
 using UnityEngine;
 
@@ -16,6 +17,9 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision.Editor
 			}
 			RoadSectionShape shape = RoadSectionShape.FromRoadSection(roadSection);
 			ConvexHullDebugExtension.GizmosDraw(shape.Hull.HorizontalHull, Color.red, 0);
+
+			PoseDebugExtensions.GizmosDraw(shape.Entry);
+			PoseDebugExtensions.GizmosDraw(shape.Exit);
 		}
 	}
 }
