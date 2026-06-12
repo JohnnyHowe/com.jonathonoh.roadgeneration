@@ -23,14 +23,14 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 		private ICollisionEngine.SearchResult result = ICollisionEngine.SearchResult.SearchNotFinished;
 		private bool hasCheckedSubject = false;
 
-		private ShapeSimplicityHeuristic shapeSimplicityHeuristic;
+		private ForwardPlacementOrderer shapeSimplicityHeuristic;
 		private IReadOnlyList<IRoadSection> orderedAllowedSections;
 
 		public RoadSectionShapeCollisionEngine()
 		{
 			shapeCache = new ShapeCache();
 			collisionChecker = new RoadSectionShapeCollisionChecker(shapeCache);
-			shapeSimplicityHeuristic = new ShapeSimplicityHeuristic(shapeCache);
+			shapeSimplicityHeuristic = new ForwardPlacementOrderer(shapeCache);
 		}
 
 		public void Reset(CollisionCheckRequest request)

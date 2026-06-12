@@ -7,7 +7,7 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 	/// <summary>
 	/// Provides an ordering for checking road section collisions.
 	/// </summary>
-	public static class CollisionCheckOrderer
+	public static class ChainCollisionCheckOrderer
 	{
 		/// <summary>
 		/// Iterates over range [0, sectionsToCheck.Count).

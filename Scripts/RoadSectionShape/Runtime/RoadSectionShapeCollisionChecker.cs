@@ -63,7 +63,7 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 
 		private int GetIndexOfAlignedShapeWithCollision(IReadOnlyList<RoadSectionShape> shapesAligned, RoadSectionShape subjectShapeAligned)
 		{
-			List<int> collisionCheckOrder = CollisionCheckOrderer.GetCollisionCheckOrder(shapesAligned.Count).ToList();
+			List<int> collisionCheckOrder = ChainCollisionCheckOrderer.GetCollisionCheckOrder(shapesAligned.Count).ToList();
 			int indexOfShapeWithCollision = GetIndexOfAlignedShapeWithCollision(shapesAligned, subjectShapeAligned, collisionCheckOrder);
 
 			if (DebugDrawEnabled)

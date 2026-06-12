@@ -5,12 +5,12 @@ using UnityEngine;
 
 namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 {
-	public class ShapeSimplicityHeuristic
+	public class ForwardPlacementOrderer
 	{
 		private ShapeCache shapeCache;
 		private Dictionary<string, float> cache;
 
-		public ShapeSimplicityHeuristic(ShapeCache shapeCache)
+		public ForwardPlacementOrderer(ShapeCache shapeCache)
 		{
 			this.shapeCache = shapeCache;
 			cache = new Dictionary<string, float>();
