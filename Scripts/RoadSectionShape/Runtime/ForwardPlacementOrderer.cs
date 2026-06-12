@@ -7,21 +7,86 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 {
 	public class ForwardPlacementOrderer
 	{
+		private struct SectionOrderEntry
+		{
+			public IRoadSection Section;
+			public int OriginalIndex;
+		}
+
 		private ShapeCache shapeCache;
-		private Dictionary<string, float> cache;
+		private Dictionary<string, float> anglesCache;
 
 		public ForwardPlacementOrderer(ShapeCache shapeCache)
 		{
 			this.shapeCache = shapeCache;
-			cache = new Dictionary<string, float>();
+			anglesCache = new Dictionary<string, float>();
 		}
 
 		/// <summary>
-		/// Higher heuristic first.
+		/// most straight, hardest left, hardest right, most straight, hardest left ...
 		/// </summary>
 		public IEnumerable<IRoadSection> GetOrdered(IEnumerable<IRoadSection> sections)
 		{
-			return sections.OrderBy(GetHeuristic);
+			IList<SectionOrderEntry> sectionsByAngle = sections
+				.Select((section, index) => new SectionOrderEntry
+				{
+					Section = section,
+					OriginalIndex = index
+				})
+				.OrderBy(entry => GetAngleNormalized(entry.Section))
+				.ToList();
+
+			IList<SectionOrderEntry> leftTurnsOrderedByAngle = sectionsByAngle.Where(entry => GetSignedAngleNormalized(entry.Section) <= 0).Reverse().ToList();
+			IList<SectionOrderEntry> rightTurnsOrderedByAngle = sectionsByAngle.Where(entry => GetSignedAngleNormalized(entry.Section) > 0).Reverse().ToList();
+
+			HashSet<int> yielded = new HashSet<int>();
+			int straightIndex = 0;
+			int leftIndex = 0;
+			int rightIndex = 0;
+
+			while (yielded.Count < sectionsByAngle.Count)
+			{
+				if (TryGetNextUnique(sectionsByAngle, yielded, ref straightIndex, out IRoadSection straightSection))
+				{
+					yield return straightSection;
+				}
+
+				if (TryGetNextUnique(leftTurnsOrderedByAngle, yielded, ref leftIndex, out IRoadSection leftSection))
+				{
+					yield return leftSection;
+				}
+
+				if (TryGetNextUnique(rightTurnsOrderedByAngle, yielded, ref rightIndex, out IRoadSection rightSection))
+				{
+					yield return rightSection;
+				}
+			}
+		}
+
+		private static bool TryGetNextUnique(IList<SectionOrderEntry> sections, HashSet<int> yielded, ref int index, out IRoadSection section)
+		{
+			while (index < sections.Count)
+			{
+				SectionOrderEntry entry = sections[index];
+				index++;
+
+				if (yielded.Add(entry.OriginalIndex))
+				{
+					section = entry.Section;
+					return true;
+				}
+			}
+
+			section = null;
+			return false;
+		}
+
+		/// <summary>
+		/// </summary>
+
+		private float GetAngleNormalized(IRoadSection section)
+		{
+			return Mathf.Abs(GetSignedAngleNormalized(section));
 		}
 
 		/// <summary>
@@ -30,31 +95,28 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 		/// Things taken into account:
 		/// - angle difference between start and end (less is better)
 		/// </summary>
-		public float GetHeuristic(IRoadSection section)
+		private float GetSignedAngleNormalized(IRoadSection section)
 		{
 			string key = section.GetShapeId();
 
 			// Is the value cached?
-			if (!cache.ContainsKey(key))
+			if (!anglesCache.ContainsKey(key))
 			{
 				RoadSectionShape shape = shapeCache.GetShape(section);
-				cache[key] = CalculateHeuristic(shape);
+				anglesCache[key] = CalculateSignedAngleNormalized(shape);
 			}
 
-			return cache[key];
+			return anglesCache[key];
 		}
 
-		private static float CalculateHeuristic(RoadSectionShape shape)
+		private static float CalculateSignedAngleNormalized(RoadSectionShape shape)
 		{
-			return GetAngleNormalized(shape);
-		}
-
-		private static float GetAngleNormalized(RoadSectionShape shape)
-		{
-			// Quaternion.Angle returns [0, 180]
-			// https://docs.unity3d.com/6000.2/Documentation/ScriptReference/Quaternion.Angle.html
-			float angle = Quaternion.Angle(shape.Entry.rotation, shape.Exit.rotation);
-			float normalizedAngle = angle / 180f;
+			float signedAngle = Vector3.SignedAngle(
+				shape.Entry.rotation.eulerAngles,
+				shape.Exit.rotation.eulerAngles,
+				Vector3.up
+			);
+			float normalizedAngle = signedAngle / 180f;
 
 			return normalizedAngle;
 		}
