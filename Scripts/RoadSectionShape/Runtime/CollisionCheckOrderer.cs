@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 {
+	/// <summary>
+	/// Provides an ordering for checking road section collisions.
+	/// </summary>
 	public static class CollisionCheckOrderer
 	{
 		/// <summary>

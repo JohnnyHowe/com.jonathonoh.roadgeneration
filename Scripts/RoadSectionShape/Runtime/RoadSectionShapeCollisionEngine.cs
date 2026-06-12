@@ -6,6 +6,9 @@ using Other;
 
 namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 {
+	/// <summary>
+	/// Searches for a collision-free chain that starts with the already placed sections and requested subject section.
+	/// </summary>
 	public class RoadSectionShapeCollisionEngine : ICollisionEngine
 	{
 		private ShapeCache shapeCache;

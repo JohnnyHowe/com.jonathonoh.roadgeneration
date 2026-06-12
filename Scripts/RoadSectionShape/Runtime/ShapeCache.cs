@@ -3,6 +3,9 @@ using JonathonOH.RoadGeneration.Core;
 
 namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 {
+	/// <summary>
+	/// Caches road section shapes by shape id so repeated collision checks can reuse generated geometry.
+	/// </summary>
 	public class ShapeCache
 	{
 		private Dictionary<string, RoadSectionShape> cache;
