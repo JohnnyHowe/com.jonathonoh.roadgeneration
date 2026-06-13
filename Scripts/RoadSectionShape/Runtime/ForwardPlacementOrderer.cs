@@ -112,8 +112,8 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 		private static float CalculateSignedAngleNormalized(RoadSectionShape shape)
 		{
 			float signedAngle = Vector3.SignedAngle(
-				shape.Entry.rotation.eulerAngles,
-				shape.Exit.rotation.eulerAngles,
+				shape.Entry.rotation * Vector3.forward,
+				shape.Exit.rotation * Vector3.forward,
 				Vector3.up
 			);
 			float normalizedAngle = signedAngle / 180f;
