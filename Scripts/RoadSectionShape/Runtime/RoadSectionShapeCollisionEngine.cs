@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using JonathonOH.RoadGeneration.Core;
 using Other;
-using UnityEngine.PlayerLoop;
 
 namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 {
@@ -37,7 +36,7 @@ namespace JonathonOH.RoadGeneration.RoadSectionShapeCollision
 		{
 			realRequest = request;
 			hasCheckedSubject = false;
-			combinationGenerator = new DFSCombinationGenerator(request.AllowedSections.Count - 1, request.MaxCheckDepth);
+			combinationGenerator = new DFSCombinationGenerator(request.AllowedSections.Count, request.MaxCheckDepth);
 			result = ICollisionEngine.SearchResult.SearchNotFinished;
 
 			orderedAllowedSections = shapeSimplicityHeuristic.GetOrdered(request.AllowedSections).ToList();
